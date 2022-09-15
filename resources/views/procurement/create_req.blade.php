@@ -90,7 +90,8 @@
                                 <td>
                                     <form id="remove-item">
                                         @csrf
-                                        <button form="remove-item" class="remove danger">Remove</button>
+                                        <button form="remove-item" class="remove danger" value="{{ $item->row }}">
+                                            Remove</button>
                                     </form>
                                 </td>
                             </tr>
@@ -181,7 +182,6 @@
                 $('#item-form')[0].reset();
                 return;
             }
-
 
             $.ajax({
                 url: url,
@@ -303,6 +303,32 @@
             $('#cancel-edit-btn').css('display', 'none');
 
             $('#item-form')[0].reset();
+        });
+
+        $(document).on('click', '.remove', function() {
+            rowIndex = $(this).val();
+        });
+
+        $(document).on('submit', '#remove-item', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ url('/savedItems/destroy/"+rowIndex+"') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    row: rowIndex
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status == 200) {
+                        $('#cancel-edi-btn').trigger('click');
+                        $('#item-form')[0].reset();
+                    }
+
+                    $('#items-table').load(location.href + " #items-table");
+                }
+            });
         });
     </script>
 </x-layout>

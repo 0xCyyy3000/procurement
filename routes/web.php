@@ -51,7 +51,8 @@ Route::post('/items/units/{item}', [ItemsController::class, 'fetchUnits']);
 
 Route::get('/savedItems', [ItemsController::class, 'indexSavedItems']);
 Route::post('/savedItems/{item}', [ItemsController::class, 'selectSavedItems']);
-Route::post('/savedItems/update/{item}', [ItemsController::class, 'update']);
+Route::post('/savedItems/update/{item}', [ItemsController::class, 'updateSavedItem']);
+Route::post('/savedItems/destroy/{item}', [ItemsController::class, 'destroySavedItem']);
 
 Route::get('/api/index', [ItemsController::class, 'index']);
 Route::get('/api/index-saved-items', [ItemsController::class, 'indexSavedItems']);

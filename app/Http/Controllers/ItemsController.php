@@ -111,16 +111,16 @@ class ItemsController extends Controller
         return response()->json($result);
     }
 
-    public function destroyAddedItem(Request $request)
+    public function destroySavedItem(Request $request)
     {
-        $deleted = SavedItems::where('created_at', $request->createdAt)->delete();
+        $deleted = SavedItems::where('row', $request->row)->delete();
         if ($deleted) $result['status'] = 200;
         else $result['deleted'] = 500;
 
         return response()->json($result);
     }
 
-    public function update(Request $request)
+    public function updateSavedItem(Request $request)
     {
         $formFields = $request->validate([
             'item' => 'required',
