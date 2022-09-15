@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Heebo', sans-serif;
+}
+
+html,
+body {
+    display: grid;
+    height: 100%;
+    width: 100%;
+}
+
+.header {
+    background-color: #fff;
+    padding: 22px;
+    text-align: left;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    opacity: 0.9;
+
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 44px;
+}
+
+.main_container {
+    background: #F2F2F2;
+    height: 110%;
+    width: 100%;
+    position: relative;
+}
+
+.container {
+    float: left;
+}
+
+.container .system_title {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 72px;
+    line-height: 107.37%;
+    position: absolute;
+    width: 789px;
+    height: 170px;
+    left: 58px;
+    top: 220px;
+}
+
+.container .system_description {
+    position: absolute;
+    width: 662px;
+    height: 55px;
+    left: 58px;
+    top: 408px;
+
+    font-style: normal;
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 116.37%;
+}
+
+.container form {
+    padding: 10px 30px 50px 30px;
+}
+
+.container form .field {
+    top: 450px;
+    display: block;
+    height: 48px;
+    width: 120%;
+    padding: 15px;
+    position: relative;
+}
+
+.container form .field input {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgrey;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.container form .field input:focus,
+form .field input:valid {
+    border-color: #0d52bd;
+}
+
+.container form .field label {
+    position: absolute;
+    top: 50%;
+    left: 35px;
+    color: #999999;
+    font-weight: 400;
+    font-size: 17px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+form .field input:focus~label,
+form .field input:valid~label {
+    top: 0%;
+    font-size: 16px;
+    color: #0d52bd;
+    background: #F2F2F2;
+    transform: translateY(-50%);
+}
+
+form .field input[type="submit"] {
+    width: 35%;
+    height: 80%;
+    color: #fff;
+    border: none;
+    padding-left: 0;
+    margin-top: -10px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #000000;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+form .field input[type="submit"]:active {
+    transform: scale(0.95);
+}
+
+form .contact_admin {
+    position: relative;
+    color: #0d52bd;
+    margin-top: 470px;
+    text-align: center;
+}
+
+.container__half {
+    flex: 1;
+}
+
+.container img {
+    position: absolute;
+    width: 65%;
+    height: auto;
+    left: 597px;
+    top: 49px;
+}

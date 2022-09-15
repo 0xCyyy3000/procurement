@@ -1,0 +1,62 @@
+.right .analytics {
+    margin-top: 2rem;
+}
+
+.right .analytics h2 {
+    margin-bottom: 0.8rem;
+}
+
+.right .analytics .item {
+    background: var(--color-white);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+    padding: 1.4rem var(--card-padding);
+    border-radius: var(--border-radius-3);
+    box-shadow: var(--box-shadow);
+    transition: all 300ms ease;
+    margin-right: 0.8rem;
+}
+
+.right .analytics .item:hover {
+    box-shadow: none;
+}
+
+.right .analytics .item .right {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin: 0;
+    width: 100%;
+}
+
+.right .analytics .item .icon {
+    padding: 0.6rem;
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    background: var(--color-warning);
+}
+
+.right .analytics .item.cancelled .icon {
+    padding: 0.6rem;
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    background: var(--color-primary);
+}
+
+.right .analytics .item.received .icon {
+    padding: 0.6rem;
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    background: var(--color-success);
+}
+
+@media screen and (max-width: 1200px) {
+    .analytics {
+        width: 94%;
+    }
+}
