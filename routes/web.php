@@ -54,9 +54,4 @@ Route::post('/savedItems/{item}', [ItemsController::class, 'selectSavedItems']);
 Route::post('/savedItems/update/{item}', [ItemsController::class, 'updateSavedItem']);
 Route::post('/savedItems/destroy/{item}', [ItemsController::class, 'destroySavedItem']);
 
-Route::get('/api/index', [ItemsController::class, 'index']);
-Route::get('/api/index-saved-items', [ItemsController::class, 'indexSavedItems']);
-Route::put('/api/saved-item/{item}', [ItemsController::class], 'update');
-Route::post('/api/fetch-units', [ItemsController::class, 'fetchUnits']);
-Route::post('/api/store-added-item', [ItemsController::class, 'storeAddedItem']);
-Route::post('/api/destroy-added-item', [ItemsController::class, 'destroyAddedItem']);
+Route::post('/submit/requisition', [RequisitionController::class, 'store']);

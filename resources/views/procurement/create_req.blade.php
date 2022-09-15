@@ -61,12 +61,8 @@
                 <button id="cancel-edit-btn" type="button" class="danger">
                     <p>Cancel edit</p>
                 </button>
-
             </div>
         </div>
-
-
-
     </form>
 
     <div class="items-table"id="items-table">
@@ -109,6 +105,7 @@
             </table>
         </div>
     </div>
+
     <script>
         let savedItems = null;
         var rowIndex = null;

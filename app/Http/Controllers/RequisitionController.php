@@ -30,4 +30,19 @@ class RequisitionController extends Controller
             ]
         );
     }
+
+    public function store(Request $request)
+    {
+        $formFields = $request->validate([
+            'description' => 'required',
+            'priority' => 'required',
+            'user' => 'required'
+        ]);
+
+        $created = Requisitions::create($formFields);
+
+        if ($created) {
+            $result['status'] = 200;
+        } else $result['status'] = 500;
+    }
 }
