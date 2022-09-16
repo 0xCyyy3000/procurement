@@ -18,7 +18,7 @@
             </div>
         </form>
     </div>
-    <div class="item">
+    <div class="item submit">
         @auth
             <button id="submit" form="req-details-form" name="submit" value="{{ auth()->user()->id }}">
                 <span class="material-icons-sharp">send</span>
@@ -26,5 +26,4 @@
             </button>
         @endauth
     </div>
-
 </div>

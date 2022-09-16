@@ -10,7 +10,7 @@
 
     <div class="description">
         <div class="description-content">
-            <textarea id="description" placeholder="Describe the purpose"></textarea>
+            <textarea id="description" oninput="" placeholder="Describe the purpose" required></textarea>
         </div>
     </div>
 

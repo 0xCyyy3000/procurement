@@ -98,6 +98,7 @@
         </div>
     </div>
     <script src="{{ asset('js/menuBtn.js') }}"></script>
+    <script src="{{ asset('js/createReqScript.js') }}"></script>
 </body>
 
 </html>

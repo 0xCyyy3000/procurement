@@ -23,6 +23,7 @@
     justify-content: space-between;
     align-items: start;
     margin: 0;
+    margin-left: 1rem;
     width: 100%;
     color: var(--color-dark);
 }
