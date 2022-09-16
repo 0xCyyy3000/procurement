@@ -1,6 +1,6 @@
 let token;
 let description;
-let prioriy;
+let priority;
 let userId;
 
 $(document).on('input', '#description', function () {
@@ -10,28 +10,33 @@ $(document).on('input', '#description', function () {
 
 $(document).on('click', '#submit', function () {
     userId = $(this).val();
-    prioriy = $('#priority').val();
+    priority = $('#priority').val();
     // description = $('#description').text();
     token = $('#token').val();
 });
 
 $(document).on('submit', '#req-details-form', function (e) {
     e.preventDefault();
-    // $.ajax({
-    //     url: '/submit/requisition',
-    //     type: 'POST',
-    //     data: {
-    //         _token: token,
-    //         user: userId,
-    //         prioriy: prioriy,
-    //         description: description
-    //     },
-    //     dataype: 'json',
-    //     success: function (result) {
-
-    //     }
-    // });
-    console.log('PRIORITY: ' + prioriy);
+    $.ajax({
+        url: '/submit/requisition',
+        type: 'POST',
+        data: {
+            _token: token,
+            user_id: userId,
+            priority: priority,
+            description: description,
+            status: 'PENDING'
+        },
+        dataype: 'json',
+        success: function (result) {
+            console.log(result);
+            if (result.status == 200) {
+                alert('Requisition was successfully submitted!');
+                location.reload();
+            }
+        }
+    });
+    console.log('PRIORITY: ' + priority);
     console.log('DESCRIPTION: ' + description);
     console.log('TOKEN: ' + token);
     console.log('USER ID: ' + userId);

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('priority');
             $table->longText('description');
             $table->string('status');
+            $table->string('evaluator')->nullable();
             $table->timestamps();
         });
         //priority, description,req_date, req_time, req_status

@@ -36,7 +36,8 @@ class RequisitionController extends Controller
         $formFields = $request->validate([
             'description' => 'required',
             'priority' => 'required',
-            'user' => 'required'
+            'user_id' => 'required',
+            'status' => 'required'
         ]);
 
         $created = Requisitions::create($formFields);
@@ -44,5 +45,7 @@ class RequisitionController extends Controller
         if ($created) {
             $result['status'] = 200;
         } else $result['status'] = 500;
+
+        return response()->json($result);
     }
 }
