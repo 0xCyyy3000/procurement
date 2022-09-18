@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('evaluator')->nullable();
             $table->timestamps();
         });
-        //priority, description,req_date, req_time, req_status
     }
 
     /**

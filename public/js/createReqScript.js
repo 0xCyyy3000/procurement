@@ -36,8 +36,4 @@ $(document).on('submit', '#req-details-form', function (e) {
             }
         }
     });
-    console.log('PRIORITY: ' + priority);
-    console.log('DESCRIPTION: ' + description);
-    console.log('TOKEN: ' + token);
-    console.log('USER ID: ' + userId);
 });

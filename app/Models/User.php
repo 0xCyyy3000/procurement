@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SavedItems::class, 'user_id');
     }
+
+    public function submittedItems()
+    {
+        return $this->hasMany(SubmittedItems::class, 'user_id');
+    }
 }
