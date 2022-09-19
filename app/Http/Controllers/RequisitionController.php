@@ -65,7 +65,7 @@ class RequisitionController extends Controller
 
         $strData = implode(',', $itemData);
 
-        return "'" . $strData . "'";
+        return "" . $strData . "";
     }
 
     public function indexSavedItems($userId, $reqId)
@@ -87,7 +87,7 @@ class RequisitionController extends Controller
             'qtys' => $qtys
         );
 
-        dd($savedItems);
+        // dd($savedItems);
         return $this->submitItems($savedItems, $userId, $reqId);
     }
 

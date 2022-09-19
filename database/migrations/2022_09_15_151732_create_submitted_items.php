@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('submitted_items', function (Blueprint $table) {
             $table->foreignId('req_id')->constrained('requisitions', 'req_id')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('item_ids');
+            $table->string('item_ids');
             $table->string('items');
             $table->string('units');
-            $table->double('qtys');
+            $table->string('qtys');
             $table->timestamps();
         });
     }
