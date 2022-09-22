@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('requisitions', function (Blueprint $table) {
             $table->id('req_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('maker');
             $table->string('priority');
             $table->longText('description');
             $table->string('status');

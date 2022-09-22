@@ -9,7 +9,7 @@
                     <span class="material-icons-sharp">request_page</span>
                     <div class="right-side">
                         <h3>
-                            <select id=req-no-select class="primary">
+                            <select id=reqs class="primary">
                                 <option value="default"> -- Please Choose one -- </option>
                             </select>
                         </h3>
@@ -55,4 +55,19 @@
             </div>
         </form>
     </div>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: "{{ url('/api/get/requisitions') }}",
+                type: 'GET',
+                dataType: 'json',
+                success: function(result) {
+                    result.forEach(element => {
+                        $('#reqs').append('<option value=' + element.req_id + '>' +
+                            'Req ' + element.req_id + '</option>')
+                    });
+                }
+            });
+        });
+    </script>
 </div>

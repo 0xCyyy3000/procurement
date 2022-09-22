@@ -9,9 +9,9 @@ $(document).on('input', '#description', function () {
 });
 
 $(document).on('click', '#submit', function () {
-    userId = $(this).val();
+    maker = $(this).val();
+    userId = $('#userId').val();
     priority = $('#priority').val();
-    // description = $('#description').text();
     token = $('#token').val();
 });
 
@@ -23,9 +23,10 @@ $(document).on('submit', '#req-details-form', function (e) {
         data: {
             _token: token,
             user_id: userId,
+            maker: maker,
             priority: priority,
             description: description,
-            status: 'PENDING'
+            status: 'Pending'
         },
         dataype: 'json',
         success: function (result) {

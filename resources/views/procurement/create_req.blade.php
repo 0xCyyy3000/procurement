@@ -93,14 +93,6 @@
                             </tr>
                         @endforeach
                     @endunless
-                    {{-- <tr>
-                            <td>Testing</td>
-                            <td>Testing</td>
-                            <td>Testing</td>
-                            <td colspan="2"><button class="primary">Edit</button></td>
-                            <td><button class="danger">Remove</button></td>
-                        </tr> --}}
-
                 </tbody>
             </table>
         </div>

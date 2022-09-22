@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Items;
 use App\Models\User;
+use App\Models\Items;
+use App\Models\Requisitions;
 use Illuminate\Http\Request;
 
 class SidebarController extends Controller
@@ -42,6 +43,25 @@ class SidebarController extends Controller
 
     public function requisitions()
     {
-        return redirect('/requisitions/user');
+        if (strtoupper(request()->user()->department) == 'ADMIN') {
+            $requisitions = Requisitions::latest()->get();
+            $update_status = 'partials._update-status';
+        } else {
+            $requisitions = request()->user()->requisitions()->get();
+            $update_status = null;
+        }
+
+        return view(
+            'procurement.requisitions',
+            [
+                'requisitions' => $requisitions,
+                'section' => [
+                    'page' => 'requisitions',
+                    'title' => 'Requisitions',
+                    'middle' => $update_status,
+                    'bottom' => null
+                ]
+            ]
+        );
     }
 }

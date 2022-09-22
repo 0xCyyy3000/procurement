@@ -18,9 +18,10 @@ class RequisitionsFactory extends Factory
     {
         return [
             'user_id' => 2,
-            'priority' => 'normal',
+            'maker' => 'John Dee',
+            'priority' => 'Normal',
             'description' => 'testingggg',
-            'status' => 'pending'
+            'status' => 'Pending'
         ];
     }
 }

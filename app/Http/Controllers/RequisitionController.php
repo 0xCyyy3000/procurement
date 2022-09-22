@@ -2,35 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Requisitions;
-use App\Models\SavedItems;
-use App\Models\SubmittedItems;
 use App\Models\User;
+use App\Models\SavedItems;
+use App\Models\Requisitions;
 use Illuminate\Http\Request;
+use App\Models\SubmittedItems;
+use Illuminate\Support\Facades\Session;
+use Requisition;
 
 class RequisitionController extends Controller
 {
+    public function apiIndex()
+    {
+        if (strtoupper(auth()->user()->department) == 'ADMIN') {
+            $requisitions = Requisitions::latest()->get();
+            return response()->json($requisitions);
+        } else return response()->json('empty');
+    }
+
     public function index()
     {
-        $requisitions = request()->user()->requisitions()->get();
-        $update_status = null;
-        if (strtoupper(request()->user()->department) == 'ADMIN') {
-            $requisitions = Requisitions::latest()->get();
-            $update_status = 'partials._update-status';
-        }
+        $requisitions = Requisitions::latest()->get();
+        return response()->json($requisitions);
+    }
 
-        return view(
-            'procurement.requisitions',
-            [
-                'requisitions' => $requisitions,
-                'section' => [
-                    'page' => 'requisitions',
-                    'title' => 'Requisitions',
-                    'middle' => $update_status,
-                    'bottom' => null
-                ]
-            ]
-        );
+    public function select(Request $request)
+    {
+        $requisition = Requisitions::where('req_id', $request->req_id)->get();
+
+        if ($requisition) {
+            return response()->json($requisition);
+        } else return null;
+    }
+
+    public function getRequisition()
+    {
     }
 
     public function store(Request $request)
@@ -39,6 +45,7 @@ class RequisitionController extends Controller
             'description' => 'required',
             'priority' => 'required',
             'user_id' => 'required',
+            'maker' => 'required',
             'status' => 'required'
         ]);
 

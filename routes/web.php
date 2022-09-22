@@ -28,7 +28,10 @@ Route::get('/create_req', [SidebarController::class, 'createReq'])->middleware('
 Route::get('/requisitions', [SidebarController::class, 'requisitions'])->middleware('auth');
 
 
-Route::get('/requisitions/user', [RequisitionController::class, 'index'])->middleware('auth');
+Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
+Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
+Route::get('/api/get/requisition', [RequisitionController::class, 'getRequisition'])->middleware('auth');
+Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
 
 Route::get('/supplier', function () {
     return view(

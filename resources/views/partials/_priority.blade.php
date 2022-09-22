@@ -20,7 +20,11 @@
     </div>
     <div class="item submit">
         @auth
-            <button id="submit" form="req-details-form" name="submit" value="{{ auth()->user()->id }}">
+            <button id="submit" form="req-details-form" name="submit" value="{{ auth()->user()->name }}">
+                <input type="hidden" id="userId" value="{{ auth()->user()->id }}">
+                <script>
+                    console.log($('#submit').val());
+                </script>
                 <span class="material-icons-sharp">send</span>
                 <h3>Submit</h3>
             </button>
