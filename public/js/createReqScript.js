@@ -35,6 +35,9 @@ $(document).on('submit', '#req-details-form', function (e) {
                 alert('Requisition was successfully submitted!');
                 location.reload();
             }
+        },
+        error: function (response) {
+            alert(response.responseJSON.message);
         }
     });
 });

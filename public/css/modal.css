@@ -46,15 +46,17 @@
 
 .modal-content .body .middle .row .items-table {
     margin-top: 2rem;
-    height: 200px;
+    max-height: 200px;
     overflow-y: auto;
+    border-radius: 0;
 }
 
 .modal-content .body .middle .row .items-table table {
     width: 100%;
     padding: var(--card-padding);
+    box-shadow: none;
     text-align: center;
-    height: 100px;
+    max-height: 100px;
 }
 
 .modal-content .body .middle .row .items-table table tbody td {
@@ -85,4 +87,21 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+
+@media screen and (max-width:1200px) {
+    .modal-content {
+        margin: 10% auto;
+    }
+}
+
+@media screen and (max-width:768px) {
+
+    .modal-content {
+        min-height: 35rem;
+        min-width: 84%;
+        padding: 20px;
+        margin: 23% auto;
+    }
 }

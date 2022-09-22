@@ -64,7 +64,7 @@
                 success: function(result) {
                     result.forEach(element => {
                         $('#reqs').append('<option value=' + element.req_id + '>' +
-                            'Req ' + element.req_id + '</option>')
+                            'Req #' + element.req_id + '</option>')
                     });
                 }
             });

@@ -10,17 +10,9 @@
 
     <div class="description">
         <div class="description-content">
-            <textarea id="description" oninput="" placeholder="Describe the purpose" required></textarea>
+            <textarea id="description" placeholder="Describe the purpose" required></textarea>
         </div>
     </div>
-
-    {{-- <div class="item-switch">
-        <label class="switch">
-            <input type="checkbox">
-            <span class="slider round"></span>
-        </label>
-        <p class="text-muted">New item</p>
-    </div> --}}
 
     <form method="POST" id="item-form" enctype="multipart/form-data">
         @csrf

@@ -291,7 +291,6 @@ aside button:hover span {
     main .insights {
         width: 50%;
     }
-
 }
 
 
@@ -301,6 +300,7 @@ aside button:hover span {
         grid-template-columns: 1fr;
         margin-left: 2rem;
     }
+
 
     aside {
         position: fixed;

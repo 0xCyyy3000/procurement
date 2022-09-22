@@ -29,10 +29,16 @@ class RequisitionController extends Controller
     public function select(Request $request)
     {
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
+        $response['requisition'] = $requisition;
 
         if ($requisition) {
-            return response()->json($requisition);
-        } else return null;
+            $response['status'] = 200;
+
+            $items = SubmittedItems::where('req_id', $request->req_id)->get();
+            $response['items'] = $items;
+        } else $response['status'] = 404;
+
+        return response()->json($response);
     }
 
     public function getRequisition()
