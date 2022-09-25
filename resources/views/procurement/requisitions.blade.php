@@ -11,12 +11,12 @@
             <div class="body">
                 <div class="top">
                     <p>Requisitioned by <span id="maker" class="primary"></span></p>
-                    <p>on <span id="date"></span> at <span id="time"></span></p>
+                    <p>On <span id="date"></span></p>
                 </div>
                 <hr>
                 <div class="middle">
                     <div class="row">
-                        <h2>Description</h2>
+                        <h3>Description</h3>
                         <p id="description" style="font-size: medium"></p>
                     </div>
                     <div class="row upper">
@@ -35,10 +35,6 @@
                         <div class="upper-container">
                             <h3>Branch Manager's Signatory</h3>
                             <p id="sig2-stats" style="font-style: italic">unsigned</p>
-                        </div>
-                        <div class="upper-container">
-                            <h3>Released</h3>
-                            <p id="is-released">False</p>
                         </div>
                     </div>
                     <div class="row">
@@ -81,9 +77,9 @@
                         @endphp
                         <tr>
                             <td>{{ $requisition->req_id }}</td>
-                            <td>{{ $requisition->priority }}</td>
+                            <td style="font-weight: bold">{{ $requisition->priority }}</td>
                             <td>{{ $requisition->description }}</td>
-                            <td
+                            <td style="font-weight: bold"
                                 @if ($status == 'PENDING') class="warning"
                                     @elseif($status == 'APPROVED') class="success"
                                     @else class="danger" @endif>
@@ -127,6 +123,7 @@
                     },
                     dataType: 'json',
                     success: function(response) {
+                        console.log(response);
                         if (response.status == 200) {
                             table_body.innerHTML = '';
 
@@ -160,6 +157,9 @@
                                 table_body.innerHTML += template;
                             }
                         }
+                    },
+                    error: function(response) {
+                        alert(response.responseJSON.message);
                     }
                 });
             });

@@ -167,14 +167,6 @@ aside button:hover span {
     background: none;
 }
 
-.container {
-    display: grid;
-    width: 15vw;
-    margin: 0 auto;
-    gap: 1.8rem;
-    grid-template-columns: 14rem auto 23rem;
-}
-
 .content {
     display: grid;
     width: 100%;

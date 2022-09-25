@@ -7,6 +7,7 @@ use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\SubmittedItems;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Requisition;
 
@@ -39,10 +40,6 @@ class RequisitionController extends Controller
         } else $response['status'] = 404;
 
         return response()->json($response);
-    }
-
-    public function getRequisition()
-    {
     }
 
     public function store(Request $request)

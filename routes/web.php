@@ -30,7 +30,6 @@ Route::get('/requisitions', [SidebarController::class, 'requisitions'])->middlew
 
 Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
-Route::get('/api/get/requisition', [RequisitionController::class, 'getRequisition'])->middleware('auth');
 Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
 
 Route::get('/supplier', function () {

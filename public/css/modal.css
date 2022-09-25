@@ -45,11 +45,11 @@
 }
 
 .modal-content .body .middle .row .items-table {
-    margin-top: 2rem;
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0;
 }
+
 
 .modal-content .body .middle .row .items-table table {
     width: 100%;

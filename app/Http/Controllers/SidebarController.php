@@ -47,7 +47,7 @@ class SidebarController extends Controller
             $requisitions = Requisitions::latest()->get();
             $update_status = 'partials._update-status';
         } else {
-            $requisitions = request()->user()->requisitions()->get();
+            $requisitions = request()->user()->requisitions()->latest()->get();
             $update_status = null;
         }
 
