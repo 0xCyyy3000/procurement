@@ -28,28 +28,13 @@
     color: var(--color-dark);
 }
 
-.priority .item .icon {
-    padding: 0.6rem;
-    color: var(--color-white);
-    border-radius: 50%;
-    display: flex;
-    background: var(--color-warning);
-}
 
 .priority .item.priority .icon {
     padding: 0.6rem;
     color: var(--color-white);
     border-radius: 50%;
     display: flex;
-    background: var(--color-danger);
-}
-
-.priority .item.total .icon {
-    padding: 0.6rem;
-    color: var(--color-white);
-    border-radius: 50%;
-    display: flex;
-    background: var(--color-success);
+    background: var(--color-warning);
 }
 
 .priority .item.submit {

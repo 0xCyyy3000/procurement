@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
         crossorigin="anonymous"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
     <title>{{ $section['title'] }}</title>
 </head>
 
@@ -43,7 +44,7 @@
                         <span class="material-icons-sharp">folder</span>
                         <h3>Requisitions</h3>
                     </a>
-                    <a href="/" @if ($section['page'] == 'purchased_orders') class="active" @endif>
+                    <a href="/purchased_orders" @if ($section['page'] == 'purchased_orders') class="active" @endif>
                         <span class="material-icons-sharp">receipt_long</span>
                         <h3>Purchased Orders</h3>
                     </a>
@@ -97,6 +98,7 @@
             </div>
         </div>
     </div>
+    <x-flash-message />
     <script src="{{ asset('js/menuBtn.js') }}"></script>
     <script src="{{ asset('js/createReqScript.js') }}"></script>
 </body>

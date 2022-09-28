@@ -250,6 +250,14 @@ aside button:hover span {
     margin-top: 1.4rem;
 }
 
+.flash-message {
+    position: absolute;
+    top: 0;
+    margin: 0 auto;
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
 
 @media screen and (max-width:1200px) {
 

@@ -22,15 +22,15 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
 Route::post('/users/authenticate', [UserController::class, 'authenticate']);
 
 Route::get('/', [SidebarController::class, 'dashboard'])->middleware('auth');
-// Route::get('/dashboard', [SidebarController::class, 'dashboard'])->middleware('auth');
-// Route::get('/admin/dashboard', [SidebarController::class, 'dashboard'])->middleware('auth');
 Route::get('/create_req', [SidebarController::class, 'createReq'])->middleware('auth');
 Route::get('/requisitions', [SidebarController::class, 'requisitions'])->middleware('auth');
+Route::get('/purchased_orders', [SidebarController::class, 'purchasedOrders'])->middleware('auth');
 
 
 Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
 Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
+Route::post('/requisitions/copy/{requisition}', [RequisitionController::class, 'copy'])->middleware('auth');
 
 Route::get('/supplier', function () {
     return view(
@@ -55,5 +55,6 @@ Route::get('/savedItems', [ItemsController::class, 'indexSavedItems']);
 Route::post('/savedItems/{item}', [ItemsController::class, 'selectSavedItems']);
 Route::post('/savedItems/update/{item}', [ItemsController::class, 'updateSavedItem']);
 Route::post('/savedItems/destroy/{item}', [ItemsController::class, 'destroySavedItem']);
+Route::post('/savedItems/clear/{user}', [ItemsController::class, 'clearSavedItem']);
 
 Route::post('/submit/requisition', [RequisitionController::class, 'store']);

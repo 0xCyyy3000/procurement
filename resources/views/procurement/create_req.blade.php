@@ -16,6 +16,9 @@
 
     <form method="POST" id="item-form" enctype="multipart/form-data">
         @csrf
+        @auth
+            <input id="user-id" type="hidden" value="{{ auth()->user()->id }}">
+        @endauth
         <div class="wrapper">
             <div class="fields" id="fields">
                 <select class="items primary" id="items">
@@ -54,6 +57,11 @@
                     <p>Cancel edit</p>
                 </button>
             </div>
+
+            <button class="clear-items" type="button" id="clear-items" style="display: none">
+                <span id="trash-icon" class="material-icons-sharp">clear</span>
+                <p>Clear items</p>
+            </button>
         </div>
     </form>
 
@@ -91,12 +99,14 @@
     </div>
 
     <script>
-        let savedItems = null;
+        let savedItems = '<?php echo $savedItems; ?>';
         var rowIndex = null;
-
         var IS_ADDING = false;
         var IS_EDITING = false;
         var unit = null;
+
+        if (savedItems.length > 2)
+            $('#clear-items').css('display', 'flex')
 
         function itemUnits(item_id) {
             $.ajax({
@@ -203,6 +213,7 @@
                     }
 
                     $('#items-table').load(location.href + " #items-table");
+                    $('#clear-items').css('display', 'flex');
                 }
             });
 
@@ -256,14 +267,14 @@
         $(document).on('click', '.edit', function() {
             IS_EDITING = true;
 
+            $('#unit').prop('required', false);
+            $('#item').prop('required', false);
+
             if (IS_ADDING) {
                 $('#items').removeClass("adding");
                 $('#units').css('display', 'inline-block');
                 $('#item').css('display', 'none');
                 $('#unit').css('display', 'none');
-
-                $('#unit').prop('required', false);
-                $('#item').prop('required', false);
                 IS_ADDING = false;
             }
 
@@ -303,11 +314,36 @@
                 dataType: 'json',
                 success: function(result) {
                     if (result.status == 200) {
+                        if (result.items < 1)
+                            $('#clear-items').css('display', 'none')
+
                         $('#cancel-edi-btn').trigger('click');
                         $('#item-form')[0].reset();
-                    }
 
-                    $('#items-table').load(location.href + " #items-table");
+                        $('#items-table').load(location.href + " #items-table");
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '#clear-items', function() {
+            const userId = $('#user-id').val();
+            $.ajax({
+                url: "{{ url('/savedItems/clear/"+userId+"') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: userId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == 200) {
+                        $('#items-table').load(location.href + " #items-table");
+                        $('#clear-items').css('display', 'none');
+                    }
+                },
+                error: function(response) {
+                    alert(response.responseJSON.message);
                 }
             });
         });

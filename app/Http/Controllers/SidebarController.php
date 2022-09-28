@@ -43,7 +43,7 @@ class SidebarController extends Controller
 
     public function requisitions()
     {
-        if (strtoupper(request()->user()->department) == 'ADMIN') {
+        if (strtoupper(auth()->user()->department) == 'ADMIN') {
             $requisitions = Requisitions::latest()->get();
             $update_status = 'partials._update-status';
         } else {
@@ -55,6 +55,7 @@ class SidebarController extends Controller
             'procurement.requisitions',
             [
                 'requisitions' => $requisitions,
+                'userId' => auth()->user()->id,
                 'section' => [
                     'page' => 'requisitions',
                     'title' => 'Requisitions',
@@ -63,5 +64,10 @@ class SidebarController extends Controller
                 ]
             ]
         );
+    }
+
+    public function purchasedOrders()
+    {
+        return view('procurement.purchased-orders');
     }
 }

@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\SubmittedItems;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Session;
-use Requisition;
 
 class RequisitionController extends Controller
 {
@@ -39,6 +35,21 @@ class RequisitionController extends Controller
             $response['items'] = $items;
         } else $response['status'] = 404;
 
+        // to access a specific item in a collection
+        // $collection[index]->key 
+
+        // print('===');
+        // print($requisition[0]->maker);
+        // print('\n');
+
+        // Anoter example
+        // $itemsTest = collect([
+        //     'item' => ['item1', 'item2', 'item3'],
+        //     'units' => [['box', 'rim', 'pcs'], ['kg', 'pounds'], 'sack'],
+        //     'prices' => [[130, 97, 13], [45, 21], 200]
+        // ]);
+        // print($itemsTest['units'][0][0]);
+
         return response()->json($response);
     }
 
@@ -62,8 +73,32 @@ class RequisitionController extends Controller
         if ($result['status'] != 200) {
             Requisitions::latest('req_id')->first()->delete();
         }
-
         return response()->json($result);
+    }
+
+    public function copy(Request $request)
+    {
+        // dd($requisition);
+        $itemsToCopy = request()->user()->submittedItems()->where('req_id', $request->req_id)->get(['item_ids', 'items', 'units', 'qtys']);
+
+        $item_ids = explode(',', $itemsToCopy[0]->item_ids);
+        $items = explode(',', $itemsToCopy[0]->items);
+        $item_units = explode(',', $itemsToCopy[0]->units);
+        $item_qtys = explode(',', $itemsToCopy[0]->qtys);
+
+        for ($index = 0; $index < sizeof($item_ids); $index++) {
+            $saved = SavedItems::create([
+                'user_id' => auth()->user()->id,
+                'item_id' => $item_ids[$index],
+                'item' => $items[$index],
+                'unit' => $item_units[$index],
+                'qty' => $item_qtys[$index]
+            ]);
+            if ($saved)
+                $response['status'] = 200;
+            else $response['status'] = 500;
+        }
+        return response()->json($response);
     }
 
     public function getPlainString($data, $key)

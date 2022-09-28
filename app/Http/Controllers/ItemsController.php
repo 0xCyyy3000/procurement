@@ -114,8 +114,20 @@ class ItemsController extends Controller
     public function destroySavedItem(Request $request)
     {
         $deleted = SavedItems::where('row', $request->row)->delete();
+        $items = SavedItems::where('user_id', auth()->user()->id)->get()->count();
+        $result['items'] = $items;
         if ($deleted) $result['status'] = 200;
         else $result['deleted'] = 500;
+
+        return response()->json($result);
+    }
+
+    public function clearSavedItem(Request $request)
+    {
+        $affectedRows = SavedItems::where('user_id', $request->user_id)->delete();
+        $result['rows'] = $affectedRows;
+        if ($affectedRows) $result['status'] = 200;
+        else $result['status'] = 500;
 
         return response()->json($result);
     }

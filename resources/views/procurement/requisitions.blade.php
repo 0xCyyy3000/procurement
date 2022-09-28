@@ -1,6 +1,8 @@
 <x-layout :section='$section'>
     <link rel="stylesheet" href="{{ asset('css/requisitions.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
+
+    <!-- View Modal -->
     <div id="view-modal" class="modal" style="display: none">
         <!-- Modal content -->
         <div class="modal-content">
@@ -11,22 +13,22 @@
             <div class="body">
                 <div class="top">
                     <p>Requisitioned by <span id="maker" class="primary"></span></p>
-                    <p>On <span id="date"></span></p>
+                    <p>on <span id="date"></span></p>
                 </div>
                 <hr>
                 <div class="middle">
                     <div class="row">
                         <h3>Description</h3>
-                        <p id="description" style="font-size: medium"></p>
+                        <p id="description" style="font-style: italic"></p>
                     </div>
                     <div class="row upper">
                         <div class="upper-container">
                             <h3>Priority</h3>
-                            <p id="priority" class="primary" style="font-weight: bold">High (Urgent)</p>
+                            <p id="priority" class="primary" style="font-weight: bold"></p>
                         </div>
                         <div class="upper-container">
                             <h3>Status</h3>
-                            <p id="status" style="font-weight: bold">Pending</p>
+                            <p id="status" style="font-weight: bold"></p>
                         </div>
                         <div class="upper-container">
                             <h3>School Director's Signatory</h3>
@@ -56,45 +58,71 @@
             <div class="footer"></div>
         </div>
     </div>
+
+    <!-- Copy Modal -->
+    <div id="copy-modal" class="copy-modal" style="display: none">
+        <!-- Modal content -->
+        <div class="copy-modal-content">
+            <span class="close-copy" id="close-copy">&times;</span>
+            <br> <br>
+            <h2>Copy Requisition Items.
+                <br>To continue this action, please confirm.
+            </h2>
+            <p class="reminder">The <b class="primary">items</b> of this requisition <b class="primary">will be
+                    copied</b> <br> and you will be redirected to requisition creation page.</p>
+            <br><br>
+            <div class="action">
+                <button class="go-back"type="button" id="go-back">
+                    <h3>Go back</h3>
+                </button>
+                <button class="confirm"type="button">
+                    <h3>Confirm</h3>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <h1>Requisitions</h1>
     <div class="date">
         <input type="date" name="" value="">
     </div>
 
     <div class="items-table"id="items-table">
-        <table>
-            <thead>
-                <th>Req No.</th>
-                <th>Priority</th>
-                <th width="">Description</th>
-                <th>Status</th>
-            </thead>
-            <tbody>
-                @unless($requisitions->isEmpty())
-                    @foreach ($requisitions as $requisition)
-                        @php
-                            $status = Str::upper($requisition->status);
-                        @endphp
-                        <tr>
-                            <td>{{ $requisition->req_id }}</td>
-                            <td style="font-weight: bold">{{ $requisition->priority }}</td>
-                            <td>{{ $requisition->description }}</td>
-                            <td style="font-weight: bold"
-                                @if ($status == 'PENDING') class="warning"
-                                    @elseif($status == 'APPROVED') class="success"
-                                    @else class="danger" @endif>
-                                {{ $requisition->status }}
-                            </td>
-                            <td> <button class="primary view" type="button" value="{{ $requisition->req_id }}">
-                                    View details</button>
-                            </td>
-                            <td><button class="text-muted copy" value="{{ $requisition->req_id }}">
-                                    <span>(Copy items)</span></button></td>
-                        </tr>
-                    @endforeach
-                @endunless
-            </tbody>
-        </table>
+        <div class="table">
+            <table>
+                <thead>
+                    <th>Req No.</th>
+                    <th>Priority</th>
+                    <th width="">Description</th>
+                    <th>Status</th>
+                </thead>
+                <tbody>
+                    @unless($requisitions->isEmpty())
+                        @foreach ($requisitions as $requisition)
+                            @php
+                                $status = Str::upper($requisition->status);
+                            @endphp
+                            <tr>
+                                <td>{{ $requisition->req_id }}</td>
+                                <td style="font-weight: bold">{{ $requisition->priority }}</td>
+                                <td>{{ $requisition->description }}</td>
+                                <td style="font-weight: bold"
+                                    @if ($status == 'PENDING') class="warning"
+                                        @elseif($status == 'APPROVED') class="success"
+                                        @else class="danger" @endif>
+                                    {{ $requisition->status }}
+                                </td>
+                                <td> <button class="primary view" type="button" value="{{ $requisition->req_id }}">
+                                        View details</button>
+                                </td>
+                                <td><button class="text-muted copy" value="{{ $requisition->req_id }}">
+                                        <span>(Copy items)</span></button></td>
+                            </tr>
+                        @endforeach
+                    @endunless
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -103,13 +131,26 @@
             var span = document.getElementById("close");
             var status = document.getElementById('status');
             var table_body = document.getElementById('table-body');
+            var copy_modal = document.getElementById("copy-modal");
+            var go_back = document.getElementById("go-back");
+            var close_copy = document.getElementById("close-copy");
+            var id = null;
 
             span.onclick = function() {
                 view_modal.style.display = "none";
             }
 
+            close_copy.onclick = function() {
+                copy_modal.style.display = "none";
+            }
+
+            go_back.onclick = function() {
+                copy_modal.style.display = "none";
+            }
+
             window.onclick = function(event) {
                 if (event.target == view_modal) view_modal.style.display = "none";
+                else if (event.target == copy_modal) copy_modal.style.display = "none";
             }
 
             $(document).on('click', '.view', function() {
@@ -123,7 +164,6 @@
                     },
                     dataType: 'json',
                     success: function(response) {
-                        console.log(response);
                         if (response.status == 200) {
                             table_body.innerHTML = '';
 
@@ -165,8 +205,28 @@
             });
 
             $(document).on('click', '.copy', function() {
-                console.log($(this).val());
+                $('.copy-modal').css('display', 'block');
+                id = this.value;
+            })
 
+            $(document).on('click', '.confirm', function() {
+                $.ajax({
+                    url: "{{ url('/requisitions/copy/"+id+"') }}",
+                    type: 'POST',
+                    data: {
+                        req_id: id,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.status == 200) {
+                            alert('Items copied successfully!');
+                            location.reload();
+                        }
+                    },
+                    error: function(response) {
+                        alert(response.responseJSON.message);
+                    }
+                });
             })
         });
     </script>
