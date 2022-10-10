@@ -115,8 +115,11 @@
                                 <td> <button class="primary view" type="button" value="{{ $requisition->req_id }}">
                                         View details</button>
                                 </td>
-                                <td><button class="text-muted copy" value="{{ $requisition->req_id }}">
-                                        <span>(Copy items)</span></button></td>
+                                <td>
+                                    <button class="text-muted copy" value="{{ $requisition->req_id }}">
+                                        <span>(Copy items)</span>
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
                     @endunless
