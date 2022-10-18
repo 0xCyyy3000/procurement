@@ -50,7 +50,7 @@
             <div class="container">
                 <!-- Image here -->
                 <!-- Right Container -->
-                <img src="" alt="centralized system">
+                <img src="{{ asset('images/clean.png') }}" alt="centralized system">
             </div>
         </div>
     </div>

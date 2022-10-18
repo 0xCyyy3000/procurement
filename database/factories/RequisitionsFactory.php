@@ -21,7 +21,8 @@ class RequisitionsFactory extends Factory
             'maker' => 'John Dee',
             'priority' => 'Normal',
             'description' => 'testingggg',
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'approval_count' => 0
         ];
     }
 }

@@ -26,10 +26,13 @@ Route::get('/create_req', [SidebarController::class, 'createReq'])->middleware('
 Route::get('/requisitions', [SidebarController::class, 'requisitions'])->middleware('auth');
 Route::get('/purchased_orders', [SidebarController::class, 'purchasedOrders'])->middleware('auth');
 
-Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
+Route::post('/submit/requisition', [RequisitionController::class, 'store']);
+
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
+Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
 Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
 Route::post('/requisitions/copy/{requisition}', [RequisitionController::class, 'copy'])->middleware('auth');
+Route::post('/requisitions/update/{requisition}', [RequisitionController::class, 'update'])->middleware('auth');
 
 Route::get('/supplier', function () {
     return view(
@@ -55,5 +58,3 @@ Route::post('/savedItems/{item}', [ItemsController::class, 'selectSavedItems']);
 Route::post('/savedItems/update/{item}', [ItemsController::class, 'updateSavedItem']);
 Route::post('/savedItems/destroy/{item}', [ItemsController::class, 'destroySavedItem']);
 Route::post('/savedItems/clear/{user}', [ItemsController::class, 'clearSavedItem']);
-
-Route::post('/submit/requisition', [RequisitionController::class, 'store']);

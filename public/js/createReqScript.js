@@ -26,7 +26,8 @@ $(document).on('submit', '#req-details-form', function (e) {
             maker: maker,
             priority: priority,
             description: description,
-            status: 'Pending'
+            status: 'Pending',
+            approval_count: 0
         },
         dataype: 'json',
         success: function (result) {
