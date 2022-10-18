@@ -19,6 +19,7 @@
 
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
+    --padding-2: .5em 1rem;
 
     --box-shadow: 0 2rem 3rem var(--color-light);
 }

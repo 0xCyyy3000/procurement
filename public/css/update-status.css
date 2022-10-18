@@ -53,6 +53,18 @@
     margin-left: 1rem;
 }
 
+.right-side h3 textarea {
+    width: 105%;
+    height: 5rem;
+    padding: var(--padding-2);
+    font-family: 'Poppins', sans-serif;
+
+    margin-left: -1em;
+    border: 1px solid var(--color-dark-variant);
+    border-radius: var(--border-radius-2);
+    color: var(--color-dark-variant);
+}
+
 @media screen and (max-width: 1200px) {
     .requisition-info {
         width: 94%;

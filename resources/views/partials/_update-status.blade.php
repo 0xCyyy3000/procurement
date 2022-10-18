@@ -19,16 +19,16 @@
             </div>
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">supervisor_account</span>
+                    <span class="material-icons-sharp">person</span>
                     <div class="right-side">
                         <h3>
-                            <select id="approval-1-select">
-                                <option value="unsigned">Unsigned (Pending)</option>
-                                <option value="signed">Signed (Approved)</option>
-                                <option value="not signed">Not Signed (Rejected)</option>
+                            <select id="approval-1-select" class="primary">
+                                <option value="default">-- Please Choose one --</option>
+                                <option value="school-director">School Director</option>
+                                <option value="branch-manager">Branch Manager</option>
                             </select>
                         </h3>
-                        <small class="text-muted">School Director's Signatory</small>
+                        <small class="text-muted">Signatory</small>
                     </div>
                 </div>
             </div>
@@ -37,17 +37,26 @@
                     <span class="material-icons-sharp">person</span>
                     <div class="right-side">
                         <h3>
-                            <select id="approval-2-select">
-                                <option value="unsigned">Unsigned (Pending)</option>
+                            <select id="approval-2-select" class="primary">
+                                <option value="unsigned">-- Please Choose one --</option>
                                 <option value="signed">Signed (Approved)</option>
                                 <option value="not signed">Not Signed (Rejected)</option>
                             </select>
                         </h3>
-                        <small class="text-muted">Branch Manager's Signatory</small>
+                        <small class="text-muted">Conclusion</small>
+                    </div>
+                </div>
+            </div>
+            <div class="detail">
+                <div class="row">
+                    <div class="right-side">
+                        <h3>
+                            <textarea name="" id="requisition-comment" cols="30" rows="2" placeholder="Message (optional)"></textarea>
+                        </h3>
                     </div>
                 </div>
                 <div class="row update">
-                    <button type="submit" id="update-signatory">
+                    <button type="submit" form="update-status-form" id="update-signatory">
                         <span class="material-icons-sharp">update</span>
                         <h3>Update</h3>
                     </button>
@@ -67,6 +76,11 @@
                             'Req #' + element.req_id + '</option>')
                     });
                 }
+            });
+
+            $('#update-status-form').submit(function(e) {
+                e.preventDefault();
+                console.log("HELLO!");
             });
         });
     </script>
