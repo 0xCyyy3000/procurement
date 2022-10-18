@@ -34,7 +34,7 @@
             </div>
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">person</span>
+                    <span class="material-icons-sharp">approval</span>
                     <div class="right-side">
                         <h3>
                             <select id="approval-2-select" class="primary">
@@ -43,7 +43,7 @@
                                 <option value="not signed">Not Signed (Rejected)</option>
                             </select>
                         </h3>
-                        <small class="text-muted">Conclusion</small>
+                        <small class="text-muted">Approval</small>
                     </div>
                 </div>
             </div>
@@ -81,6 +81,7 @@
             $('#update-status-form').submit(function(e) {
                 e.preventDefault();
                 console.log("HELLO!");
+
             });
         });
     </script>

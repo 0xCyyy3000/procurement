@@ -16,6 +16,7 @@
      padding: 25px;
      font-family: 'Poppins', sans-serif;
      transition: all 300ms ease;
+     resize: none;
  }
 
  .description .description-content textarea:hover {

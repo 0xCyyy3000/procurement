@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('evaluator')->nullable();
             $table->string('signed')->nullable();
+            $table->longText('message')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@
                 <div class="middle">
                     <div class="row">
                         <h3>Description</h3>
-                        <p id="description" style="font-style: italic"></p>
+                        <p id="description"></p>
                     </div>
                     <div class="row upper">
                         <div class="upper-container">
@@ -106,11 +106,13 @@
                                 <td>{{ $requisition->req_id }}</td>
                                 <td style="font-weight: bold">{{ $requisition->priority }}</td>
                                 <td>{{ $requisition->description }}</td>
-                                <td style="font-weight: bold"
-                                    @if ($status == 'PENDING') class="warning"
+                                <td>
+                                    <span
+                                        @if ($status == 'PENDING') class="warning"
                                         @elseif($status == 'APPROVED') class="success"
                                         @else class="danger" @endif>
-                                    {{ $requisition->status }}
+                                        {{ $requisition->status }}
+                                    </span>
                                 </td>
                                 <td> <button class="primary view" type="button" value="{{ $requisition->req_id }}">
                                         View details</button>

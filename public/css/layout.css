@@ -196,6 +196,26 @@ aside button:hover span {
     color: var(--color-warning);
 }
 
+td span.text-muted {
+    background-color: var(--color-info-dark);
+}
+
+td span.primary {
+    background-color: var(--color-primary);
+}
+
+td span.danger {
+    background-color: var(--color-danger);
+}
+
+td span.success {
+    background-color: var(--color-success);
+}
+
+td span.warning {
+    background-color: var(--color-warning);
+}
+
 .date,
 .time {
     display: inline-block;
