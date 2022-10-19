@@ -64,6 +64,13 @@ class RequisitionController extends Controller
             'approval_count' => ''
         ]);
 
+        $signatories = array(
+            array('name' => 'School Director', 'approval' => 'null'),
+            array('name' => 'Branch Manager', 'approval' => 'null')
+        );
+
+        $formFields['signatories'] = json_encode($signatories);
+
         $created = Requisitions::create($formFields);
 
         if ($created) {
@@ -75,6 +82,45 @@ class RequisitionController extends Controller
             Requisitions::latest('req_id')->first()->delete();
         }
         return response()->json($result);
+    }
+
+    public function update(Request $request)
+    {
+        $formFields = $request->validate([
+            'req_id' => 'required',
+            'signatories' => 'required',
+            'message' => ''
+        ]);
+
+        $requisition = Requisitions::where('req_id', $request->req_id)->get();
+        $approvalCount = $requisition[0]->approval_count;
+        $signatories = json_decode($requisition[0]->signatories);
+
+        if (strtoupper($request->approval) == 'SIGNED') {
+            if ($approvalCount == 0) $reqStatus = 'Partially Approved';
+            else $reqStatus = 'Approved';
+
+            $approvalCount += 1;
+        } else {
+            $reqStatus = 'Rejected';
+        }
+
+        foreach ($signatories as $signatory) {
+            if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories)
+                $signatory->approval = $request->approval;
+        }
+
+        $formFields['evaluator'] = auth()->user()->name;
+        $formFields['approval_count'] = $approvalCount;
+        $formFields['status'] = $reqStatus;
+        $formFields['signatories'] = $signatories;
+
+        $affectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
+
+        if ($affectedRows) $response['status'] = 200;
+        else $response['status'] = 500;
+
+        return response()->json($response);
     }
 
     public function copy(Request $request)
@@ -157,43 +203,5 @@ class RequisitionController extends Controller
         $affectedRows = SavedItems::where('user_id', $userId)->delete();
         if ($affectedRows > 0) return 200;
         else return 433;
-    }
-
-    public function update(Request $request)
-    {
-        $formFields = $request->validate([
-            'req_id' => 'required',
-            'signatory' => 'required',
-            'approval' => 'required',
-            'message' => ''
-        ]);
-
-        $requisition = Requisitions::where('req_id', $request->req_id)->get();
-        $approvalCount = $requisition[0]->approval_count;
-
-        if (strtoupper($request->approval) == 'SIGNED') {
-            if ($approvalCount == 0) {
-                $reqStatus = 'Partially Approved';
-                $signatories = $request->signatory;
-            } else {
-                $reqStatus = 'Approved';
-                $signatories = 'Both';
-            }
-            $approvalCount += 1;
-        } else {
-            $reqStatus = 'Rejected';
-        }
-
-        $formFields['evaluator'] = auth()->id();
-        $formFields['approval_count'] = $approvalCount;
-        $formFields['status'] = $reqStatus;
-        $formFields['signatory'] = $signatories;
-
-        $affectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
-
-        if ($affectedRows) $response['status'] = 200;
-        else $response['status'] = 500;
-
-        return response()->json($response);
     }
 }

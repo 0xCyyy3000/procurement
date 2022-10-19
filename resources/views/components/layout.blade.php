@@ -60,7 +60,7 @@
 
                     <a href="/" @if ($section['page'] == 'inventory') class="active" @endif>
                         <span class="material-icons-sharp">inventory</span>
-                        <h3>Iventory</h3>
+                        <h3>Inventory</h3>
                     </a>
 
                     <a href="/" @if ($section['page'] == 'settings') class="active" @endif>

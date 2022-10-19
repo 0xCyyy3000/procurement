@@ -32,11 +32,11 @@
                         </div>
                         <div class="upper-container">
                             <h3>School Director's Signatory</h3>
-                            <p id="sig1-stats" style="font-style: italic">unsigned</p>
+                            <p id="director-approval">Not yet</p>
                         </div>
                         <div class="upper-container">
                             <h3>Branch Manager's Signatory</h3>
-                            <p id="sig2-stats" style="font-style: italic">unsigned</p>
+                            <p id="manager-approval">Not yet</p>
                         </div>
                     </div>
                     <div class="row">
@@ -110,6 +110,7 @@
                                     <span
                                         @if ($status == 'PENDING') class="warning"
                                         @elseif($status == 'APPROVED') class="success"
+                                        @elseif($status == 'PARTIALLY APPROVED') class="partial"
                                         @else class="danger" @endif>
                                         {{ $requisition->status }}
                                     </span>
@@ -171,6 +172,7 @@
                     success: function(response) {
                         if (response.status == 200) {
                             table_body.innerHTML = '';
+                            console.log(response);
 
                             $('.modal').css('display', 'block');
                             $('#req-no').text('Requisition No. ' + response.requisition[0]
@@ -181,10 +183,19 @@
                             $('#description').text(response.requisition[0].description);
                             $('#status').text(response.requisition[0].status);
 
+                            const signatories = response.requisition[0]
+                                .signatories.split(',');
+                            $('#director-approval').text(signatories);
+                            console.log(signatories);
+
+
                             if (response.requisition[0].status.toUpperCase() == "REJECTED")
                                 status.style.color = '#ff7782';
                             else if (response.requisition[0].status.toUpperCase() == "APPROVED")
                                 status.style.color = '#7380ec';
+                            else if (response.requisition[0].status.toUpperCase() ==
+                                "PARTIALLY APPROVED")
+                                status.style.color = '#ccd725';
                             else status.style.color = '#ffbb55';
 
                             const ids = response.items[0].item_ids.split(',');

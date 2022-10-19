@@ -24,9 +24,9 @@
                         <h3>
                             <select id="signatory" class="primary">
                                 <option value="default">-- Please Choose one --</option>
-                                <option value="school-director">School Director</option>
-                                <option value="branch-manager">Branch Manager</option>
-                                <option value="all-signatories">All Signatories</option>
+                                <option value="School Director">School Director</option>
+                                <option value="Branch Manager">Branch Manager</option>
+                                <option value="Both">Both Signatories</option>
                             </select>
                         </h3>
                         <small class="text-muted">Signatory</small>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="row update">
-                    <button type="submit" id="update-button">
+                    <button type="submit" id="update-button" disabled>
                         <span class="material-icons-sharp">update</span>
                         <h3>Update</h3>
                     </button>
@@ -67,6 +67,7 @@
     </div>
     <script>
         $(document).ready(function() {
+            let message = '';
 
             $.ajax({
                 url: "{{ url('/api/get/requisitions') }}",
@@ -80,6 +81,10 @@
                 }
             });
 
+            $(document).on('input', '#requisition-comment', function() {
+                message = $(this).val();
+            })
+
             $(document).on('change', '#reqs', function(e) {
                 if ($('#reqs option:selected').val() != 'default' || $('#reqs').val() != 'default') {
                     $('#update-button').prop('disabled', false);
@@ -90,35 +95,34 @@
                 console.log($('#update-button').prop('disabled'));
             });
 
-            $(document).on('click', '#update-button', function(e) {
-                if ($('#reqs').val() == 'default' || $('#update-button').prop('disabled') ||
-                    $('#reqs option:selected').val() == 'default') {
-                    alert('Please choose a Requisition Number!');
-                    console.log('clicked!');
-                    $('#update-button').prop('disabled', true);
-                }
-            });
-
             $(document).on('submit', '#update-status-form', function(e) {
                 e.preventDefault();
                 const reqId = $('#reqs option:selected').val();
                 console.log("HELLO!");
                 console.log(reqId);
 
-                // $.ajax({
-                //     url: "{{ url('/requisitions/update/"+reqId+"') }}",
-                //     type: 'POST',
-                //     dataType: 'json',
-                //     success: function(response) {
-                //         console.log(response);
-                //         if (response.status == 200) {
-                //             alert("Status has been updated for Req no. " + reqId);
-                //         }
-                //     },
-                //     error: function(response) {
-                //         alert(response.responseJSON.message);
-                //     }
-                // });
+                $.ajax({
+                    url: "{{ url('/requisitions/update/"+reqId+"') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        req_id: $('#reqs option:selected').val(),
+                        signatories: $('#signatory option:selected').val(),
+                        approval: $('#approval option:selected').val(),
+                        message: message
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        if (response.status == 200) {
+                            alert("Status has been updated for Req no. " + reqId);
+                            location.reload();
+                        }
+                    },
+                    error: function(response) {
+                        alert(response.responseJSON.message);
+                    }
+                });
 
             });
         });
