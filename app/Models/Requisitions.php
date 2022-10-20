@@ -33,4 +33,9 @@ class Requisitions extends Model
             ->timezone(env("APP_TIMEZONE"))
             ->toDayDateTimeString();
     }
+
+    public function getSignatoriesAttribute($value)
+    {
+        return json_decode($value);
+    }
 }

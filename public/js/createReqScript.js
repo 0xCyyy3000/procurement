@@ -5,7 +5,6 @@ let userId;
 
 $(document).on('input', '#description', function () {
     description = $(this).val();
-    console.log($(this).val());
 });
 
 $(document).on('click', '#submit', function () {

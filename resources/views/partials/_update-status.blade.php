@@ -24,8 +24,8 @@
                         <h3>
                             <select id="signatory" class="primary">
                                 <option value="default">-- Please Choose one --</option>
-                                <option value="School Director">School Director</option>
-                                <option value="Branch Manager">Branch Manager</option>
+                                <option id="School Director" value="School Director">School Director</option>
+                                <option id="Branch Manager" value="Branch Manager">Branch Manager</option>
                                 <option value="Both">Both Signatories</option>
                             </select>
                         </h3>
@@ -39,9 +39,9 @@
                     <div class="right-side">
                         <h3>
                             <select id="approval" class="primary">
-                                <option value="unsigned">-- Please Choose one --</option>
-                                <option value="signed">Signed (Approved)</option>
-                                <option value="not signed">Not Signed (Rejected)</option>
+                                <option value="default">-- Please Choose one --</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
                             </select>
                         </h3>
                         <small class="text-muted">Approval</small>
@@ -68,6 +68,11 @@
     <script>
         $(document).ready(function() {
             let message = '';
+            let approvalCount = null,
+                signatories = new Array();
+
+            $('#signatory').prop('disabled', true);
+            $('#approval').prop('disabled', true);
 
             $.ajax({
                 url: "{{ url('/api/get/requisitions') }}",
@@ -77,6 +82,9 @@
                     result.forEach(element => {
                         $('#reqs').append('<option value=' + element.req_id + '>' +
                             'Req #' + element.req_id + '</option>')
+
+                        approvalCount = element.approval_count;
+                        signatories.push(element.signatories)
                     });
                 }
             });
@@ -87,12 +95,20 @@
 
             $(document).on('change', '#reqs', function(e) {
                 if ($('#reqs option:selected').val() != 'default' || $('#reqs').val() != 'default') {
-                    $('#update-button').prop('disabled', false);
+                    //$('#update-button').prop('disabled', false);
+                    $('#signatory').prop('disabled', false);
+                    signatories.forEach(element => {
+                        element.map((item, index) => {
+                            console.log(item);
+                            if (item.approval != 'Not yet') {
+                                document.getElementById(item.name).disabled = false;
+                            }
+                        })
+                    });
+
                 } else {
                     $('#update-button').prop('disabled', true);
                 }
-                console.log('changed');
-                console.log($('#update-button').prop('disabled'));
             });
 
             $(document).on('submit', '#update-status-form', function(e) {

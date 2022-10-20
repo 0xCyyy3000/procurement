@@ -21,7 +21,7 @@ return new class extends Migration
             $table->longText('description');
             $table->string('status');
             $table->string('evaluator')->nullable();
-            $table->string('signatories')->nullable();
+            $table->json('signatories')->nullable();
             $table->integer('approval_count');
             $table->longText('message')->nullable();
             $table->timestamps();

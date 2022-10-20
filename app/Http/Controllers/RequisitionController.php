@@ -27,28 +27,12 @@ class RequisitionController extends Controller
     {
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
         $response['requisition'] = $requisition;
-
         if ($requisition) {
             $response['status'] = 200;
 
             $items = SubmittedItems::where('req_id', $request->req_id)->get();
             $response['items'] = $items;
         } else $response['status'] = 404;
-
-        // to access a specific item in a collection
-        // $collection[index]->key 
-
-        // print('===');
-        // print($requisition[0]->maker);
-        // print('\n');
-
-        // Anoter example
-        // $itemsTest = collect([
-        //     'item' => ['item1', 'item2', 'item3'],
-        //     'units' => [['box', 'rim', 'pcs'], ['kg', 'pounds'], 'sack'],
-        //     'prices' => [[130, 97, 13], [45, 21], 200]
-        // ]);
-        // print($itemsTest['units'][0][0]);
 
         return response()->json($response);
     }
@@ -65,8 +49,8 @@ class RequisitionController extends Controller
         ]);
 
         $signatories = array(
-            array('name' => 'School Director', 'approval' => 'null'),
-            array('name' => 'Branch Manager', 'approval' => 'null')
+            array('name' => 'School Director', 'approval' => 'Not yet'),
+            array('name' => 'Branch Manager', 'approval' => 'Not yet')
         );
 
         $formFields['signatories'] = json_encode($signatories);
@@ -94,20 +78,19 @@ class RequisitionController extends Controller
 
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
         $approvalCount = $requisition[0]->approval_count;
-        $signatories = json_decode($requisition[0]->signatories);
-
-        if (strtoupper($request->approval) == 'SIGNED') {
-            if ($approvalCount == 0) $reqStatus = 'Partially Approved';
-            else $reqStatus = 'Approved';
-
-            $approvalCount += 1;
-        } else {
-            $reqStatus = 'Rejected';
-        }
+        $signatories = $requisition[0]->signatories;
 
         foreach ($signatories as $signatory) {
-            if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories)
+            if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories) {
+                if ($approvalCount == 0 and strtoupper($request->approval) == 'APPROVED') {
+                    $reqStatus = 'Partially Approved';
+                } else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
+                    $reqStatus = 'Approved';
+                } else $reqStatus = 'Rejected';
+
                 $signatory->approval = $request->approval;
+                $approvalCount++;
+            }
         }
 
         $formFields['evaluator'] = auth()->user()->name;

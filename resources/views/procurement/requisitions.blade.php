@@ -32,11 +32,11 @@
                         </div>
                         <div class="upper-container">
                             <h3>School Director's Signatory</h3>
-                            <p id="director-approval">Not yet</p>
+                            <p id="director-approval"></p>
                         </div>
                         <div class="upper-container">
                             <h3>Branch Manager's Signatory</h3>
-                            <p id="manager-approval">Not yet</p>
+                            <p id="manager-approval"></p>
                         </div>
                     </div>
                     <div class="row">
@@ -183,19 +183,21 @@
                             $('#description').text(response.requisition[0].description);
                             $('#status').text(response.requisition[0].status);
 
-                            const signatories = response.requisition[0]
-                                .signatories.split(',');
-                            $('#director-approval').text(signatories);
-                            console.log(signatories);
+                            $('#director-approval').text(
+                                response.requisition[0].signatories[0]
+                                .approval);
+
+                            $('#manager-approval').text(
+                                response.requisition[0].signatories[1]
+                                .approval);
 
 
                             if (response.requisition[0].status.toUpperCase() == "REJECTED")
                                 status.style.color = '#ff7782';
                             else if (response.requisition[0].status.toUpperCase() == "APPROVED")
-                                status.style.color = '#7380ec';
+                                status.style.color = '#41f1b6';
                             else if (response.requisition[0].status.toUpperCase() ==
-                                "PARTIALLY APPROVED")
-                                status.style.color = '#ccd725';
+                                "PARTIALLY APPROVED") status.style.color = '#ccd725';
                             else status.style.color = '#ffbb55';
 
                             const ids = response.items[0].item_ids.split(',');
