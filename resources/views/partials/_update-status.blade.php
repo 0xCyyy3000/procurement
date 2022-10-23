@@ -26,7 +26,7 @@
                                 <option value="default">-- Please Choose one --</option>
                                 <option id="School Director" value="School Director">School Director</option>
                                 <option id="Branch Manager" value="Branch Manager">Branch Manager</option>
-                                <option value="Both">Both Signatories</option>
+                                <option id="Both" value="Both">Both Signatories</option>
                             </select>
                         </h3>
                         <small class="text-muted">Signatory</small>
@@ -68,7 +68,7 @@
     <script>
         $(document).ready(function() {
             let message = '';
-            let approvalCount = null,
+            let approvalCount = new Array(),
                 signatories = new Array();
 
             $('#signatory').prop('disabled', true);
@@ -83,7 +83,7 @@
                         $('#reqs').append('<option value=' + element.req_id + '>' +
                             'Req #' + element.req_id + '</option>')
 
-                        approvalCount = element.approval_count;
+                        approvalCount.push(element.approval_count);
                         signatories.push(element.signatories)
                     });
                 }
@@ -94,28 +94,49 @@
             })
 
             $(document).on('change', '#reqs', function(e) {
-                if ($('#reqs option:selected').val() != 'default' || $('#reqs').val() != 'default') {
-                    //$('#update-button').prop('disabled', false);
-                    $('#signatory').prop('disabled', false);
-                    signatories.forEach(element => {
-                        element.map((item, index) => {
-                            console.log(item);
-                            if (item.approval != 'Not yet') {
-                                document.getElementById(item.name).disabled = false;
-                            }
-                        })
-                    });
+                $('#approval').val('default');
+                $('#signatory').val('default');
 
+                // Formatting the index to start at 0, since it's the rule of thumb
+                const selectedIndex = this.selectedIndex - 1;
+
+                if ($(this).val() != 'default' &&
+                    (approvalCount[selectedIndex] < 2 && approvalCount[selectedIndex] >= 0)) {
+
+                    $('#signatory').prop('disabled', false);
+
+                    // Disabling Both Option if either of the Signatories has signed already
+                    if (approvalCount[selectedIndex] == 0) document.getElementById('Both').disabled = false;
+                    else document.getElementById('Both').disabled = true;
+
+                    signatories[selectedIndex].forEach(element => {
+                        if (element.approval == 'Not yet')
+                            document.getElementById(element.name).disabled = false;
+                        else
+                            document.getElementById(element.name).disabled = true;
+                    });
                 } else {
                     $('#update-button').prop('disabled', true);
+                    $('#signatory').prop('disabled', true);
+                    $('#approval').prop('disabled', true);
                 }
+            });
+
+            $(document).on('change', '#signatory', function() {
+                $('#approval').val('default');
+
+                if ($(this).val() != 'default') $('#approval').prop('disabled', false);
+                else $('#approval').prop('disabled', true);
+            });
+
+            $(document).on('change', '#approval', function() {
+                if ($(this).val() != 'default') $('#update-button').prop('disabled', false);
+                else $('#update-button').prop('disabled', true);
             });
 
             $(document).on('submit', '#update-status-form', function(e) {
                 e.preventDefault();
                 const reqId = $('#reqs option:selected').val();
-                console.log("HELLO!");
-                console.log(reqId);
 
                 $.ajax({
                     url: "{{ url('/requisitions/update/"+reqId+"') }}",
@@ -129,7 +150,6 @@
                         message: message
                     },
                     success: function(response) {
-                        console.log(response);
                         if (response.status == 200) {
                             alert("Status has been updated for Req no. " + reqId);
                             location.reload();
