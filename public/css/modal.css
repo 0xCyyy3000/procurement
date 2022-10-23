@@ -6,7 +6,6 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.4);
 }
 
@@ -15,7 +14,7 @@
     border-radius: var(--border-radius-2);
     overflow: auto;
     background-color: #fefefe;
-    margin: 8% auto;
+    margin: 5.5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 60%;
@@ -44,12 +43,29 @@
     margin-bottom: 0.4rem;
 }
 
+.modal-content .body .middle .row .message {
+    margin-top: 1.8rem;
+    max-height: 8rem;
+}
+
+.modal-content .body .middle .row .message .label {
+    display: flex;
+}
+
+.modal-content .body .middle .row .message .label img {
+    width: 3%;
+}
+
+.modal-content .body .middle .row .message .content {
+    display: inline-block;
+    width: 96%;
+}
+
 .modal-content .body .middle .row .items-table {
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0;
 }
-
 
 .modal-content .body .middle .row .items-table table {
     width: 100%;

@@ -15,7 +15,7 @@
                     <p>Requisitioned by <span id="maker" class="primary"></span></p>
                     <p>on <span id="date"></span></p>
                 </div>
-                <hr>
+
                 <div class="middle">
                     <div class="row">
                         <h3>Description</h3>
@@ -39,6 +39,19 @@
                             <p id="manager-approval"></p>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="message">
+                            <div class="label">
+                                <h3>Message</h3>
+                                {{-- <img src="{{ asset('svgs/expand_more.svg') }}" alt=""> --}}
+                            </div>
+                            <div class="content">
+                                <p id="message"></p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="items-table">
                             <h3>Submitted Items</h3>
@@ -172,7 +185,6 @@
                     success: function(response) {
                         if (response.status == 200) {
                             table_body.innerHTML = '';
-                            console.log(response);
 
                             $('.modal').css('display', 'block');
                             $('#req-no').text('Requisition No. ' + response.requisition[0]
@@ -190,6 +202,11 @@
                             $('#manager-approval').text(
                                 response.requisition[0].signatories[1]
                                 .approval);
+
+                            if (response.requisition[0].message != null) {
+                                $('#message').text(response.requisition[0].message);
+                                $('.message').css('display', 'block');
+                            } else $('.message').css('display', 'none');
 
 
                             if (response.requisition[0].status.toUpperCase() == "REJECTED")
