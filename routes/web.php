@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\InventoryItemsController;
 use App\Http\Controllers\ItemsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SidebarController;
 use App\Http\Controllers\RequisitionController;
+use App\Models\InventoryItems;
 
 /*
 |--------------------------------------------------------------------------

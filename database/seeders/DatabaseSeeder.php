@@ -5,9 +5,10 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use App\Models\Items;
-use App\Models\Requisitions;
 use App\Models\SavedItems;
+use App\Models\Requisitions;
 use Illuminate\Database\Seeder;
+use App\Models\InventoryCategories;
 
 class DatabaseSeeder extends Seeder
 {
@@ -62,5 +63,7 @@ class DatabaseSeeder extends Seeder
             'unit' => 'rim',
             'qty' => 100
         ]);
+
+        InventoryCategories::factory(1)->create();
     }
 }
