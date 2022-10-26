@@ -9,7 +9,6 @@ class InventoryItemsController extends Controller
 {
     public function store(Request $request)
     {
-        $item = InventoryItems::create($request);
-        return response($item);
+        return InventoryItems::create($request);
     }
 }

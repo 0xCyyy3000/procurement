@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RequisitionController;
+use App\Http\Controllers\UserSavedItemsController;
 use App\Models\InventoryItems;
 
 /*
@@ -25,20 +26,17 @@ Route::get('/v1/requisitions', function () {
     return InventoryItems::get();
 });
 
-Route::group(['prefix' => 'v1/requisition'], function () {
-    Route::get('/select', function () {
-        return [
-            'id' => 1,
-            'requisition' => 'select'
-        ];
-    });
+Route::group(['prefix' => 'saved-items'], function () {
+    // Get requests
+    Route::get('/index/{row}', [UserSavedItemsController::class, 'index']);
+    Route::get('/select/{row}', [UserSavedItemsController::class, 'select']);
 
-    Route::get('/update', function () {
-        return [
-            'id' => 1,
-            'requisition' => 'update'
-        ];
-    });
+    // Post requests
+    Route::post('/update/row/{row}', [UserSavedItemsController::class, 'update']);
+    Route::post('/remove/{row}', [UserSavedItemsController::class, 'removeItem']);
+    Route::post('/destroy/{row}', [UserSavedItemsController::class, 'destroy']);
+    Route::post('/create', [UserSavedItemsController::class, 'store']);
+    Route::post('/add/{row}', [UserSavedItemsController::class, 'add']);
 });
 
 Route::group(['prefix' => 'inventory-items'], function () {
@@ -48,14 +46,14 @@ Route::group(['prefix' => 'inventory-items'], function () {
             'category_id' => 1,
             'item' => 'Item 1',
             'units' => [
-                ['test', 'test2', 'test'],
+                ['unit 1', 'unit 2', 'unit 3'],
                 ['pcs', 'box', 'ream']
             ],
             'qtys' => [
                 [
-                    'test' => '3',
-                    'test2' => '110',
-                    'test3' => '9'
+                    'unit 1' => '3',
+                    'unit 2' => '110',
+                    'unit 3' => '9'
                 ],
                 [
                     'pcs' => '15',
@@ -65,9 +63,9 @@ Route::group(['prefix' => 'inventory-items'], function () {
             ],
             'prices' => [
                 [
-                    'test' => '79',
-                    'test2' => '254',
-                    'test3' => '189'
+                    'unit 1' => '79',
+                    'unit 2' => '254',
+                    'unit 3' => '189'
                 ],
                 [
                     'pcs' => '79',
@@ -88,4 +86,9 @@ Route::group(['prefix' => 'inventory-items'], function () {
     Route::get('/select/{item}', function (Request $request) {
         return InventoryItems::where('id', $request->item)->get(['units', 'qtys', 'prices']);
     });
+});
+
+Route::group(['prefix' => 'requisition'], function () {
+    Route::post('/store', [RequisitionController::class, 'replicateSavedItems']);
+    Route::get('/select', [RequisitionController::class, 'showRequisitionItems']);
 });

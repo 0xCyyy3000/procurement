@@ -10,8 +10,8 @@ class InventoryItems extends Model
     use HasFactory;
 
     protected $casts = [
-        'units' => 'json',
-        'qtys' => 'json',
-        'prices' => 'json'
+        'units' => 'array',
+        'qtys' => 'array',
+        'prices' => 'array'
     ];
 }

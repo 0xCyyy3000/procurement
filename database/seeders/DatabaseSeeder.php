@@ -9,6 +9,7 @@ use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Database\Seeder;
 use App\Models\InventoryCategories;
+use App\Models\UserSavedItems;
 
 class DatabaseSeeder extends Seeder
 {
@@ -65,5 +66,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         InventoryCategories::factory(1)->create();
+        UserSavedItems::factory(4)->create();
     }
 }

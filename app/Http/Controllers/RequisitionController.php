@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RequisitionItems;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\SubmittedItems;
+use App\Models\UserSavedItems;
 
 class RequisitionController extends Controller
 {
@@ -68,6 +70,7 @@ class RequisitionController extends Controller
         return response()->json($result);
     }
 
+
     public function update(Request $request)
     {
         $formFields = $request->validate([
@@ -109,7 +112,9 @@ class RequisitionController extends Controller
     public function copy(Request $request)
     {
         // dd($requisition);
-        $itemsToCopy = request()->user()->submittedItems()->where('req_id', $request->req_id)->get(['item_ids', 'items', 'units', 'qtys']);
+        $itemsToCopy = request()->user()->submittedItems()
+            ->where('req_id', $request->req_id)
+            ->get(['item_ids', 'items', 'units', 'qtys']);
 
         $item_ids = explode(',', $itemsToCopy[0]->item_ids);
         $items = explode(',', $itemsToCopy[0]->items);
@@ -186,5 +191,25 @@ class RequisitionController extends Controller
         $affectedRows = SavedItems::where('user_id', $userId)->delete();
         if ($affectedRows > 0) return 200;
         else return 433;
+    }
+
+    public function replicateSavedItems(Request $request)
+    {
+        $savedItems = UserSavedItems::where('id', $request->row)->get('items');
+
+        $requisitionItems =  RequisitionItems::create([
+            'req_id' => $request->req_id,
+            'items' => $savedItems[0]->items
+        ]);
+
+        if ($requisitionItems) // If has been copied, delete the Saved Items
+            return UserSavedItems::destroy($request->row);
+        else
+            return null;
+    }
+
+    public function showRequisitionItems(Request $request)
+    {
+        return RequisitionItems::where('req_id', $request->req_id)->get('items');
     }
 }
