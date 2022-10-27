@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Models\InventoryItems;
+use App\Models\PurchasedOrders;
+use App\Models\RequisitionItems;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\UserSavedItemsController;
-use App\Models\InventoryItems;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,4 +93,21 @@ Route::group(['prefix' => 'inventory-items'], function () {
 Route::group(['prefix' => 'requisition'], function () {
     Route::post('/store', [RequisitionController::class, 'replicateSavedItems']);
     Route::get('/select', [RequisitionController::class, 'showRequisitionItems']);
+    Route::post('/update', function (Request $request) {
+        $items = RequisitionItems::where('req_id', $request->req_id)->get('items');
+
+        $purchasedItems = PurchasedOrders::create([
+            'status' => 'Pending',
+            'notes' => 'Lorem ipsum ...',
+            'supplier' => 'Supplier 1',
+            'delivery_address' => 'Delivery Address 1',
+            'req_id' => $request->req_id,
+            'purchased_items' => $items[0]->items,
+            'order_total' => 750.89,
+            'payment' => 'Paid'
+        ]);
+
+        if ($purchasedItems)
+            RequisitionItems::where('req_id', $request->req_id)->delete();
+    });
 });

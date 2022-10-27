@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PurchasedOrders;
 use App\Models\RequisitionItems;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
@@ -85,11 +86,12 @@ class RequisitionController extends Controller
 
         foreach ($signatories as $signatory) {
             if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories) {
-                if ($approvalCount == 0 and strtoupper($request->approval) == 'APPROVED') {
+                if ($approvalCount == 0 and strtoupper($request->approval) == 'APPROVED')
                     $reqStatus = 'Partially Approved';
-                } else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
+                else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
                     $reqStatus = 'Approved';
-                } else $reqStatus = 'Rejected';
+                } else
+                    $reqStatus = 'Rejected';
 
                 $signatory->approval = $request->approval;
                 $approvalCount++;
