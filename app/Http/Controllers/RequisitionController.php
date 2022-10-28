@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Items;
 use App\Models\PurchasedOrders;
 use App\Models\RequisitionItems;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\SubmittedItems;
+use App\Models\User;
 use App\Models\UserSavedItems;
 
 class RequisitionController extends Controller
@@ -30,10 +32,11 @@ class RequisitionController extends Controller
     {
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
         $response['requisition'] = $requisition;
+        $response['department'] = User::where('id', auth()->user()->id)->get('department');
         if ($requisition) {
             $response['status'] = 200;
 
-            $items = SubmittedItems::where('req_id', $request->req_id)->get();
+            $items = RequisitionItems::where('req_id', $request->req_id)->get();
             $response['items'] = $items;
         } else $response['status'] = 404;
 
@@ -62,12 +65,13 @@ class RequisitionController extends Controller
 
         if ($created) {
             $reqId = Requisitions::select('req_id')->latest('req_id')->first();
-            $result['status'] = $this->indexSavedItems($request->user_id, $reqId['req_id']);
+            $result['status'] = $this->indexSavedItems($request->user_id, $reqId['req_id'],);
         }
 
         if ($result['status'] != 200) {
-            Requisitions::latest('req_id')->first()->delete();
+            Requisitions::find($reqId)->delete();
         }
+
         return response()->json($result);
     }
 
@@ -113,78 +117,44 @@ class RequisitionController extends Controller
 
     public function copy(Request $request)
     {
-        // dd($requisition);
-        $itemsToCopy = request()->user()->submittedItems()
-            ->where('req_id', $request->req_id)
-            ->get(['item_ids', 'items', 'units', 'qtys']);
+        $itemsToCopy = RequisitionItems::where('req_id', $request->req_id)
+            ->get(['item_id', 'unit', 'qty']);
 
-        $item_ids = explode(',', $itemsToCopy[0]->item_ids);
-        $items = explode(',', $itemsToCopy[0]->items);
-        $item_units = explode(',', $itemsToCopy[0]->units);
-        $item_qtys = explode(',', $itemsToCopy[0]->qtys);
+        foreach ($itemsToCopy as $itemToCopy) {
 
-        for ($index = 0; $index < sizeof($item_ids); $index++) {
-            $saved = SavedItems::create([
+            $created = SavedItems::create([
                 'user_id' => auth()->user()->id,
-                'item_id' => $item_ids[$index],
-                'item' => $items[$index],
-                'unit' => $item_units[$index],
-                'qty' => $item_qtys[$index]
+                'item_id' => $itemToCopy->item_id,
+                'item' => Items::where('item_id', $itemToCopy->item_id)->get('item')[0]->item,
+                'unit' => $itemToCopy->unit,
+                'qty' => $itemToCopy->qty
             ]);
-            if ($saved)
-                $response['status'] = 200;
-            else $response['status'] = 500;
         }
+
+        if ($created) $response['status'] = 200;
+        else $response['status'] = 500;
+
         return response()->json($response);
     }
 
-    public function getPlainString($data, $key)
+    public function indexSavedItems($user_id, $req_id)
     {
-        $itemData = array();
-        for ($i = 0; $i < count($data); $i++) {
-            array_push($itemData, $data[$i]->$key);
+        $savedItems = SavedItems::where('user_id', $user_id)->get();
+        return $this->submitItems($savedItems, $user_id, $req_id);
+    }
+
+    public function submitItems($savedItems, $user_id, $req_id)
+    {
+        foreach ($savedItems as $item) {
+            RequisitionItems::create([
+                'req_id' => $req_id,
+                'item_id' => $item->item_id,
+                'unit_id' => $item->unit,
+                'qty' => $item->qty
+            ]);
         }
 
-        $strData = implode(',', $itemData);
-
-        return "" . $strData . "";
-    }
-
-    public function indexSavedItems($userId, $reqId)
-    {
-        $item_ids = SavedItems::where('user_id', $userId)->get('item_id')->toJson();
-        $item_names = SavedItems::where('user_id', $userId)->get('item')->toJson();
-        $item_units = SavedItems::where('user_id', $userId)->get('unit')->toJson();
-        $item_qtys = SavedItems::where('user_id', $userId)->get('qty')->toJson();
-
-        $ids = $this->getPlainString(json_decode($item_ids), 'item_id');
-        $items = $this->getPlainString(json_decode($item_names), 'item');
-        $units = $this->getPlainString(json_decode($item_units), 'unit');
-        $qtys = $this->getPlainString(json_decode($item_qtys), 'qty');
-
-        $savedItems = array(
-            'item_ids' => $ids,
-            'items' => $items,
-            'units' => $units,
-            'qtys' => $qtys
-        );
-
-        // dd($savedItems);
-        return $this->submitItems($savedItems, $userId, $reqId);
-    }
-
-    public function submitItems($savedItems, $userId, $reqId)
-    {
-        SubmittedItems::create([
-            'req_id' => $reqId,
-            'user_id' => $userId,
-            'item_ids' => $savedItems['item_ids'],
-            'items' => $savedItems['items'],
-            'units' => $savedItems['units'],
-            'qtys' => $savedItems['qtys']
-        ]);
-
-        return $this->disposeSavedItems($userId);
+        return $this->disposeSavedItems($user_id);
     }
 
     // Disposing the submitted Saved Items
@@ -193,25 +163,5 @@ class RequisitionController extends Controller
         $affectedRows = SavedItems::where('user_id', $userId)->delete();
         if ($affectedRows > 0) return 200;
         else return 433;
-    }
-
-    public function replicateSavedItems(Request $request)
-    {
-        $savedItems = UserSavedItems::where('id', $request->row)->get('items');
-
-        $requisitionItems =  RequisitionItems::create([
-            'req_id' => $request->req_id,
-            'items' => $savedItems[0]->items
-        ]);
-
-        if ($requisitionItems) // If has been copied, delete the Saved Items
-            return UserSavedItems::destroy($request->row);
-        else
-            return null;
-    }
-
-    public function showRequisitionItems(Request $request)
-    {
-        return RequisitionItems::where('req_id', $request->req_id)->get('items');
     }
 }

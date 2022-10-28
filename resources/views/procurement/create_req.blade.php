@@ -75,10 +75,13 @@
                 </thead>
                 <tbody>
                     @unless($savedItems->isEmpty())
+                        @php
+                            $index = 0;
+                        @endphp
                         @foreach ($savedItems as $item)
                             <tr>
                                 <td>{{ $item->item }}</td>
-                                <td>{{ $item->unit }}</td>
+                                <td>{{ $units[$index]->unit_name }}</td>
                                 <td>{{ $item->qty }}x</td>
                                 <td>
                                     <button type="button" value="{{ $item->row }}" class="edit primary">Edit</button>
@@ -91,6 +94,9 @@
                                     </form>
                                 </td>
                             </tr>
+                            @php
+                                $index++;
+                            @endphp
                         @endforeach
                     @endunless
                 </tbody>
@@ -108,23 +114,23 @@
         if (savedItems.length > 2)
             $('#clear-items').css('display', 'flex')
 
-        function itemUnits(item_id) {
+        function itemUnits() {
             $.ajax({
-                url: "{{ url('/items/units/" + item_id + "') }}",
+                url: "{{ url('/items/units') }}",
                 type: "POST",
                 data: {
-                    item_id: item_id,
                     _token: '{{ csrf_token() }}'
                 },
                 dataType: 'json',
                 success: function(result) {
-                    const units = result[0].units.split(',');
                     $('#units').html(
                         '<option value="">-- Select unit --</option>');
-                    units.forEach(unit => {
-                        $("#units").append('<option value="' + unit + '">' +
-                            unit + '</option>');
+
+                    result.forEach(unit => {
+                        $("#units").append('<option value="' + unit.unit_id + '">' +
+                            unit.unit_name + '</option>');
                     });
+
                     if ($('#units').find('option[value="' + unit + '"]').length > 0 &&
                         IS_EDITING) $('#units').val(unit);
                 }
@@ -144,8 +150,8 @@
                     const item = result[0];
                     if (IS_EDITING) {
                         $('#items').val(item.item_id);
-                        unit = item.unit;;
-                        itemUnits(item.item_id)
+                        itemUnits();
+                        console.log(result[0].unit_id);
                         $('#qty').val(item.qty);
                     }
                 }
@@ -161,8 +167,7 @@
             var url = "{{ url('/items/store/"+item+"') }}";
 
             if (IS_ADDING) {
-                item = $('#item').val(); // <- From <input/>
-                unit = $('#unit').val();
+                item = $('#item').val();
             } else if (IS_EDITING) {
                 url = "{{ url('/savedItems/update/"+itemID+"') }}";
             }
@@ -171,6 +176,7 @@
                 item.toUpperCase() === 'NEW ITEM' || item.toUpperCase() === 'NEW-ITEM') {
                 alert('- Please select an Item/Unit\n- Please use a different item name');
                 $('#item-form')[0].reset();
+                location.reload();
                 return;
             }
 
@@ -182,18 +188,18 @@
                     item: item,
                     item_id: itemID,
                     qty: $('#qty').val(),
-                    unit: unit,
+                    unit_id: unit,
                     isAdding: IS_ADDING,
                     row: rowIndex
                 },
                 dataType: 'json',
                 success: function(result) {
+                    console.log(result);
                     if (result.status == 200) {
                         if (IS_ADDING) {
                             // Adding the New Added Item to the Select Options for Items
-                            $('#items').append('<option value="' + result.newItem.item_id +
-                                '">' +
-                                item + '</option>');
+                            $('#items').append('<option value="' + result.item.item_id +
+                                '">' + result.item.item + '</option>');
 
                             IS_ADDING = false;
                         }
@@ -234,18 +240,15 @@
                 $('#qty').val('');
 
             } else if ($(this).val().toUpperCase() === 'NEW-ITEM') {
-                $('#units').css('display', 'none');
                 $('#item').css('display', 'inline-block');
-                $('#unit').css('display', 'inline-block');
                 $('#items').toggleClass("adding");
-
-                $('#unit').prop('required', true);
                 $('#item').prop('required', true);
                 IS_ADDING = true;
 
                 $('#item-form')[0].reset();
                 $('#items').val('new-item');
                 $('#qty').val('');
+                itemUnits();
 
             } else {
                 $('#items').removeClass("adding");
@@ -259,9 +262,7 @@
             }
 
             if (IS_ADDING || $(this).val() === '') return;
-
-            // Getting the Units of the Selected Item
-            itemUnits($('#items option:selected').val());
+            itemUnits();
         });
 
         $(document).on('click', '.edit', function() {

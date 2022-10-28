@@ -16,13 +16,12 @@ return new class extends Migration
         Schema::create('purchased_orders', function (Blueprint $table) {
             $table->id();
             $table->string('status');
-            $table->longText('notes')->nullable(); //need to refresh the migration
-            $table->string('supplier');
+            $table->longText('notes')->nullable();
+            $table->foreignId('supplier')->constrained('suppliers');
             $table->longText('delivery_address');
             $table->foreignId('req_id')->constrained('requisitions', 'req_id');
-            $table->json('purchased_items');
-            $table->double('order_total');
             $table->string('payment');
+            $table->double('order_total');
             $table->timestamps();
         });
     }

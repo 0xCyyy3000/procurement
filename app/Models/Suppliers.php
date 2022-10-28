@@ -5,16 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserSavedItems extends Model
+class Suppliers extends Model
 {
     use HasFactory;
-
     protected $casts = [
-        'items' => 'array'
+        'contact_person' => 'array'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }

@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('requisition_items', function (Blueprint $table) {
+        Schema::create('item_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('req_id')->constrained('requisitions', 'req_id');
-            $table->json('items');
+            $table->string('category');
+            $table->integer('total_items')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requisition_items');
+        Schema::dropIfExists('item_categories');
     }
 };

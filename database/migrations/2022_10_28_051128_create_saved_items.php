@@ -13,15 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained('inventory_categories');
+        Schema::create('saved_items', function (Blueprint $table) {
+            $table->id('row');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('item_id')->constrained('items', 'item_id')->onDelete('cascade');
             $table->string('item');
-            $table->json('units');
-            $table->json('qtys');
-            $table->json('prices');
-            $table->string('supplier');
-            $table->double('worth');
+            $table->foreignId('unit_id')->constrained('units', 'unit_id');
+            $table->double('qty');
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory_items');
+        Schema::dropIfExists('saved_items');
     }
 };

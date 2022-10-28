@@ -28,10 +28,11 @@ Route::get('/create_req', [SidebarController::class, 'createReq'])->middleware('
 Route::get('/requisitions', [SidebarController::class, 'requisitions'])->middleware('auth');
 Route::get('/purchased_orders', [SidebarController::class, 'purchasedOrders'])->middleware('auth');
 
-Route::post('/submit/requisition', [RequisitionController::class, 'store']);
 
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
 Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
+
+Route::post('/requisition/create', [RequisitionController::class, 'store'])->middleware('auth');
 Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
 Route::post('/requisitions/copy/{requisition}', [RequisitionController::class, 'copy'])->middleware('auth');
 Route::post('/requisitions/update/{requisition}', [RequisitionController::class, 'update'])->middleware('auth');
@@ -53,7 +54,7 @@ Route::get('/supplier', function () {
 Route::get('/items', [ItemsController::class, 'index']);
 Route::get('/items/{item}', [ItemsController::class, 'select']);
 Route::post('/items/store/{item}', [ItemsController::class, 'store']);
-Route::post('/items/units/{item}', [ItemsController::class, 'fetchUnits']);
+Route::post('/items/units', [ItemsController::class, 'fetchUnits']);
 
 Route::get('/savedItems', [ItemsController::class, 'indexSavedItems']);
 Route::post('/savedItems/{item}', [ItemsController::class, 'selectSavedItems']);

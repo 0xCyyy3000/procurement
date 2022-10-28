@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_saved_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->json('items');
+        Schema::create('units', function (Blueprint $table) {
+            $table->id('unit_id');
+            $table->string('unit_name');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_saved_items');
+        Schema::dropIfExists('units');
     }
 };

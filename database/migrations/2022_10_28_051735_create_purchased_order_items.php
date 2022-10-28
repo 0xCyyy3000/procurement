@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('saved_items', function (Blueprint $table) {
-            $table->id('row');
-            //user_id is used for having a db relationship to user
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('item_id')->constrained('items', 'item_id')->onDelete('cascade');
-            $table->string('item');
-            $table->string('unit');
+        Schema::create('purchased_order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('po_id')->constrained('purchased_orders');
+            $table->foreignId('item_id')->constrained('items', 'item_id');
             $table->double('qty');
             $table->timestamps();
         });
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('saved_items');
+        Schema::dropIfExists('purchased_order_items');
     }
 };

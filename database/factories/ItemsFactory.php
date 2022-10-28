@@ -19,12 +19,13 @@ class ItemsFactory extends Factory
         $qty = rand(0, 25);
         $price = rand(0, 1000);
         $items = ['Long bondpaper', 'Short bondpaper', 'Envelope'];
+        $units = ['box', 'rim', 'pack'];
         return [
             'item' => $items[rand(0, 2)],
-            'units' => 'box,rim,pack',
-            'qty' => $qty,
+            'unit' => $units[rand(0, 2)],
+            'stock' => $qty,
             'price' => $price,
-            'supplier' => fake()->company(),
+            'supplier' => rand(1, 300),
             'worth' => $qty * $price
         ];
     }

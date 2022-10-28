@@ -9,7 +9,12 @@ use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Database\Seeder;
 use App\Models\InventoryCategories;
+use App\Models\ItemCategories;
+use App\Models\Suppliers;
+use App\Models\Units;
 use App\Models\UserSavedItems;
+
+use function PHPSTORM_META\map;
 
 class DatabaseSeeder extends Seeder
 {
@@ -48,24 +53,39 @@ class DatabaseSeeder extends Seeder
             'department' => 'Information Technology'
         ]);
 
-        Requisitions::factory(5)->create();
-        Items::factory(3)->create();
-        SavedItems::factory()->create([
-            'user_id' => 2,
-            'item_id' => 1,
-            'item' => 'Long bondpaper',
-            'unit' => 'rim',
-            'qty' => 100
-        ]);
-        SavedItems::factory()->create([
-            'user_id' => 2,
-            'item_id' => 1,
-            'item' => 'Short bondpaper',
-            'unit' => 'rim',
-            'qty' => 100
+        Suppliers::create([
+            'company_name' => fake()->company(),
+            'contact_person' => [
+                'name' => 'John Doe',
+                'email' => 'example@mail.com',
+                'contact_number' => '09123456789',
+            ],
+            'address' => fake()->address()
         ]);
 
-        InventoryCategories::factory(1)->create();
-        UserSavedItems::factory(4)->create();
+        ItemCategories::create([
+            'category' => 'Category 1',
+            'total_items' => rand(1, 1000)
+        ]);
+
+        Units::create([
+            'unit_name' => 'pcs'
+        ]);
+
+        Units::create([
+            'unit_name' => 'reams'
+        ]);
+
+        Units::create([
+            'unit_name' => 'box'
+        ]);
+
+        Units::create([
+            'unit_name' => 'meters'
+        ]);
+
+        Units::create([
+            'unit_name' => 'centimeter'
+        ]);
     }
 }

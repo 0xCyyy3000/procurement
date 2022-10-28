@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Items;
+use App\Models\Units;
+use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
+use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
 
 class SidebarController extends Controller
 {
@@ -26,6 +29,14 @@ class SidebarController extends Controller
 
     public function createReq()
     {
+        $ids = SavedItems::where('user_id', auth()->user()->id)->get('unit_id')[0];
+        $units = Units::get(['unit_id', 'unit_name']);
+        $savedUnits = array();
+
+        foreach ($ids as $id) {
+            array_push($savedUnits, $units[$id]);
+        }
+
         return view(
             'procurement.create_req',
             [
@@ -36,7 +47,8 @@ class SidebarController extends Controller
                     'bottom' => null
                 ],
                 'items' => Items::all(),
-                'savedItems' => request()->user()->savedItems()->get()
+                'savedItems' => request()->user()->savedItems()->get(),
+                'units' => $savedUnits
             ]
         );
     }

@@ -15,12 +15,9 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id('item_id');
+            $table->foreignId('category_id')->nullable()->constrained('item_categories');
             $table->string('item');
-            $table->string('units');
-            $table->double('qty');
-            $table->double('price');
-            $table->string('supplier')->nullable();
-            $table->double('worth');
+            $table->foreignId('supplier')->nullable()->constrained('suppliers');
             $table->timestamps();
         });
     }
@@ -30,6 +27,7 @@ return new class extends Migration
      *
      * @return void
      */
+
     public function down()
     {
         Schema::dropIfExists('items');

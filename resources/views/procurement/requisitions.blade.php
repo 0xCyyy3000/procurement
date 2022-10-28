@@ -12,7 +12,9 @@
             </div>
             <div class="body">
                 <div class="top">
-                    <p>Requisitioned by <span id="maker" class="primary"></span></p>
+                    <p>Requisitioned by <span id="maker" class="primary"></span>
+                        from <span id="department" class="primary"></span>
+                    </p>
                     <p>on <span id="date"></span></p>
                 </div>
 
@@ -190,6 +192,8 @@
                             $('#req-no').text('Requisition No. ' + response.requisition[0]
                                 .req_id);
                             $('#maker').text(response.requisition[0].maker);
+                            $('#department').text(response.department[0].department +
+                                '  Department');
                             $('#date').text(response.requisition[0].created_at);
                             $('#priority').text(response.requisition[0].priority);
                             $('#description').text(response.requisition[0].description);
@@ -217,12 +221,10 @@
                                 "PARTIALLY APPROVED") status.style.color = '#ccd725';
                             else status.style.color = '#ffbb55';
 
-                            const ids = response.items[0].item_ids.split(',');
-                            const items = response.items[0].items.split(',');
-                            const units = response.items[0].units.split(',');
-                            const qtys = response.items[0].qtys.split(',');
+                            console.log(response.items);
 
-                            for (let index = 0; index < items.length; index++) {
+                            response.items.forEach(element => {
+                                console.log(element);
                                 let template = `
                                 <tr>
                                   <td>${items[index]}</td>
@@ -230,7 +232,7 @@
                                   <td>${qtys[index]}x</td>
                                 </tr>`;
                                 table_body.innerHTML += template;
-                            }
+                            });
                         }
                     },
                     error: function(response) {
