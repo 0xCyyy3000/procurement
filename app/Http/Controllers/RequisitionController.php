@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Items;
+use App\Models\PurchasedOrderItems;
 use App\Models\Units;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
@@ -104,8 +105,6 @@ class RequisitionController extends Controller
                     $reqStatus = 'Partially Approved';
                 else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
                     $reqStatus = 'Approved';
-                    $itemDetails = RequisitionItems::where('req_id', $request->req_id)
-                        ->get(['item_id', 'unit_id']);
 
                     if ($request->supplier || $requisition[0]->supplier) {
                         $formFields['released'] = true;
@@ -117,6 +116,8 @@ class RequisitionController extends Controller
                             'payment' => 'Due',
                             'order_total' => 15899
                         ]);
+
+                        $this->createOrderItems($request->req_id, PurchasedOrders::select('id')->latest('id')->first()->id);
                     }
                 } else
                     $reqStatus = 'Rejected';
@@ -187,5 +188,22 @@ class RequisitionController extends Controller
         $affectedRows = SavedItems::where('user_id', $userId)->delete();
         if ($affectedRows > 0) return 200;
         else return 433;
+    }
+
+    public function createOrderItems($requisition_id, $po_id)
+    {
+        $items = RequisitionItems::where('req_id', $requisition_id)->get(['item_id', 'unit_id', 'qty']);
+
+        foreach ($items as $item) {
+            $isCreated = PurchasedOrderItems::create([
+                'po_id' => $po_id,
+                'item_id' => $item->item_id,
+                'unit_id' => $item->unit_id,
+                'qty' => $item->qty
+            ]);
+        }
+
+        if ($isCreated)
+            RequisitionItems::where('req_id', $requisition_id)->delete();
     }
 }

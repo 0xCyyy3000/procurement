@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('po_id')->constrained('purchased_orders');
             $table->foreignId('item_id')->constrained('items', 'item_id');
+            $table->foreignId('unit_id')->constrained('units', 'unit_id');
             $table->double('qty');
             $table->timestamps();
         });
