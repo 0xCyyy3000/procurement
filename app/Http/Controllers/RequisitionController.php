@@ -10,6 +10,7 @@ use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\PurchasedOrders;
 use App\Models\RequisitionItems;
+use App\Models\Suppliers;
 
 class RequisitionController extends Controller
 {
@@ -44,6 +45,7 @@ class RequisitionController extends Controller
 
             $units = Units::get();
             $response['units'] = $units;
+            $response['supplier'] = Suppliers::where('id', $requisition[0]->supplier)->get('company_name');
         } else $response['status'] = 404;
 
         return response()->json($response);
@@ -96,22 +98,26 @@ class RequisitionController extends Controller
 
         foreach ($signatories as $signatory) {
             if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories) {
+                $request->supplier == 'default' ? $supplier = $requisition[0]->supplier : $supplier = $request->supplier;
+
                 if ($approvalCount == 0 and strtoupper($request->approval) == 'APPROVED')
                     $reqStatus = 'Partially Approved';
                 else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
                     $reqStatus = 'Approved';
-                    $formFields['released'] = true;
                     $itemDetails = RequisitionItems::where('req_id', $request->req_id)
                         ->get(['item_id', 'unit_id']);
 
-                    $hasCreatedOrder = PurchasedOrders::create([
-                        'status' => 'Pending',
-                        'supplier' => $request->supplier, // <- this should be dynamic, depending on the chocie of the admin
-                        'delivery_address' => 'ACLC Tacloban Real Street Tacloban City', // <- Must be dynamic
-                        'req_id' => $request->req_id,
-                        'payment' => 'Due',
-                        'order_total' => 15899
-                    ]);
+                    if ($request->supplier || $requisition[0]->supplier) {
+                        $formFields['released'] = true;
+                        PurchasedOrders::create([
+                            'status' => 'Pending',
+                            'supplier' => $supplier, // <- this should be dynamic, depending on the chocie of the admin
+                            'delivery_address' => 'ACLC Tacloban Real Street Tacloban City', // <- Must be dynamic
+                            'req_id' => $request->req_id,
+                            'payment' => 'Due',
+                            'order_total' => 15899
+                        ]);
+                    }
                 } else
                     $reqStatus = 'Rejected';
 
@@ -124,11 +130,11 @@ class RequisitionController extends Controller
         $formFields['approval_count'] = $approvalCount;
         $formFields['status'] = $reqStatus;
         $formFields['signatories'] = $signatories;
-        $formFields['supplier'] = $request->supplier;
+        $formFields['supplier'] = $supplier;
 
         $hasAffectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
 
-        if ($hasCreatedOrder || $hasAffectedRows) $response['status'] = 200;
+        if ($hasAffectedRows) $response['status'] = 200;
         else $response['status'] = 500;
 
         return response()->json($response);

@@ -61,9 +61,11 @@ class SidebarController extends Controller
         if (strtoupper(auth()->user()->department) == 'ADMIN') {
             $requisitions = Requisitions::latest()->get();
             $update_status = 'partials._update-status';
+            $suppliers =  Suppliers::get();
         } else {
             $requisitions = request()->user()->requisitions()->latest()->get();
             $update_status = null;
+            $suppliers = null;
         }
 
         return view(
@@ -71,14 +73,15 @@ class SidebarController extends Controller
             [
                 'requisitions' => $requisitions,
                 'userId' => auth()->user()->id,
+                'suppliers' => $suppliers,
                 'section' =>
                 [
                     'page' => 'requisitions',
                     'title' => 'Requisitions',
                     'middle' => $update_status,
-                    'bottom' => null
-                ],
-                'suppliers' => Suppliers::get()
+                    'bottom' => null,
+                    'userDepartmant' => auth()->user()->department
+                ]
             ]
         );
     }

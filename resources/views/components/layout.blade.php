@@ -87,7 +87,11 @@
             </div>
             <div class="middle">
                 @if ($section['middle'] != null)
-                    @include($section['middle'], ['suppliers' => $suppliers])
+                    @if ($section['title'] == 'Requisition' and $section['userDepartment'] == 'Admin')
+                        @include($section['middle'], ['suppliers' => $suppliers])
+                    @else
+                        @include($section['middle'])
+                    @endif
                 @endif
             </div>
             <div class="bottom">

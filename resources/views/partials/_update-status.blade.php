@@ -22,7 +22,7 @@
                     <span class="material-icons-sharp">local_shipping</span>
                     <div class="right-side">
                         <h3>
-                            <select id="supplier" class="primary">
+                            <select id="suppliers" class="primary">
                                 <option value="default">-- Please Choose one --</option>
                                 @unless($suppliers->isEmpty())
                                     @foreach ($suppliers as $supplier)
@@ -92,7 +92,7 @@
 
             $('#signatory').prop('disabled', true);
             $('#approval').prop('disabled', true);
-            $('#supplier').prop('disabled', true);
+            $('#suppliers').prop('disabled', true);
 
             $.ajax({
                 url: "{{ url('/api/get/requisitions') }}",
@@ -118,6 +118,17 @@
                 $('#approval').val('default');
                 $('#signatory').val('default');
 
+                reqs.map(element => {
+                    if (element.req_id == this.value) {
+                        if (element.supplier == null && !element.released)
+                            $('#suppliers').prop('disabled', false);
+                        else {
+                            $('#suppliers').prop('disabled', true);
+                            $('#suppliers').val('default');
+                        }
+                    }
+                });
+
                 // Formatting the index to start at 0, since it's the rule of thumb
                 const selectedIndex = this.selectedIndex - 1;
 
@@ -135,15 +146,6 @@
                             document.getElementById(element.name).disabled = false;
                         else
                             document.getElementById(element.name).disabled = true;
-                    });
-
-                    reqs.forEach(element => {
-                        if (element.req_id == this.value) {
-                            if (element.supplier == null)
-                                $('#supplier').prop('disabled', false);
-                            else
-                                $('#supplier').prop('disabled', true);
-                        }
                     });
                 } else {
                     $('#update-button').prop('disabled', true);
@@ -168,8 +170,8 @@
                 e.preventDefault();
                 const reqId = $('#reqs option:selected').val();
                 let supplier = null;
-                if ($('#supplier option:selected').val() != 'defualt')
-                    supplier = $('#supplier option:selected').val();
+                if ($('#suppliers option:selected').val() != 'defualt')
+                    supplier = $('#suppliers option:selected').val();
 
                 $.ajax({
                     url: "{{ url('/requisitions/update/"+reqId+"') }}",
@@ -188,7 +190,9 @@
                             alert("Status has been updated for Req no. " + reqId);
                             location.reload();
                         } else {
-                            alert("There was an error, please try again.");
+                            alert(
+                                "There was an error, please try again. \n\nPossible error:\nNo Selected Supplier"
+                            );
                             location.reload();
                         }
                     }

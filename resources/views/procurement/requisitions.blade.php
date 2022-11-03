@@ -33,6 +33,10 @@
                             <p id="status" style="font-weight: bold"></p>
                         </div>
                         <div class="upper-container">
+                            <h3>Supplier</h3>
+                            <p id="supplier" class="" style=""></p>
+                        </div>
+                        <div class="upper-container">
                             <h3>School Director's Signatory</h3>
                             <p id="director-approval"></p>
                         </div>
@@ -46,7 +50,6 @@
                         <div class="message">
                             <div class="label">
                                 <h3>Message</h3>
-                                {{-- <img src="{{ asset('svgs/expand_more.svg') }}" alt=""> --}}
                             </div>
                             <div class="content">
                                 <p id="message"></p>
@@ -207,6 +210,10 @@
                                 response.requisition[0].signatories[1]
                                 .approval);
 
+                            response.supplier.length > 0 ? $('#supplier').text(response
+                                .supplier[0].company_name) : $('#supplier').text(
+                                'Not assigned');
+
                             if (response.requisition[0].message != null) {
                                 $('#message').text(response.requisition[0].message);
                                 $('.message').css('display', 'block');
@@ -215,7 +222,8 @@
 
                             if (response.requisition[0].status.toUpperCase() == "REJECTED")
                                 status.style.color = '#ff7782';
-                            else if (response.requisition[0].status.toUpperCase() == "APPROVED")
+                            else if (response.requisition[0].status.toUpperCase() ==
+                                "APPROVED")
                                 status.style.color = '#41f1b6';
                             else if (response.requisition[0].status.toUpperCase() ==
                                 "PARTIALLY APPROVED") status.style.color = '#ccd725';
