@@ -8,7 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class PurchasedOrders extends Model
 {
     use HasFactory;
-    protected $casts = [
-        'purchased_items' => 'array'
-    ];
 }

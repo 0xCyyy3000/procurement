@@ -24,6 +24,8 @@ return new class extends Migration
             $table->json('signatories')->nullable();
             $table->integer('approval_count');
             $table->longText('message')->nullable();
+            $table->foreignId('supplier')->nullable()->constrained('suppliers');
+            $table->boolean('released');
             $table->timestamps();
         });
     }

@@ -30,7 +30,6 @@ $(document).on('submit', '#req-details-form', function (e) {
         },
         dataype: 'json',
         success: function (result) {
-            console.log(result);
             if (result.status == 200) {
                 alert('Requisition was successfully submitted!');
                 location.reload();

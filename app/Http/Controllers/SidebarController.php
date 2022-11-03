@@ -7,6 +7,7 @@ use App\Models\Items;
 use App\Models\Units;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
+use App\Models\Suppliers;
 use Illuminate\Http\Request;
 use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
 
@@ -29,12 +30,14 @@ class SidebarController extends Controller
 
     public function createReq()
     {
-        $ids = SavedItems::where('user_id', auth()->user()->id)->get('unit_id')[0];
-        $units = Units::get(['unit_id', 'unit_name']);
-        $savedUnits = array();
+        $ids = SavedItems::where('user_id', auth()->user()->id)->get('unit_id');
+        $units = array();
 
         foreach ($ids as $id) {
-            array_push($savedUnits, $units[$id]);
+            array_push(
+                $units,
+                Units::where('unit_id', $id->unit_id)->get('unit_name')[0]->unit_name
+            );
         }
 
         return view(
@@ -48,7 +51,7 @@ class SidebarController extends Controller
                 ],
                 'items' => Items::all(),
                 'savedItems' => request()->user()->savedItems()->get(),
-                'units' => $savedUnits
+                'units' => $units
             ]
         );
     }
@@ -68,12 +71,14 @@ class SidebarController extends Controller
             [
                 'requisitions' => $requisitions,
                 'userId' => auth()->user()->id,
-                'section' => [
+                'section' =>
+                [
                     'page' => 'requisitions',
                     'title' => 'Requisitions',
                     'middle' => $update_status,
                     'bottom' => null
-                ]
+                ],
+                'suppliers' => Suppliers::get()
             ]
         );
     }

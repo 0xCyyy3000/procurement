@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Items;
-use App\Models\PurchasedOrders;
-use App\Models\RequisitionItems;
+use App\Models\Units;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
-use App\Models\SubmittedItems;
-use App\Models\User;
-use App\Models\UserSavedItems;
+use App\Models\PurchasedOrders;
+use App\Models\RequisitionItems;
 
 class RequisitionController extends Controller
 {
@@ -32,12 +31,19 @@ class RequisitionController extends Controller
     {
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
         $response['requisition'] = $requisition;
-        $response['department'] = User::where('id', auth()->user()->id)->get('department');
+        $response['department'] = User::where('id', $requisition[0]->user_id)->get('department');
+
         if ($requisition) {
             $response['status'] = 200;
 
-            $items = RequisitionItems::where('req_id', $request->req_id)->get();
-            $response['items'] = $items;
+            $requisitionItems = RequisitionItems::where('req_id', $request->req_id)->get();
+            $response['requisitionItems'] = $requisitionItems;
+
+            $availableItems = Items::get();
+            $response['items'] = $availableItems;
+
+            $units = Units::get();
+            $response['units'] = $units;
         } else $response['status'] = 404;
 
         return response()->json($response);
@@ -60,12 +66,14 @@ class RequisitionController extends Controller
         );
 
         $formFields['signatories'] = json_encode($signatories);
+        $formFields['supplier'] = null;
+        $formFields['released'] = false;
 
         $created = Requisitions::create($formFields);
 
         if ($created) {
             $reqId = Requisitions::select('req_id')->latest('req_id')->first();
-            $result['status'] = $this->indexSavedItems($request->user_id, $reqId['req_id'],);
+            $result['status'] = $this->indexSavedItems($request->user_id, $reqId['req_id']);
         }
 
         if ($result['status'] != 200) {
@@ -75,13 +83,11 @@ class RequisitionController extends Controller
         return response()->json($result);
     }
 
-
     public function update(Request $request)
     {
         $formFields = $request->validate([
             'req_id' => 'required',
-            'signatories' => 'required',
-            'message' => ''
+            'signatories' => 'required'
         ]);
 
         $requisition = Requisitions::where('req_id', $request->req_id)->get();
@@ -94,6 +100,18 @@ class RequisitionController extends Controller
                     $reqStatus = 'Partially Approved';
                 else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
                     $reqStatus = 'Approved';
+                    $formFields['released'] = true;
+                    $itemDetails = RequisitionItems::where('req_id', $request->req_id)
+                        ->get(['item_id', 'unit_id']);
+
+                    $hasCreatedOrder = PurchasedOrders::create([
+                        'status' => 'Pending',
+                        'supplier' => $request->supplier, // <- this should be dynamic, depending on the chocie of the admin
+                        'delivery_address' => 'ACLC Tacloban Real Street Tacloban City', // <- Must be dynamic
+                        'req_id' => $request->req_id,
+                        'payment' => 'Due',
+                        'order_total' => 15899
+                    ]);
                 } else
                     $reqStatus = 'Rejected';
 
@@ -106,10 +124,11 @@ class RequisitionController extends Controller
         $formFields['approval_count'] = $approvalCount;
         $formFields['status'] = $reqStatus;
         $formFields['signatories'] = $signatories;
+        $formFields['supplier'] = $request->supplier;
 
-        $affectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
+        $hasAffectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
 
-        if ($affectedRows) $response['status'] = 200;
+        if ($hasCreatedOrder || $hasAffectedRows) $response['status'] = 200;
         else $response['status'] = 500;
 
         return response()->json($response);
@@ -118,15 +137,14 @@ class RequisitionController extends Controller
     public function copy(Request $request)
     {
         $itemsToCopy = RequisitionItems::where('req_id', $request->req_id)
-            ->get(['item_id', 'unit', 'qty']);
+            ->get(['item_id', 'unit_id', 'qty']);
 
         foreach ($itemsToCopy as $itemToCopy) {
-
             $created = SavedItems::create([
                 'user_id' => auth()->user()->id,
                 'item_id' => $itemToCopy->item_id,
                 'item' => Items::where('item_id', $itemToCopy->item_id)->get('item')[0]->item,
-                'unit' => $itemToCopy->unit,
+                'unit_id' => $itemToCopy->unit_id,
                 'qty' => $itemToCopy->qty
             ]);
         }
@@ -139,7 +157,7 @@ class RequisitionController extends Controller
 
     public function indexSavedItems($user_id, $req_id)
     {
-        $savedItems = SavedItems::where('user_id', $user_id)->get();
+        $savedItems = request()->user()->savedItems()->get();
         return $this->submitItems($savedItems, $user_id, $req_id);
     }
 
@@ -149,7 +167,7 @@ class RequisitionController extends Controller
             RequisitionItems::create([
                 'req_id' => $req_id,
                 'item_id' => $item->item_id,
-                'unit_id' => $item->unit,
+                'unit_id' => $item->unit_id,
                 'qty' => $item->qty
             ]);
         }

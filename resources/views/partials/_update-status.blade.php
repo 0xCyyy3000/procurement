@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="{{ asset('css/update-status.css') }}">
 <div class="requisition-info">
-    <h2>Update Status</h2>
+    <h2>Update Requisition</h2>
     <div class="details">
         <form id="update-status-form">
             @csrf
@@ -14,6 +14,24 @@
                             </select>
                         </h3>
                         <small class="text-muted">Requisition No.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="detail">
+                <div class="row">
+                    <span class="material-icons-sharp">local_shipping</span>
+                    <div class="right-side">
+                        <h3>
+                            <select id="supplier" class="primary">
+                                <option value="default">-- Please Choose one --</option>
+                                @unless($suppliers->isEmpty())
+                                    @foreach ($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}">{{ $supplier->company_name }}</option>
+                                    @endforeach
+                                @endunless
+                            </select>
+                        </h3>
+                        <small class="text-muted">Supplier</small>
                     </div>
                 </div>
             </div>
@@ -67,12 +85,14 @@
     </div>
     <script>
         $(document).ready(function() {
-            let message = '';
+            let message = null
             let approvalCount = new Array(),
-                signatories = new Array();
+                signatories = new Array(),
+                reqs = new Array();
 
             $('#signatory').prop('disabled', true);
             $('#approval').prop('disabled', true);
+            $('#supplier').prop('disabled', true);
 
             $.ajax({
                 url: "{{ url('/api/get/requisitions') }}",
@@ -83,6 +103,7 @@
                         $('#reqs').append('<option value=' + element.req_id + '>' +
                             'Req #' + element.req_id + '</option>')
 
+                        reqs.push(element);
                         approvalCount.push(element.approval_count);
                         signatories.push(element.signatories)
                     });
@@ -115,6 +136,15 @@
                         else
                             document.getElementById(element.name).disabled = true;
                     });
+
+                    reqs.forEach(element => {
+                        if (element.req_id == this.value) {
+                            if (element.supplier == null)
+                                $('#supplier').prop('disabled', false);
+                            else
+                                $('#supplier').prop('disabled', true);
+                        }
+                    });
                 } else {
                     $('#update-button').prop('disabled', true);
                     $('#signatory').prop('disabled', true);
@@ -137,6 +167,9 @@
             $(document).on('submit', '#update-status-form', function(e) {
                 e.preventDefault();
                 const reqId = $('#reqs option:selected').val();
+                let supplier = null;
+                if ($('#supplier option:selected').val() != 'defualt')
+                    supplier = $('#supplier option:selected').val();
 
                 $.ajax({
                     url: "{{ url('/requisitions/update/"+reqId+"') }}",
@@ -145,6 +178,7 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         req_id: $('#reqs option:selected').val(),
+                        supplier: supplier,
                         signatories: $('#signatory option:selected').val(),
                         approval: $('#approval option:selected').val(),
                         message: message
@@ -153,10 +187,10 @@
                         if (response.status == 200) {
                             alert("Status has been updated for Req no. " + reqId);
                             location.reload();
+                        } else {
+                            alert("There was an error, please try again.");
+                            location.reload();
                         }
-                    },
-                    error: function(response) {
-                        alert(response.responseJSON.message);
                     }
                 });
 

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id('item_id');
             $table->foreignId('category_id')->nullable()->constrained('item_categories');
             $table->string('item');
-            $table->foreignId('supplier')->nullable()->constrained('suppliers');
             $table->timestamps();
         });
     }

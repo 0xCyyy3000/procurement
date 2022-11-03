@@ -1,4 +1,4 @@
-<x-layout :section='$section'>
+<x-layout :section='$section' :suppliers='$suppliers'>
     <link rel="stylesheet" href="{{ asset('css/requisitions.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
 
@@ -221,16 +221,20 @@
                                 "PARTIALLY APPROVED") status.style.color = '#ccd725';
                             else status.style.color = '#ffbb55';
 
-                            console.log(response.items);
+                            response.requisitionItems.forEach(element => {
+                                let itemName = response.items.find(item => item
+                                    .item_id == element.item_id).item;
 
-                            response.items.forEach(element => {
-                                console.log(element);
+                                let unitName = response.units.find(unit => unit
+                                    .unit_id == element.unit_id).unit_name;
+
                                 let template = `
-                                <tr>
-                                  <td>${items[index]}</td>
-                                  <td>${units[index]}</td>
-                                  <td>${qtys[index]}x</td>
-                                </tr>`;
+                                        <tr>
+                                            <td>${itemName}</td>
+                                            <td>${unitName}</td>
+                                            <td>${element.qty}x</td>
+                                        </tr>`;
+
                                 table_body.innerHTML += template;
                             });
                         }

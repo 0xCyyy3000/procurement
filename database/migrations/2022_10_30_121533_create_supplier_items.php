@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('supplier_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users', 'id');
-            $table->foreignId('item_id')->nullable()->constrained('items', 'item_id');
-            $table->foreignId('unit_id')->nullable()->constrained('units', 'unit_id');
-            $table->double('stock')->nullable();
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers', 'id');
+            $table->foreignId('item_id')->constrained('items', 'item_id');
+            $table->foreignId('unit_id')->constrained('units', 'unit_id');
+            $table->double('price')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory');
+        Schema::dropIfExists('supplier_items');
     }
 };

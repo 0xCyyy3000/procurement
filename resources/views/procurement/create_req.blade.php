@@ -81,7 +81,7 @@
                         @foreach ($savedItems as $item)
                             <tr>
                                 <td>{{ $item->item }}</td>
-                                <td>{{ $units[$index]->unit_name }}</td>
+                                <td>{{ $units[$index] }}</td>
                                 <td>{{ $item->qty }}x</td>
                                 <td>
                                     <button type="button" value="{{ $item->row }}" class="edit primary">Edit</button>
@@ -109,7 +109,7 @@
         var rowIndex = null;
         var IS_ADDING = false;
         var IS_EDITING = false;
-        var unit = null;
+        let unitId = null;
 
         if (savedItems.length > 2)
             $('#clear-items').css('display', 'flex')
@@ -123,6 +123,7 @@
                 },
                 dataType: 'json',
                 success: function(result) {
+
                     $('#units').html(
                         '<option value="">-- Select unit --</option>');
 
@@ -131,8 +132,9 @@
                             unit.unit_name + '</option>');
                     });
 
-                    if ($('#units').find('option[value="' + unit + '"]').length > 0 &&
-                        IS_EDITING) $('#units').val(unit);
+                    if ($('#units').length > 0 && IS_EDITING) {
+                        $('#units').val(unitId);
+                    }
                 }
             });
         }
@@ -150,8 +152,8 @@
                     const item = result[0];
                     if (IS_EDITING) {
                         $('#items').val(item.item_id);
+                        unitId = item.unit_id;
                         itemUnits();
-                        console.log(result[0].unit_id);
                         $('#qty').val(item.qty);
                     }
                 }
@@ -194,7 +196,6 @@
                 },
                 dataType: 'json',
                 success: function(result) {
-                    console.log(result);
                     if (result.status == 200) {
                         if (IS_ADDING) {
                             // Adding the New Added Item to the Select Options for Items
@@ -318,11 +319,14 @@
                         if (result.items < 1)
                             $('#clear-items').css('display', 'none')
 
-                        $('#cancel-edi-btn').trigger('click');
+                        $('#cancel-edit-btn').trigger('click');
                         $('#item-form')[0].reset();
 
                         $('#items-table').load(location.href + " #items-table");
                     }
+                },
+                error: function(response) {
+                    alert(response.responseJSON.message);
                 }
             });
         });
@@ -341,6 +345,7 @@
                     if (response.status == 200) {
                         $('#items-table').load(location.href + " #items-table");
                         $('#clear-items').css('display', 'none');
+                        $('#item-form')[0].reset();
                     }
                 },
                 error: function(response) {

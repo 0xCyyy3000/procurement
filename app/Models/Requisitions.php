@@ -10,10 +10,9 @@ class Requisitions extends Model
 {
     use HasFactory;
 
-    // protected $casts = [
-    //     'created_at' => 'datetime:D, d M Y-g:i A',
-    //     'updated_at' => 'datetime:D, d M Y-g:i A'
-    // ];
+    protected $casts = [
+        'released' => 'boolean'
+    ];
 
     public function user()
     {

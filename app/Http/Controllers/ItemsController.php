@@ -34,11 +34,10 @@ class ItemsController extends Controller
             $item = Items::select(['item_id', 'item'])->latest('item_id')->first();
 
             Inventories::create([
+                'user_id' => auth()->user()->id,
                 'item_id' => $item['item_id'],
                 'unit_id' => $unit[0]->unit_id,
-                'stock' => 0,
-                'price' => 0,
-                'worth' => 0
+                'stock' => 0
             ]);
 
             $addedItem = SavedItems::create([
@@ -142,7 +141,7 @@ class ItemsController extends Controller
     {
         $formFields = $request->validate([
             'item' => 'required',
-            'unit' => 'required',
+            'unit_id' => 'required',
             'qty' => 'required | min:1',
             'item_id' => 'required'
         ]);

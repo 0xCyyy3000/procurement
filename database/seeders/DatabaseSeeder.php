@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Inventories;
 use App\Models\User;
 use App\Models\Items;
 use App\Models\SavedItems;
@@ -10,6 +12,7 @@ use App\Models\Requisitions;
 use Illuminate\Database\Seeder;
 use App\Models\InventoryCategories;
 use App\Models\ItemCategories;
+use App\Models\SupplierItems;
 use App\Models\Suppliers;
 use App\Models\Units;
 use App\Models\UserSavedItems;
@@ -25,13 +28,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
@@ -53,15 +49,29 @@ class DatabaseSeeder extends Seeder
             'department' => 'Information Technology'
         ]);
 
+        User::factory()->create([
+            'name' => 'Sonny Fischer',
+            'email' => 'sonny@gmail.com',
+            'password' => bcrypt('123'),
+            'department' => 'Property Custodian'
+        ]);
+
+        $company = fake()->company();
+
         Suppliers::create([
-            'company_name' => fake()->company(),
+            'company_name' => $company,
             'contact_person' => [
                 'name' => 'John Doe',
-                'email' => 'example@mail.com',
+                'email' => $company . '@mail.com',
                 'contact_number' => '09123456789',
             ],
             'address' => fake()->address()
         ]);
+
+        Items::create([
+            'item' => 'Item 1'
+        ]);
+
 
         ItemCategories::create([
             'category' => 'Category 1',
@@ -80,12 +90,10 @@ class DatabaseSeeder extends Seeder
             'unit_name' => 'box'
         ]);
 
-        Units::create([
-            'unit_name' => 'meters'
-        ]);
-
-        Units::create([
-            'unit_name' => 'centimeter'
+        SupplierItems::create([
+            'item_id' => 1,
+            'unit_id' => 1,
+            'price' => 0
         ]);
     }
 }
