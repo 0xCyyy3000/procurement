@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Items;
+use App\Models\PurchasedOrders;
 use App\Models\Units;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
@@ -88,6 +89,31 @@ class SidebarController extends Controller
 
     public function purchasedOrders()
     {
-        return view('procurement.purchased-orders');
+        $middle = null;
+        $bottom = null;
+        $purchasedOrders = null;
+        $suppliers = Suppliers::get(['id', 'company_name']);
+
+        if (strtoupper(auth()->user()->department) == 'ADMIN') {
+            $purchasedOrders = PurchasedOrders::latest()->get();
+            $middle = 'partials._update-order';
+            $bottom = 'partials._update-order-info';
+        }
+
+
+        return view(
+            'procurement.purchased-orders',
+            [
+                'suppliers' => $suppliers,
+                'purchasedOrders' => $purchasedOrders,
+                'section' =>
+                [
+                    'page' => 'purchased_orders',
+                    'title' => 'Purchase Orders',
+                    'middle' => $middle,
+                    'bottom' => $bottom
+                ]
+            ]
+        );
     }
 }

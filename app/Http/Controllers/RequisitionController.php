@@ -119,8 +119,10 @@ class RequisitionController extends Controller
 
                         $this->createOrderItems($request->req_id, PurchasedOrders::select('id')->latest('id')->first()->id);
                     }
-                } else
+                } else {
                     $reqStatus = 'Rejected';
+                    $signatory->approval = 'Rejected';
+                }
 
                 $signatory->approval = $request->approval;
                 $approvalCount++;
@@ -202,8 +204,5 @@ class RequisitionController extends Controller
                 'qty' => $item->qty
             ]);
         }
-
-        if ($isCreated)
-            RequisitionItems::where('req_id', $requisition_id)->delete();
     }
 }

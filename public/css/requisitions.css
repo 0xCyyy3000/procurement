@@ -47,7 +47,12 @@ main {
 }
 
 table tbody td {
+    width: inherit;
+    max-width: 120px;
     height: 2.8rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     border-bottom: 1px solid var(--color-light);
     color: var(--color-dark-variant);
 }
@@ -70,6 +75,10 @@ table tbody span {
 table tbody span:hover {
     transition: all 300ms ease;
     transform: scale(130%);
+}
+
+table thead th.th-description {
+    width: 35%;
 }
 
 .copy {

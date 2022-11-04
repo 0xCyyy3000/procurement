@@ -196,6 +196,10 @@ aside button:hover span {
     color: var(--color-warning);
 }
 
+.primary-variant {
+    color: var(--color-primary-variant);
+}
+
 
 td span.text-muted {
     background-color: var(--color-info-dark);
@@ -266,6 +270,12 @@ td span.partial {
     display: flex;
     gap: 2rem;
     text-align: right;
+    margin-right: 1.4rem;
+    align-items: center;
+}
+
+.right .top .notification {
+    display: flex;
     margin-right: 1.4rem;
     align-items: center;
 }

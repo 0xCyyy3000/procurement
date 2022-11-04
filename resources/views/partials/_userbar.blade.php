@@ -13,4 +13,7 @@
             <img class="primary" src="{{ asset('/images/profile.jpg') }}"alt="logo">
         </div>
     </div>
+    {{-- <button class="notification">
+        <span class="material-icons-sharp">notifications</span>
+    </button> --}}
 </div>

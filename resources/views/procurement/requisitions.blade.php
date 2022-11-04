@@ -1,6 +1,5 @@
 <x-layout :section='$section' :suppliers='$suppliers'>
     <link rel="stylesheet" href="{{ asset('css/requisitions.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
 
     <!-- View Modal -->
     <div id="view-modal" class="modal" style="display: none">
@@ -59,7 +58,6 @@
 
                     <div class="row">
                         <div class="items-table">
-                            <h3>Submitted Items</h3>
                             <table>
                                 <thead>
                                     <th>Item name</th>
@@ -111,7 +109,7 @@
                 <thead>
                     <th>Req No.</th>
                     <th>Priority</th>
-                    <th width="">Description</th>
+                    <th class="th-description">Description</th>
                     <th>Status</th>
                 </thead>
                 <tbody>
@@ -197,7 +195,14 @@
                             $('#maker').text(response.requisition[0].maker);
                             $('#department').text(response.department[0].department +
                                 '  Department');
-                            $('#date').text(response.requisition[0].created_at);
+
+                            $('#date').text(
+                                // Using RegularExpression to replace ',' (comma) with ' ' (space)
+                                // /searchValue/g -> for every instance; g means global
+                                // newValue -> the string to replace
+                                response.requisition[0].created_at.replace(/,/g, '')
+                            );
+
                             $('#priority').text(response.requisition[0].priority);
                             $('#description').text(response.requisition[0].description);
                             $('#status').text(response.requisition[0].status);

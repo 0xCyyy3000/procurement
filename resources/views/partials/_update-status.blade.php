@@ -6,10 +6,10 @@
             @csrf
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">request_page</span>
+                    <span class="material-icons-sharp primary-variant">request_page</span>
                     <div class="right-side">
                         <h3>
-                            <select id=reqs class="primary">
+                            <select id=reqs>
                                 <option value="default"> -- Please Choose one -- </option>
                             </select>
                         </h3>
@@ -19,10 +19,10 @@
             </div>
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">local_shipping</span>
+                    <span class="material-icons-sharp primary-variant">store</span>
                     <div class="right-side">
                         <h3>
-                            <select id="suppliers" class="primary">
+                            <select id="suppliers">
                                 <option value="default">-- Please Choose one --</option>
                                 @unless($suppliers->isEmpty())
                                     @foreach ($suppliers as $supplier)
@@ -37,10 +37,10 @@
             </div>
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">person</span>
+                    <span class="material-icons-sharp primary-variant">person</span>
                     <div class="right-side">
                         <h3>
-                            <select id="signatory" class="primary">
+                            <select id="signatory">
                                 <option value="default">-- Please Choose one --</option>
                                 <option id="School Director" value="School Director">School Director</option>
                                 <option id="Branch Manager" value="Branch Manager">Branch Manager</option>
@@ -53,10 +53,10 @@
             </div>
             <div class="detail">
                 <div class="row">
-                    <span class="material-icons-sharp">approval</span>
+                    <span class="material-icons-sharp primary-variant">approval</span>
                     <div class="right-side">
                         <h3>
-                            <select id="approval" class="primary">
+                            <select id="approval">
                                 <option value="default">-- Please Choose one --</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Rejected">Rejected</option>

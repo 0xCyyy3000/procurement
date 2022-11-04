@@ -61,18 +61,38 @@
     width: 96%;
 }
 
+.modal-content .body .middle .row.middle {
+    display: flex;
+}
+
+.modal-content .body .middle .row.middle .middle-container {
+    margin-right: 1.6rem;
+}
+
 .modal-content .body .middle .row .items-table {
+    position: sticky;
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0;
 }
 
 .modal-content .body .middle .row .items-table table {
+    /* background-color: limegreen; */
     width: 100%;
     padding: var(--card-padding);
     box-shadow: none;
     text-align: center;
     max-height: 100px;
+    margin-top: -1rem;
+}
+
+.modal-content .body .middle .row .items-table table th {
+    position: fixed;
+    position: sticky;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: .3rem;
+    font-size: 1rem;
 }
 
 .modal-content .body .middle .row .items-table table tbody td {
@@ -81,13 +101,26 @@
     color: var(--color-dark-variant);
 }
 
-.modal-content .footer .row {
+.modal-content .footer .order-total {
     display: flex;
-    margin-top: 1rem;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+    margin-right: 2rem;
 }
 
-.modal-content .footer .row h2 {
-    margin-right: 1rem;
+.footer .order-total h2 {
+    padding: .3rem;
+    font-size: 1.2rem;
+}
+
+.footer .order-total h2.primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.footer .order-total h2.total {
+    background-color: var(--color-info-light);
+    color: var(--color-dark);
 }
 
 /* The Close Button */
