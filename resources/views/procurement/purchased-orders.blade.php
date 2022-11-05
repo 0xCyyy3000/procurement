@@ -229,6 +229,19 @@
             }
 
             $(document).on('click', '.view', function() {
+                $.ajax({
+                    url: "{{ url('/orders/select/" + $(this).val() + "') }}",
+                    type: "POST",
+                    dateType: 'json',
+                    data: {
+                        po_id: $(this).val(),
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    }
+                });
+
                 $('.modal').css('display', 'block');
             });
         });

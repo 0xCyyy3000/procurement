@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InventoryItemsController;
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\PurchasedOrdersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SidebarController;
@@ -36,6 +37,11 @@ Route::post('/requisition/create', [RequisitionController::class, 'store'])->mid
 Route::post('/requisitions/{requisition}', [RequisitionController::class, 'select'])->middleware('auth');
 Route::post('/requisitions/copy/{requisition}', [RequisitionController::class, 'copy'])->middleware('auth');
 Route::post('/requisitions/update/{requisition}', [RequisitionController::class, 'update'])->middleware('auth');
+
+Route::group(['prefix' => 'orders'], function () {
+    Route::post('/select/{po_id}', [PurchasedOrdersController::class, 'select']);
+});
+
 
 Route::get('/supplier', function () {
     return view(

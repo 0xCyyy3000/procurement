@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'contact_person' => [
                 'name' => 'John Doe',
                 'email' => $company . '@mail.com',
-                'contact_number' => '09123456789',
+                'phone' => '09123456789',
             ],
             'address' => fake()->address()
         ]);
