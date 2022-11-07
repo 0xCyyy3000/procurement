@@ -7,61 +7,49 @@
         <div class="modal-content">
             <span class="close" id="close">&times;</span>
             <div class="header">
-                <h1 id="req-no">Purchase Order No. ###</h1>
+                <h1 id="po-id"></h1>
             </div>
             <div class="body">
                 <div class="top">
-                    <p>Requisitioned by <span id="maker" class="primary"> Chingchong</span>
-                        from <span id="department" class="primary">Gen Ed Department</span>
+                    <p>Requisitioned by <span id="maker" class="primary"></span>
+                        from <span id="department" class="primary"></span>
                     </p>
-                    <small class="text-muted">Evaluated by <span class="primary">Admin</span></small>
-                    <small class="text-muted">on <span id="date">Wed Nov 8 2022</span></small>
+                    <small class="text-muted">Evaluated by <span id="evaluator" class="primary"></span></small>
+                    <small class="text-muted">on <span id="date"></span></small>
                 </div>
 
                 <div class="middle">
                     <div class="row upper">
                         <div class="upper-container">
                             <h3>Status</h3>
-                            <p id="status" style="font-weight: bold">
-                                Pending
-                            </p>
+                            <p id="status" style="font-weight: bold"></p>
                         </div>
                         <div class="upper-container">
                             <h3>Delivery Address</h3>
-                            <p id="delivery-address">
-                                ACLC Tacloban Real Street
-                            </p>
+                            <p id="delivery-address"></p>
                         </div>
                     </div>
-                    <div class="row middle">
+                    <div class="row
+                                middle">
                         <div class="middle-container">
                             <h3>Supplier</h3>
-                            <p id="supplier">
-                                John Doe
-                            </p>
+                            <p id="supplier"></p>
                         </div>
                         <div class="middle-container">
                             <h3>Address</h3>
-                            <p id="contact-address">
-                                124 Jed Harbors Suite 010
-                                Klingberg
-                            </p>
+                            <p id="supplier-address"></p>
                         </div>
                         <div class="middle-container">
                             <h3>Contact</h3>
-                            <p id="contact-name">John Doe</p>
+                            <p id="contact-name"></p>
                         </div>
                         <div class="middle-container">
                             <h3>Email</h3>
-                            <p id="contact-email">
-                                johndoe@mail.com
-                            </p>
+                            <p id="contact-email"></p>
                         </div>
                         <div class="middle-container">
                             <h3>Phone</h3>
-                            <p id="contact-phone">
-                                +639123456789
-                            </p>
+                            <p id="contact-phone"></p>
                         </div>
                     </div>
 
@@ -75,36 +63,7 @@
                                     <th>Qty</th>
                                     <th>Total</th>
                                 </thead>
-                                <tbody class="table-body" id="table-body">
-                                    <tr>
-                                        <td>Test item</td>
-                                        <td>pcs</td>
-                                        <td>₱16.75</td>
-                                        <td>32x</td>
-                                        <td>₱536</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Test item</td>
-                                        <td>pcs</td>
-                                        <td>₱16.75</td>
-                                        <td>32x</td>
-                                        <td>₱536</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Test item</td>
-                                        <td>pcs</td>
-                                        <td>₱16.75</td>
-                                        <td>32x</td>
-                                        <td>₱536</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Test item</td>
-                                        <td>pcs</td>
-                                        <td>₱16.75</td>
-                                        <td>32x</td>
-                                        <td>₱536</td>
-                                    </tr>
-                                </tbody>
+                                <tbody class="table-body" id="table-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -113,7 +72,7 @@
             <div class="footer">
                 <div class="order-total">
                     <h2 class="primary">Order Total</h2>
-                    <h2 class="total">₱123456789</h2>
+                    <h2 id="order-total" class="total"></h2>
                 </div>
             </div>
         </div>
@@ -157,9 +116,6 @@
                     <th>Status</th>
                 </thead>
                 <tbody>
-                    @php
-                        $index = 0;
-                    @endphp
                     @unless($purchasedOrders->isEmpty())
                         @foreach ($purchasedOrders as $purchasedOrder)
                             @php
@@ -168,12 +124,7 @@
                             <tr>
                                 <td>{{ $purchasedOrder->id }}</td>
                                 <td>
-                                    @php
-                                        if ($suppliers[$index]->id == $purchasedOrder->supplier) {
-                                            echo $suppliers[$index]->company_name;
-                                        }
-                                        $index++;
-                                    @endphp
+                                    {{ $purchasedOrder->supplier_name->company_name }}
                                 </td>
                                 <td style="font-weight: bold">{{ $purchasedOrder->payment }}</td>
                                 <td>
@@ -203,10 +154,11 @@
 
     <script>
         $(document).ready(function() {
+            let table_body = document.getElementById('table-body');
+
             var view_modal = document.getElementById("view-modal");
             var span = document.getElementById("close");
             var status = document.getElementById('status');
-            var table_body = document.getElementById('table-body');
             var copy_modal = document.getElementById("copy-modal");
             var go_back = document.getElementById("go-back");
             var close_copy = document.getElementById("close-copy");
@@ -239,6 +191,46 @@
                     },
                     success: function(response) {
                         console.log(response);
+                        table_body.innerHTML = '';
+
+                        $('#po-id').text('Purchase Order No. ' + response.purchaseOrder.id);
+                        $('#maker').text(response.purchaseOrder.maker.name);
+                        $('#department').text(response.purchaseOrder.maker.department);
+                        $('#evaluator').text(response.purchaseOrder.evaluator);
+                        $('#date').text(response.purchaseOrder.created_at.replace(/,/g, ''));
+
+                        $('#status').text(response.purchaseOrder.status);
+                        if (response.purchaseOrder.status.toUpperCase() == "CANCELLED")
+                            status.style.color = '#ff7782';
+                        else if (response.purchaseOrder.status.toUpperCase() ==
+                            "FULFILLED")
+                            status.style.color = '#41f1b6';
+                        else if (response.purchaseOrder.status.toUpperCase() ==
+                            "PARTIALLY FULFILLED") status.style.color = '#ccd725';
+                        else status.style.color = '#ffbb55';
+
+                        $('#delivery-address').text(response.purchaseOrder.delivery_address);
+                        $('#supplier').text(response.purchaseOrder.supplier_name);
+                        $('#supplier-address').text(response.purchaseOrder.supplier_address);
+                        $('#contact-name').text(response.purchaseOrder.contact_name);
+                        $('#contact-email').text(response.purchaseOrder.contact_email);
+                        $('#contact-phone').text(response.purchaseOrder.contact_phone);
+
+                        response.orderedItems.forEach(element => {
+                            let template = `
+                                <tr>
+                                    <td> ${element.item_name} </td>
+                                    <td> ${element.unit_name} </td>
+                                    <td> ₱${element.price} </td>
+                                    <td> ${element.qty}x </td>
+                                    <td> ₱${element.total} </td>
+                                </tr>
+                            `;
+
+                            table_body.innerHTML += template;
+                        });
+
+                        $('#order-total').text('₱' + response.purchaseOrder.order_total);
                     }
                 });
 

@@ -11,6 +11,7 @@ use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\PurchasedOrders;
 use App\Models\RequisitionItems;
+use App\Models\SupplierItems;
 use App\Models\Suppliers;
 
 class RequisitionController extends Controller
@@ -107,6 +108,12 @@ class RequisitionController extends Controller
                     $reqStatus = 'Approved';
 
                     if ($request->supplier || $requisition[0]->supplier) {
+                        $supplierItems = SupplierItems::where('supplier_id', $request->supplier)
+                            ->orWhere('supplier_id', $requisition[0]->supplier)
+                            ->get(['item_id', 'unit_id', 'price']);
+
+
+
                         $formFields['released'] = true;
                         PurchasedOrders::create([
                             'status' => 'Pending',
@@ -114,10 +121,10 @@ class RequisitionController extends Controller
                             'delivery_address' => 'ACLC Tacloban Real Street Tacloban City', // <- Must be dynamic
                             'req_id' => $request->req_id,
                             'payment' => 'Due',
-                            'order_total' => 15899
+                            'order_total' => 0
                         ]);
 
-                        $this->createOrderItems($request->req_id, PurchasedOrders::select('id')->latest('id')->first()->id);
+                        $this->createOrderItems($request->req_id, PurchasedOrders::select('id')->latest('id')->first()->id, $supplierItems);
                     }
                 } else {
                     $reqStatus = 'Rejected';
@@ -192,17 +199,28 @@ class RequisitionController extends Controller
         else return 433;
     }
 
-    public function createOrderItems($requisition_id, $po_id)
+    public function createOrderItems($requisition_id, $po_id, $supplierItems)
     {
         $items = RequisitionItems::where('req_id', $requisition_id)->get(['item_id', 'unit_id', 'qty']);
+        $orderTotal = 0;
+        $itemTotal = 0;
 
         foreach ($items as $item) {
-            $isCreated = PurchasedOrderItems::create([
+            PurchasedOrderItems::create([
                 'po_id' => $po_id,
                 'item_id' => $item->item_id,
                 'unit_id' => $item->unit_id,
                 'qty' => $item->qty
             ]);
+
+            foreach ($supplierItems as $supplierItem) {
+                if ($supplierItem->item_id == $item->item_id and $supplierItem->unit_id == $item->unit_id) {
+                    $itemTotal = $item->qty * $supplierItem->price;
+                    $orderTotal += $itemTotal;
+                }
+            }
         }
+
+        PurchasedOrders::where('id', $po_id)->update(['order_total' => $orderTotal]);
     }
 }

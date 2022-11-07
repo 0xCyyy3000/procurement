@@ -92,7 +92,6 @@ class SidebarController extends Controller
         $middle = null;
         $bottom = null;
         $purchasedOrders = null;
-        $suppliers = Suppliers::get(['id', 'company_name']);
 
         if (strtoupper(auth()->user()->department) == 'ADMIN') {
             $purchasedOrders = PurchasedOrders::latest()->get();
@@ -100,11 +99,13 @@ class SidebarController extends Controller
             $bottom = 'partials._update-order-info';
         }
 
+        foreach ($purchasedOrders as $purchasedOrder) {
+            $purchasedOrder['supplier_name'] = Suppliers::find($purchasedOrder->supplier);
+        }
 
         return view(
             'procurement.purchased-orders',
             [
-                'suppliers' => $suppliers,
                 'purchasedOrders' => $purchasedOrders,
                 'section' =>
                 [
