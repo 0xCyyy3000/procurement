@@ -1,4 +1,4 @@
-<x-layout :section='$section'>
+<x-layout :section='$section' :purchasedOrders='$purchasedOrders'>
     <link rel="stylesheet" href="{{ asset('css/requisitions.css') }}">
 
     <!-- View Modal -->

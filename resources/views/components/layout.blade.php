@@ -1,4 +1,4 @@
-@props(['section', 'suppliers'])
+@props(['section', 'suppliers', 'purchasedOrders'])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +94,10 @@
             <div class="middle">
                 @if ($section['middle'] != null)
                     @if ($section['title'] == 'Requisition' and $section['userDepartment'] == 'Admin')
-                        @include($section['middle'], ['suppliers' => $suppliers])
+                        @include($section['middle'], [
+                            'suppliers' => $suppliers,
+                            'purchasedOrders' => $purchasedOrders,
+                        ])
                     @else
                         @include($section['middle'])
                     @endif

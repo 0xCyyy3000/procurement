@@ -8,7 +8,12 @@
                 <div class="right-side">
                     <h3>
                         <select id="purchase-orders">
-                            <option value="default">-- Please Choose one --</option>
+                            @unless($purchasedOrders->isEmpty())
+                                <option value="default">-- Please Choose one --</option>
+                                @foreach ($purchasedOrders as $purchasedOrder)
+                                    <option value="{{ $purchasedOrder->id }}">PO #{{ $purchasedOrder->id }}</option>
+                                @endforeach
+                            @endunless
                         </select>
                     </h3>
                     <small class="text-muted">Purchased Order No.</small>
