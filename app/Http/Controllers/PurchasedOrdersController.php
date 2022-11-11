@@ -49,4 +49,20 @@ class PurchasedOrdersController extends Controller
             'orderedItems' => $orderedItems
         ];
     }
+
+    public function update(Request $request)
+    {
+        $updatedOrder = PurchasedOrders::where('id', $request->po_id)
+            ->update(['payment' => $request->payment]);
+
+        if ($updatedOrder) {
+            $response['status'] = 200;
+            $response['message'] = 'Updated successfully!';
+        } else {
+            $response['status'] = 400;
+            $response['message'] = 'There was an error, please try again.';
+        }
+
+        return response()->json($response);
+    }
 }

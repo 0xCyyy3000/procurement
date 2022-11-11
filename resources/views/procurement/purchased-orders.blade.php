@@ -21,6 +21,10 @@
                 <div class="middle">
                     <div class="row upper">
                         <div class="upper-container">
+                            <h3>Payment</h3>
+                            <p id="payment" style="font-weight: bold"></p>
+                        </div>
+                        <div class="upper-container">
                             <h3>Status</h3>
                             <p id="status" style="font-weight: bold"></p>
                         </div>
@@ -78,15 +82,23 @@
         </div>
     </div>
 
-    <!-- Copy Modal -->
-    <div id="copy-modal" class="copy-modal" style="display: none">
+    <!-- Receive Modal -->
+    <div id="receive-modal" class="copy-modal" style="display: none">
         <!-- Modal content -->
         <div class="copy-modal-content">
             <span class="close-copy" id="close-copy">&times;</span>
-            <br> <br>
-            <h2>Copy Requisition Items.
-                <br>To continue this action, please confirm.
-            </h2>
+            <br><br>
+            <h2>Receive Purchased Order</h2>
+
+            <select class="pos" id="receive-purchase-orders">
+                @unless($purchasedOrders->isEmpty())
+                    <option value="default">-- Please Choose one --</option>
+                    @foreach ($purchasedOrders as $purchasedOrder)
+                        <option value="{{ $purchasedOrder->id }}">PO #{{ $purchasedOrder->id }}</option>
+                    @endforeach
+                @endunless
+            </select>
+
             <p class="reminder">The <b class="primary">items</b> of this requisition <b class="primary">will be
                     copied</b> <br> and you will be redirected to requisition creation page.</p>
             <br><br>
@@ -159,7 +171,7 @@
             var view_modal = document.getElementById("view-modal");
             var span = document.getElementById("close");
             var status = document.getElementById('status');
-            var copy_modal = document.getElementById("copy-modal");
+            var receive_modal = document.getElementById("receive-modal");
             var go_back = document.getElementById("go-back");
             var close_copy = document.getElementById("close-copy");
 
@@ -168,16 +180,16 @@
             }
 
             close_copy.onclick = function() {
-                copy_modal.style.display = "none";
+                receive_modal.style.display = "none";
             }
 
             go_back.onclick = function() {
-                copy_modal.style.display = "none";
+                receive_modal.style.display = "none";
             }
 
             window.onclick = function(event) {
                 if (event.target == view_modal) view_modal.style.display = "none";
-                else if (event.target == copy_modal) copy_modal.style.display = "none";
+                else if (event.target == receive_modal) receive_modal.style.display = "none";
             }
 
             $(document).on('click', '.view', function() {
@@ -190,7 +202,6 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        console.log(response);
                         table_body.innerHTML = '';
 
                         $('#po-id').text('Purchase Order No. ' + response.purchaseOrder.id);
@@ -198,6 +209,7 @@
                         $('#department').text(response.purchaseOrder.maker.department);
                         $('#evaluator').text(response.purchaseOrder.evaluator);
                         $('#date').text(response.purchaseOrder.created_at.replace(/,/g, ''));
+                        $('#payment').text(response.purchaseOrder.payment);
 
                         $('#status').text(response.purchaseOrder.status);
                         if (response.purchaseOrder.status.toUpperCase() == "CANCELLED")
@@ -236,6 +248,13 @@
 
                 $('.modal').css('display', 'block');
             });
+
+            $(document).on('click', '#receive-update-orders', function() {
+                if ($(this).val() != 'default') {
+                    
+                }
+            });
+
         });
     </script>
 </x-layout>

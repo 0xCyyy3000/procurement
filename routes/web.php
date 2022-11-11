@@ -40,6 +40,7 @@ Route::post('/requisitions/update/{requisition}', [RequisitionController::class,
 
 Route::group(['prefix' => 'orders'], function () {
     Route::post('/select/{po_id}', [PurchasedOrdersController::class, 'select']);
+    Route::post('/update/{po_id}', [PurchasedOrdersController::class, 'update']);
 });
 
 

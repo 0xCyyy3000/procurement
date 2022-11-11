@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Items;
-use App\Models\PurchasedOrders;
 use App\Models\Units;
+use App\Models\Suppliers;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
-use App\Models\Suppliers;
-use Illuminate\Http\Request;
-use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
+use App\Models\PurchasedOrders;
 
 class SidebarController extends Controller
 {
@@ -110,7 +108,7 @@ class SidebarController extends Controller
                 'section' =>
                 [
                     'page' => 'purchased_orders',
-                    'title' => 'Purchase Orders',
+                    'title' => 'Purchased Orders',
                     'middle' => $middle,
                     'bottom' => $bottom
                 ]

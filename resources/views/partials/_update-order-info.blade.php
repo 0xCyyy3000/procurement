@@ -54,7 +54,9 @@
         }
 
         $(document).on('click', '.receive', function() {
-            $('#copy-modal').css('display', 'flex');
+            $('#receive-modal').css('display', 'flex');
         });
+
+
     });
 </script>
