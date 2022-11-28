@@ -1,12 +1,20 @@
 <!-- Receive Modal -->
-<div id="receive-modal" class="copy-modal" style="display: none">
+{{-- <div id="receive-modal" class="copy-modal" style="display: none">
     <!-- Modal content -->
-    <div class="receive-modal-content">
-        <span class="close-receive-modal" id="close-receive-modal">&times;</span>
-        <br> <br>
-        <h2>Copy Requisition Items.
-            <br>To continue this action, please confirm.
-        </h2>
+    <div class="copy-modal-content">
+        <span class="close-copy" id="close-copy">&times;</span>
+        <br><br>
+        <h2>Receive Purchased Order</h2>
+
+        <select class="pos" id="receive-purchase-orders">
+            @unless($purchasedOrders->isEmpty())
+                <option value="default">-- Please Choose one --</option>
+                @foreach ($purchasedOrders as $purchasedOrder)
+                    <option value="{{ $purchasedOrder->id }}">PO #{{ $purchasedOrder->id }}</option>
+                @endforeach
+            @endunless
+        </select>
+
         <p class="reminder">The <b class="primary">items</b> of this requisition <b class="primary">will be
                 copied</b> <br> and you will be redirected to requisition creation page.</p>
         <br><br>
@@ -19,7 +27,7 @@
             </button>
         </div>
     </div>
-</div>
+</div> --}}
 
 <div class="order-info">
     <link rel="stylesheet" href="{{ asset('css/update-order-info.css') }}">
@@ -46,17 +54,9 @@
 
 <script>
     $(document).ready(function() {
-        const receiveModal = document.getElementById("receive-modal");
-        const closeReceiveModal = document.getElementById("close-receive-modal");
-
-        closeReceiveModal.onclick = function() {
-            receiveModal.style.display = "none";
-        }
-
         $(document).on('click', '.receive', function() {
             $('#receive-modal').css('display', 'flex');
         });
-
 
     });
 </script>

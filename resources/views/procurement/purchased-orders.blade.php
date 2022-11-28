@@ -86,7 +86,7 @@
     <div id="receive-modal" class="copy-modal" style="display: none">
         <!-- Modal content -->
         <div class="copy-modal-content">
-            <span class="close-copy" id="close-copy">&times;</span>
+            <span class="close-copy" id="close-receive-modal">&times;</span>
             <br><br>
             <h2>Receive Purchased Order</h2>
 
@@ -170,17 +170,20 @@
 
             var view_modal = document.getElementById("view-modal");
             var span = document.getElementById("close");
+
             var status = document.getElementById('status');
-            var receive_modal = document.getElementById("receive-modal");
             var go_back = document.getElementById("go-back");
             var close_copy = document.getElementById("close-copy");
 
-            span.onclick = function() {
-                view_modal.style.display = "none";
+            const receiveModal = document.getElementById("receive-modal");
+            const closeReceiveModal = document.getElementById("close-receive-modal");
+
+            closeReceiveModal.onclick = function() {
+                receiveModal.style.display = "none";
             }
 
-            close_copy.onclick = function() {
-                receive_modal.style.display = "none";
+            span.onclick = function() {
+                view_modal.style.display = "none";
             }
 
             go_back.onclick = function() {
@@ -189,7 +192,7 @@
 
             window.onclick = function(event) {
                 if (event.target == view_modal) view_modal.style.display = "none";
-                else if (event.target == receive_modal) receive_modal.style.display = "none";
+                else if (event.target == receiveModal) receiveModal.style.display = "none";
             }
 
             $(document).on('click', '.view', function() {
@@ -251,7 +254,7 @@
 
             $(document).on('click', '#receive-update-orders', function() {
                 if ($(this).val() != 'default') {
-                    
+
                 }
             });
 
