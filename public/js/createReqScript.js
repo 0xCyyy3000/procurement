@@ -17,7 +17,7 @@ $(document).on('click', '#submit', function () {
 $(document).on('submit', '#req-details-form', function (e) {
     e.preventDefault();
     $.ajax({
-        url: '/requisition/create',
+        url: '/requisitions/create',
         type: 'POST',
         data: {
             _token: token,

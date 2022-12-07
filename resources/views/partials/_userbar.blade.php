@@ -5,8 +5,8 @@
     <div class="profile">
         <div class="info">
             @auth
-                <p>Welcome, <b>{{ auth()->user()->name }}</b></p>
-                <small class="text-muted">{{ auth()->user()->department }}</small>
+                <p>Welcome, <b>{{ $user->name }}</b></p>
+                <small class="text-muted">{{ $user->department }}</small>
             @endauth
         </div>
         <div class="profile-photo">

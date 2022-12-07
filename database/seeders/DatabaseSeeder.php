@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Department;
 use App\Models\Inventories;
 use App\Models\User;
 use App\Models\Items;
@@ -28,32 +29,45 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+        $departments = [
+            'Branch Manager', 'School Director', 'Property Custodian',
+            'SHS Department', 'IT Department', 'Gen Ed Department',
+            'HM Department', 'Accountancy Department', 'Allied Health Department',
+            'SHS Registrar', 'College Registrar', 'Admission', 'Accounting',
+            'Technical', 'Library', 'Cashier', 'Not assigned'
+        ];
+
+        foreach ($departments as $department) {
+            Department::create(['department' => $department]);
+        }
+
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123'),
-            'department' => 'Admin'
+            'department' => 2
         ]);
 
         User::factory()->create([
             'name' => 'John Dee',
             'email' => 'john@gmail.com',
             'password' => bcrypt('123'),
-            'department' => 'Accounting'
+            'department' => 13
         ]);
 
         User::factory()->create([
             'name' => 'Karen Doe',
             'email' => 'karen@gmail.com',
             'password' => bcrypt('123'),
-            'department' => 'Information Technology'
+            'department' => 5
         ]);
 
         User::factory()->create([
             'name' => 'Sonny Fischer',
             'email' => 'sonny@gmail.com',
             'password' => bcrypt('123'),
-            'department' => 'Property Custodian'
+            'department' => 3
         ]);
 
         $company = fake()->company();
@@ -88,6 +102,10 @@ class DatabaseSeeder extends Seeder
 
         Units::create([
             'unit_name' => 'box'
+        ]);
+
+        Units::create([
+            'unit_name' => 'dozen'
         ]);
 
         SupplierItems::create([

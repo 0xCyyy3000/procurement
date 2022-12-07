@@ -5,7 +5,7 @@
     <div id="view-modal" class="modal" style="display: none">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" id="close">&times;</span>
+            <span class="close absolute right-0" id="close"></span>
             <div class="header">
                 <h1 id="req-no"></h1>
             </div>
@@ -22,7 +22,7 @@
                         <h3>Description</h3>
                         <p id="description"></p>
                     </div>
-                    <div class="row upper">
+                    <div class="container upper">
                         <div class="upper-container">
                             <h3>Priority</h3>
                             <p id="priority" class="primary" style="font-weight: bold"></p>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="container">
                         <div class="message">
                             <div class="label">
                                 <h3>Message</h3>
@@ -56,10 +56,10 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="container-fluid">
                         <div class="items-table">
-                            <table>
-                                <thead>
+                            <table class="">
+                                <thead style="background-color: var(--color-primary);" class="text-white">
                                     <th>Item name</th>
                                     <th>Unit</th>
                                     <th>Qty</th>
@@ -76,22 +76,21 @@
     </div>
 
     <!-- Copy Modal -->
-    <div id="copy-modal" class="copy-modal" style="display: none">
+    <div id="copy-modal" class="copy-modal d-none">
         <!-- Modal content -->
         <div class="copy-modal-content">
-            <span class="close-copy" id="close-copy">&times;</span>
-            <br> <br>
-            <h2>Copy Requisition Items.
+            <span class="close-copy" id="close-copy"></span>
+            <h2 class="mt-2">Copy Requisition Items.
                 <br>To continue this action, please confirm.
             </h2>
             <p class="reminder">The <b class="primary">items</b> of this requisition <b class="primary">will be
                     copied</b> <br> and you will be redirected to requisition creation page.</p>
             <br><br>
-            <div class="action">
-                <button class="go-back"type="button" id="go-back">
+            <div class="action d-flex gap-2">
+                <button class="go-back w-25"type="button" id="go-back">
                     <h3>Go back</h3>
                 </button>
-                <button class="confirm"type="button">
+                <button class="confirm w-25"type="button">
                     <h3>Confirm</h3>
                 </button>
             </div>
@@ -105,12 +104,12 @@
 
     <div class="items-table"id="items-table">
         <div class="table">
-            <table>
+            <table class="">
                 <thead>
-                    <th>Req No.</th>
-                    <th>Priority</th>
-                    <th class="th-description">Description</th>
-                    <th>Status</th>
+                    <th class="p-2">Req No.</th>
+                    <th class="p-2">Priority</th>
+                    <th class="th-description p-2">Description</th>
+                    <th class="p-2">Status</th>
                 </thead>
                 <tbody>
                     @unless($requisitions->isEmpty())
@@ -163,16 +162,23 @@
             }
 
             close_copy.onclick = function() {
-                copy_modal.style.display = "none";
+                // copy_modal.style.display = "none";
+                $('#copy-modal').removeClass('d-block');
+                $('#copy-modal').addClass('d-none');
             }
 
             go_back.onclick = function() {
-                copy_modal.style.display = "none";
+                $('#copy-modal').removeClass('d-block');
+                $('#copy-modal').addClass('d-none');
             }
 
             window.onclick = function(event) {
                 if (event.target == view_modal) view_modal.style.display = "none";
-                else if (event.target == copy_modal) copy_modal.style.display = "none";
+
+                else if (event.target == copy_modal) {
+                    $('#copy-modal').removeClass('d-block');
+                    $('#copy-modal').addClass('d-none');
+                }
             }
 
             $(document).on('click', '.view', function() {
@@ -259,7 +265,8 @@
             });
 
             $(document).on('click', '.copy', function() {
-                $('.copy-modal').css('display', 'block');
+                $('.copy-modal').removeClass('d-none');
+                $('.copy-modal').addClass('d-block');
                 id = this.value;
             })
 

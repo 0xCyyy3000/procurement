@@ -1,7 +1,6 @@
 <x-layout :section='$section'>
     <link rel="stylesheet" href="{{ asset('css/create_req.css') }}">
-    <script src="{{ asset('js/dateTime.js') }}" defer></script>
-    <h1>Requisition Creation</h1>
+    <h1>Create Requisition</h1>
 
     <div class="date-time">
         <div id="date" class="date"></div>
@@ -33,22 +32,23 @@
                 <select id="units">
                     <option value="">-- Select unit --</option>
                 </select>
-                <input type="text" class="particulars" placeholder="Item name" name="item" id="item"
+                <input type="text" class="" placeholder="Item name" name="item" id="item"
                     autocomplete="off">
-                <input type="text" placeholder="Unit" id="unit" name="unit" autocomplete="off">
+                <input type="text" placeholder="Unit" class="" id="unit" name="unit"
+                    autocomplete="off">
                 <input type="number" placeholder="How many?" min="1" id="qty" name="qty"
                     autocomplete="off" required>
             </div>
         </div>
 
         <div class="create">
-            <button id="add-button" form="item-form" type="submit">
+            <button id="add-button" form="item-form" class="d-flex" type="submit">
                 <span id="add-icon" class="material-icons-sharp">add</span>
                 <h3>Add item</h3>
             </button>
 
-            <div class="editing">
-                <button id="update-button">
+            <div class="d-none" id="editing">
+                <button id="update-button" class="d-flex">
                     <span id="update-icon" class="material-icons-sharp">upgrade</span>
                     <h3>Update Item</h3>
                 </button>
@@ -58,7 +58,7 @@
                 </button>
             </div>
 
-            <button class="clear-items" type="button" id="clear-items" style="display: none">
+            <button class="clear-items d-none d-flex" type="button" id="clear-items">
                 <span id="trash-icon" class="material-icons-sharp">clear</span>
                 <p>Clear items</p>
             </button>
@@ -68,8 +68,8 @@
     <div class="items-table"id="items-table">
         <div class="table">
             <table>
-                <thead>
-                    <th>Item name</th>
+                <thead class="">
+                    <th class="p-3">Item name</th>
                     <th>Unit</th>
                     <th>Qty</th>
                 </thead>
@@ -104,7 +104,9 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/dateTime.js') }}" defer></script>
     <script>
+        // itemUnits()
         let savedItems = '<?php echo $savedItems; ?>';
         var rowIndex = null;
         var IS_ADDING = false;
@@ -112,7 +114,7 @@
         let unitId = null;
 
         if (savedItems.length > 2)
-            $('#clear-items').css('display', 'flex')
+            $('#clear-items').removeClass('d-none');
 
         function itemUnits() {
             $.ajax({
@@ -123,7 +125,6 @@
                 },
                 dataType: 'json',
                 success: function(result) {
-
                     $('#units').html(
                         '<option value="">-- Select unit --</option>');
 
@@ -220,7 +221,7 @@
                     }
 
                     $('#items-table').load(location.href + " #items-table");
-                    $('#clear-items').css('display', 'flex');
+                    $('#clear-items').removeClass('d-none');
                 }
             });
 
@@ -241,6 +242,7 @@
                 $('#qty').val('');
 
             } else if ($(this).val().toUpperCase() === 'NEW-ITEM') {
+                console.log($(this).val());
                 $('#item').css('display', 'inline-block');
                 $('#items').toggleClass("adding");
                 $('#item').prop('required', true);
@@ -250,6 +252,7 @@
                 $('#items').val('new-item');
                 $('#qty').val('');
                 itemUnits();
+                $('#units').val('');
 
             } else {
                 $('#items').removeClass("adding");
@@ -280,11 +283,13 @@
                 IS_ADDING = false;
             }
 
+            $('#editing').removeClass("d-none");
             rowIndex = $(this).val();
 
             getSavedItemByRowID(rowIndex);
 
-            $('#add-button').css('display', 'none');
+            // $('#add-button').css('display', 'none');
+            $('#add-button').addClass('d-none');
             $('#update-button').css('display', 'flex');
             $('#cancel-edit-btn').css('display', 'block');
         });
@@ -292,9 +297,8 @@
         $(document).on('click', '#cancel-edit-btn', function() {
             IS_EDITING = false;
 
-            $('#add-button').css('display', 'flex');
-            $('#update-button').css('display', 'none');
-            $('#cancel-edit-btn').css('display', 'none');
+            $('#add-button').removeClass("d-none");
+            $('#editing').addClass("d-none");
 
             $('#item-form')[0].reset();
         });
@@ -317,7 +321,7 @@
                 success: function(result) {
                     if (result.status == 200) {
                         if (result.items < 1)
-                            $('#clear-items').css('display', 'none')
+                            $('#clear-items').addClass('d-none')
 
                         $('#cancel-edit-btn').trigger('click');
                         $('#item-form')[0].reset();
@@ -344,7 +348,7 @@
                 success: function(response) {
                     if (response.status == 200) {
                         $('#items-table').load(location.href + " #items-table");
-                        $('#clear-items').css('display', 'none');
+                        $('#clear-items').addClass('d-none');
                         $('#item-form')[0].reset();
                     }
                 },
@@ -354,4 +358,5 @@
             });
         });
     </script>
+
 </x-layout>

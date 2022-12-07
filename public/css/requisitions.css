@@ -1,102 +1,102 @@
 main {
-    margin-top: 1.4rem;
+    margin-top: 1.4rem !important;
 }
 
 .date {
-    margin-top: 1rem;
+    margin-top: 1rem !important;
 }
 
 .items-table {
-    margin-top: 2rem;
-    margin-bottom: 3rem;
-    min-height: 0vh;
-    max-height: 77%;
+    margin-top: 2rem !important;
+    margin-bottom: 3rem !important;
+    min-height: 0vh !important;
+    max-height: 77% !important;
 }
 
 .items-table .table {
-    margin: 0;
-    max-height: 77%;
-    overflow-y: auto;
-    margin-top: 0;
-    border-radius: var(--card-border-radius);
-    box-shadow: var(--box-shadow);
-    background: var(--color-white);
+    margin: 0 !important;
+    max-height: 77% !important;
+    overflow-y: auto !important;
+    margin-top: 0 !important;
+    border-radius: var(--card-border-radius) !important;
+    box-shadow: var(--box-shadow) !important;
+    background: var(--color-white) !important;
 }
 
 .items-table table {
-    margin-top: 0;
-    width: 100%;
-    padding: var(--card-padding);
-    text-align: center;
-    transition: all 300ms ease;
+    margin-top: 0 !important;
+    width: 100% !important;
+    padding: var(--card-padding) !important;
+    text-align: center !important;
+    transition: all 300ms ease !important;
 }
 
 .items-table .table:hover {
-    box-shadow: none;
+    box-shadow: none !important;
 }
 
 .items-table table tr td button {
-    background: transparent;
-    cursor: pointer;
-    transition: all 300ms ease;
+    background: transparent !important;
+    cursor: pointer !important;
+    transition: all 300ms ease !important;
 }
 
 .items-table table tr td button:hover {
-    transform: scale(110%);
-    transition: all 300ms ease;
+    transform: scale(110%) !important;
+    transition: all 300ms ease !important;
 }
 
 table tbody td {
-    width: inherit;
-    max-width: 120px;
-    height: 2.8rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border-bottom: 1px solid var(--color-light);
-    color: var(--color-dark-variant);
+    width: inherit !important;
+    max-width: 120px !important;
+    height: 2.8rem !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    border-bottom: 1px solid var(--color-light) !important;
+    color: var(--color-dark-variant) !important;
 }
 
 table tbody td span.warning,
 table tbody td span.success,
 table tbody td span.danger,
 table tbody td span.partial {
-    padding: .4rem 1rem .4rem 1rem;
-    border-radius: 2.5em;
-    color: var(--color-white);
-    font-weight: 500;
+    padding: .4rem 1rem .4rem 1rem !important;
+    border-radius: 2.5em !important;
+    color: var(--color-white) !important;
+    font-weight: 500 !important;
 }
 
 
 table tbody span {
-    transition: all 300ms ease;
+    transition: all 300ms ease !important;
 }
 
 table tbody span:hover {
-    transition: all 300ms ease;
-    transform: scale(130%);
+    transition: all 300ms ease !important;
+    transform: scale(130%) !important;
 }
 
 table thead th.th-description {
-    width: 35%;
+    width: 35% !important;
 }
 
 .copy {
-    font-size: 10px;
-    margin-left: 1rem;
-    font-weight: 600;
+    font-size: 10px !important;
+    margin-left: 1rem !important;
+    font-weight: 600 !important;
 }
 
 @media screen and (max-width: 1200px) {
     main {
-        width: 94%;
+        width: 94% !important;
     }
 }
 
 @media screen and (max-width: 768px) {
 
     main {
-        margin-top: 8rem;
-        padding: 0 1rem;
+        margin-top: 4rem !important;
+        padding: 0 1rem !important;
     }
 }

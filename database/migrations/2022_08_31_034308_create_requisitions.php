@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('approval_count');
             $table->longText('message')->nullable();
             $table->foreignId('supplier')->nullable()->constrained('suppliers');
-            $table->boolean('released');
+            $table->integer('stage')->default(0);
             $table->timestamps();
         });
     }

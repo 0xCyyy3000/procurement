@@ -4,21 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Items;
-use App\Models\PurchasedOrderItems;
 use App\Models\Units;
+use App\Models\Suppliers;
 use App\Models\SavedItems;
+use App\Events\Requisition;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
+use App\Models\SupplierItems;
 use App\Models\PurchasedOrders;
 use App\Models\RequisitionItems;
-use App\Models\SupplierItems;
-use App\Models\Suppliers;
+use App\Models\PurchasedOrderItems;
+use App\Models\RequisitionNotification;
+use Illuminate\Support\Facades\Auth;
 
 class RequisitionController extends Controller
 {
     public function apiIndex()
     {
-        if (strtoupper(auth()->user()->department) == 'ADMIN') {
+        if (Auth::user()->department <= 2) {
             $requisitions = Requisitions::latest()->get();
             return response()->json($requisitions);
         } else return response()->json('empty');
@@ -71,7 +74,6 @@ class RequisitionController extends Controller
 
         $formFields['signatories'] = json_encode($signatories);
         $formFields['supplier'] = null;
-        $formFields['released'] = false;
 
         $created = Requisitions::create($formFields);
 
@@ -187,6 +189,15 @@ class RequisitionController extends Controller
                 'qty' => $item->qty
             ]);
         }
+
+        $user = User::find(auth()->user()->id);
+        event(new Requisition($user->name, 'Submitted a new requisition'));
+
+        RequisitionNotification::create([
+            'requisition_id' => $req_id,
+            'user_id' => auth()->user()->id,
+            'context' => 'Submitted a new requisition'
+        ]);
 
         return $this->disposeSavedItems($user_id);
     }

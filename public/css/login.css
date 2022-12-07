@@ -1,149 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300 !important;400 !important;500 !important;700&display=swap');
 
 * {
-    padding: 0;
-    margin: 0;
-    font-family: 'Heebo', sans-serif;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: 'Heebo', sans-serif !important;
 }
 
 html,
 body {
-    display: grid;
-    height: 100%;
-    width: 100%;
+    display: grid !important;
+    height: 100% !important;
+    width: 100% !important;
 }
 
 .header {
-    background-color: #fff;
-    padding: 22px;
-    text-align: left;
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-    opacity: 0.9;
+    background-color: #fff !important;
+    padding: 22px !important;
+    text-align: left !important;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) !important;
+    opacity: 0.9 !important;
 
-    font-weight: 700;
-    font-size: 30px;
-    line-height: 44px;
+    font-weight: 700 !important;
+    font-size: 30px !important;
+    line-height: 44px !important;
 }
 
 .main_container {
-    background: #F2F2F2;
-    height: 110%;
-    width: 100%;
-    position: relative;
+    background: #F2F2F2 !important;
+    height: 110% !important;
+    width: 100% !important;
+    position: relative !important;
 }
 
 .container {
-    float: left;
+    float: left !important;
 }
 
 .container .system_title {
-    font-style: normal;
-    font-weight: 800;
-    font-size: 72px;
-    line-height: 107.37%;
-    position: absolute;
-    width: 789px;
-    height: 170px;
-    left: 58px;
-    top: 220px;
+    font-style: normal !important;
+    font-weight: 800 !important;
+    font-size: 72px !important;
+    line-height: 107.37% !important;
+    position: absolute !important;
+    width: 789px !important;
+    height: 170px !important;
+    left: 58px !important;
+    top: 220px !important;
 }
 
 .container .system_description {
-    position: absolute;
-    width: 662px;
-    height: 55px;
-    left: 58px;
-    top: 408px;
+    position: absolute !important;
+    width: 662px !important;
+    height: 55px !important;
+    left: 58px !important;
+    top: 408px !important;
 
-    font-style: normal;
-    font-weight: 300;
-    font-size: 42px;
-    line-height: 116.37%;
+    font-style: normal !important;
+    font-weight: 300 !important;
+    font-size: 42px !important;
+    line-height: 116.37% !important;
 }
 
 .container form {
-    padding: 10px 30px 50px 30px;
+    padding: 10px 30px 50px 30px !important;
 }
 
 .container form .field {
-    top: 450px;
-    display: block;
-    height: 48px;
-    width: 120%;
-    padding: 15px;
-    position: relative;
+    top: 450px !important;
+    display: block !important;
+    height: 48px !important;
+    width: 120% !important;
+    padding: 15px !important;
+    position: relative !important;
 }
 
 .container form .field input {
-    height: 100%;
-    width: 100%;
-    outline: none;
-    font-size: 17px;
-    padding-left: 20px;
-    border: 1px solid lightgrey;
-    border-radius: 25px;
-    transition: all 0.3s ease;
+    height: 100% !important;
+    width: 100% !important;
+    outline: none !important;
+    font-size: 17px !important;
+    padding-left: 20px !important;
+    border: 1px solid lightgrey !important;
+    border-radius: 25px !important;
+    transition: all 0.3s ease !important;
 }
 
 .container form .field input:focus,
 form .field input:valid {
-    border-color: #0d52bd;
+    border-color: #0d52bd !important;
 }
 
 .container form .field label {
-    position: absolute;
-    top: 50%;
-    left: 35px;
-    color: #999999;
-    font-weight: 400;
-    font-size: 17px;
-    pointer-events: none;
-    transform: translateY(-50%);
-    transition: all 0.3s ease;
+    position: absolute !important;
+    top: 50% !important;
+    left: 35px !important;
+    color: #999999 !important;
+    font-weight: 400 !important;
+    font-size: 17px !important;
+    pointer-events: none !important;
+    transform: translateY(-50%) !important;
+    transition: all 0.3s ease !important;
 }
 
 form .field input:focus~label,
 form .field input:valid~label {
-    top: 0%;
-    font-size: 16px;
-    color: #0d52bd;
-    background: #F2F2F2;
-    transform: translateY(-50%);
+    top: 0% !important;
+    font-size: 16px !important;
+    color: #0d52bd !important;
+    background: #F2F2F2 !important;
+    transform: translateY(-50%) !important;
 }
 
 form .field input[type="submit"] {
-    width: 35%;
-    height: 80%;
-    color: #fff;
-    border: none;
-    padding-left: 0;
-    margin-top: -10px;
-    font-size: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    background: #000000;
-    border-radius: 15px;
-    transition: all 0.3s ease;
+    width: 35% !important;
+    height: 80% !important;
+    color: #fff !important;
+    border: none !important;
+    padding-left: 0 !important;
+    margin-top: -10px !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    background: #000000 !important;
+    border-radius: 15px !important;
+    transition: all 0.3s ease !important;
 }
 
 form .field input[type="submit"]:active {
-    transform: scale(0.95);
+    transform: scale(0.95) !important;
 }
 
 form .contact_admin {
-    position: relative;
-    color: #0d52bd;
-    margin-top: 470px;
-    text-align: center;
+    position: relative !important;
+    color: #0d52bd !important;
+    margin-top: 470px !important;
+    text-align: center !important;
 }
 
 .container__half {
-    flex: 1;
+    flex: 1 !important;
 }
 
 .container img {
-    position: absolute;
-    width: 65%;
-    left: 597px;
-    top: 49px;
+    position: absolute !important;
+    width: 65% !important;
+    left: 597px !important;
+    top: 49px !important;
 }

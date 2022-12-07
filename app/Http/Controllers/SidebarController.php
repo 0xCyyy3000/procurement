@@ -9,15 +9,29 @@ use App\Models\Suppliers;
 use App\Models\SavedItems;
 use App\Models\Requisitions;
 use App\Models\PurchasedOrders;
+use Illuminate\Support\Facades\Auth;
 
 class SidebarController extends Controller
 {
+
+    public function getDepartment()
+    {
+        $user = User::join('departments', 'departments.id', '=', 'users.department')
+            ->where('users.id', Auth::id())
+            ->get(['departments.department', 'users.name']);
+
+        return $user;
+    }
+
     public function dashboard()
     {
+        $user = $this->getDepartment();
+
         return view(
             'procurement.dashboard',
             [
                 'section' => [
+                    'user' => $user[0],
                     'page' => 'dashboard',
                     'title' => 'Dashboard',
                     'middle' => 'partials._updates',
@@ -27,8 +41,27 @@ class SidebarController extends Controller
         );
     }
 
+    public function notifications()
+    {
+        $user = $this->getDepartment();
+        return view(
+            'procurement.notifications',
+            [
+                'section' => [
+                    'user' => $user[0],
+                    'page' => 'notifications',
+                    'title' => 'Notifications',
+                    'middle' => null,
+                    'bottom' => null
+                ]
+            ]
+        );
+    }
+
     public function createReq()
     {
+        $user = $this->getDepartment();
+
         $ids = SavedItems::where('user_id', auth()->user()->id)->get('unit_id');
         $units = array();
 
@@ -43,6 +76,7 @@ class SidebarController extends Controller
             'procurement.create_req',
             [
                 'section' => [
+                    'user' => $user[0],
                     'page' => 'create_req',
                     'title' => 'Create Requisition',
                     'middle' => 'partials._priority',
@@ -57,7 +91,7 @@ class SidebarController extends Controller
 
     public function requisitions()
     {
-        if (strtoupper(auth()->user()->department) == 'ADMIN') {
+        if (strtoupper(auth()->user()->department) <= 2) {
             $requisitions = Requisitions::latest()->get();
             $update_status = 'partials._update-status';
             $suppliers =  Suppliers::get();
@@ -67,6 +101,8 @@ class SidebarController extends Controller
             $suppliers = null;
         }
 
+        $user = $this->getDepartment();
+
         return view(
             'procurement.requisitions',
             [
@@ -75,6 +111,7 @@ class SidebarController extends Controller
                 'suppliers' => $suppliers,
                 'section' =>
                 [
+                    'user' => $user[0],
                     'page' => 'requisitions',
                     'title' => 'Requisitions',
                     'middle' => $update_status,
@@ -101,12 +138,15 @@ class SidebarController extends Controller
             $purchasedOrder['supplier_name'] = Suppliers::find($purchasedOrder->supplier);
         }
 
+        $user = $this->getDepartment();
+
         return view(
             'procurement.purchased-orders',
             [
                 'purchasedOrders' => $purchasedOrders,
                 'section' =>
                 [
+                    'user' => $user[0],
                     'page' => 'purchased_orders',
                     'title' => 'Purchased Orders',
                     'middle' => $middle,

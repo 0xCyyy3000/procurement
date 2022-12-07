@@ -7,10 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf_token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
     <script src="{{ asset('js/jquery-3.6.1.min.js') }}"></script>
+    <script src="{{ asset('js/menuBtn.js') }}" defer></script>
+    <script src="{{ asset('js/createReqScript.js') }}" defer></script>
     <title>{{ $section['title'] }}</title>
 </head>
 
@@ -22,7 +25,7 @@
                     <div class="logo">
                         <img src="{{ asset('images/logo.svg') }}" alt="">
                         <span class="">
-                            <h2>Procurement</h2>
+                            <h2 class="fw-bolder">Procurement</h2>
                             <p>System</p>
                         </span>
                     </div>
@@ -36,6 +39,12 @@
                             <span class="material-icons-sharp">home</span>
                             <h3>Dashboard</h3>
                         </a>
+
+                        <a href="/notifications" @if ($section['page'] == 'notifications') class="active" @endif>
+                            <span class="material-icons-sharp">work_history</span>
+                            <h3>Procurement Logs</h3>
+                        </a>
+
                         <a href="/create_req" @if ($section['page'] == 'create_req') class="active" @endif>
                             <span class="material-icons-sharp">request_quote</span>
                             <h3>Create Requisition</h3>
@@ -44,14 +53,14 @@
                             <span class="material-icons-sharp">folder</span>
                             <h3>Requisitions</h3>
                         </a>
-                        @if (auth()->user()->department == 'Admin')
+                        @if (auth()->user()->department <= 2)
                             <a href="/purchased_orders" @if ($section['page'] == 'purchased_orders') class="active" @endif>
                                 <span class="material-icons-sharp">receipt_long</span>
                                 <h3>Purchased Orders</h3>
                             </a>
                         @endif
 
-                        @if (auth()->user()->department == 'Admin' || auth()->user()->department == 'Property Custodian')
+                        @if (auth()->user()->department <= 3)
                             <a href="/" @if ($section['page'] == 'distributions') class="active" @endif>
                                 <span class="material-icons-sharp">view_list</span>
                                 <h3>Distributions</h3>
@@ -89,11 +98,11 @@
         </main>
         <div class="right">
             <div class="top">
-                @include('partials._userbar')
+                @include('partials._userbar', ['user' => $section['user']])
             </div>
             <div class="middle">
                 @if ($section['middle'] != null)
-                    @if ($section['title'] == 'Requisition' and $section['userDepartment'] == 'Admin')
+                    @if ($section['title'] == 'Requisition' and auth()->user()->department <= 2)
                         @include($section['middle'], [
                             'suppliers' => $suppliers,
                             'purchasedOrders' => $purchasedOrders,
@@ -108,11 +117,11 @@
                     @include($section['bottom'])
                 @endif
             </div>
+            @include('partials._pusher')
         </div>
     </div>
     <x-flash-message />
-    <script src="{{ asset('js/menuBtn.js') }}"></script>
-    <script src="{{ asset('js/createReqScript.js') }}"></script>
+    @vite('resources/js/app.js')
 </body>
 
 </html>

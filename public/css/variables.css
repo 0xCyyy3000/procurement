@@ -1,26 +1,26 @@
 :root {
-    --color-primary: #7380ec;
-    --color-danger: #ff7782;
-    --color-success: #41f1b6;
-    --color-partial: #ccd725;
-    --color-warning: #ffbb55;
-    --color-white: #fff;
-    --color-info-dark: #7d8da1;
-    --color-info-light: #dce1eb;
-    --color-dark: #363949;
-    --color-light: rgba(132, 139, 200, 0.18);
-    --color-primary-variant: #111e88;
-    --color-dark-variant: #677483;
-    --color-background: #f6f6f9;
+    --color-primary: #7380ec !important;
+    --color-danger: #ff7782 !important;
+    --color-success: #41f1b6 !important;
+    --color-partial: #ccd725 !important;
+    --color-warning: #ffbb55 !important;
+    --color-white: #fff !important;
+    --color-info-dark: #7d8da1 !important;
+    --color-info-light: #dce1eb !important;
+    --color-dark: #363949 !important;
+    --color-light: rgba(132, 139, 200, 0.18) !important;
+    --color-primary-variant: #111e88 !important;
+    --color-dark-variant: #677483 !important;
+    --color-background: #f6f6f9 !important;
 
-    --card-border-radius: 2rem;
-    --border-radius-1: 0.4rem;
-    --border-radius-2: 0.8rem;
-    --border-radius-3: 1.2rem;
+    --card-border-radius: 2rem !important;
+    --border-radius-1: 0.4rem !important;
+    --border-radius-2: 0.8rem !important;
+    --border-radius-3: 1.2rem !important;
 
-    --card-padding: 1.8rem;
-    --padding-1: 1.2rem;
-    --padding-2: .5em 1rem;
+    --card-padding: 1.8rem !important;
+    --padding-1: 1.2rem !important;
+    --padding-2: .5em 1rem !important;
 
-    --box-shadow: 0 2rem 3rem var(--color-light);
+    --box-shadow: 0 2rem 3rem var(--color-light) !important;
 }
