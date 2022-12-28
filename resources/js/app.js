@@ -18,9 +18,11 @@ import { createApp } from 'vue';
 const app = createApp({});
 
 import PusherComponent from './components/PusherComponent.vue';
+import ReceiveOrderModalComponent from './components/ReceiveOrderModalComponent.vue';
 import NotificationComponent from './components/NotificationComponent.vue';
 
 // app.component('pusher-component', PusherComponent);
+// app.component('receive-modal-component', ReceiveOrderModalComponent);
 app.component('notification-component', NotificationComponent);
 /**
  * The following block of code may be used to automatically register your

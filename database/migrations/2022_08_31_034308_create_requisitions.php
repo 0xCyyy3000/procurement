@@ -20,12 +20,11 @@ return new class extends Migration
             $table->string('priority');
             $table->longText('description');
             $table->string('status');
-            $table->string('evaluator')->nullable();
-            $table->json('signatories')->nullable();
-            $table->integer('approval_count');
+            $table->foreignId('evaluator')->nullable()->constrained('users');
             $table->longText('message')->nullable();
             $table->foreignId('supplier')->nullable()->constrained('suppliers');
             $table->integer('stage')->default(0);
+            $table->foreignId('delivery_address')->nullable()->constrained('delivery_addresses');
             $table->timestamps();
         });
     }

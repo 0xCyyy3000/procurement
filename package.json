@@ -19,6 +19,7 @@
     "dependencies": {
         "@vitejs/plugin-vue": "^3.2.0",
         "jquery": "^3.6.1",
+        "jquery-confirm": "^3.3.4",
         "laravel-echo": "^1.14.2",
         "pusher-js": "^7.5.0",
         "vue": "^3.2.45",

@@ -1,0 +1,31 @@
+.jconfirm.jconfirm-my-theme .jconfirm-bg {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box {
+    padding: 1rem !important;
+    border-radius: var(--border-radius-2) !important;
+}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box.loading {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box.loading:before {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box.loading:after {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-closeIcon {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-title-c {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-content-pane {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-content {
+    padding: 2rem !important;
+    padding-left: 0 !important;
+}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-buttons {}
+
+.jconfirm.jconfirm-my-theme .jconfirm-box .jconfirm-buttons button {
+    padding: .5rem !important;
+}

@@ -74,11 +74,9 @@ class DatabaseSeeder extends Seeder
 
         Suppliers::create([
             'company_name' => $company,
-            'contact_person' => [
-                'name' => 'John Doe',
-                'email' => $company . '@mail.com',
-                'phone' => '09123456789',
-            ],
+            'contact_person' => 'John Doe',
+            'email' => $company . '@mail.com',
+            'phone' => '09123456789',
             'address' => fake()->address()
         ]);
 

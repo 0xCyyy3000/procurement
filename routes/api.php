@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InventoryItemsController;
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\PurchasedOrdersController;
 use Illuminate\Http\Request;
 use App\Models\InventoryItems;
 use App\Models\PurchasedOrders;
@@ -26,8 +27,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'saved-items'], function () {
-    // Route::get('/select/{row_id}', [ItemsController::class, 'selectSavedItems']);
-    // Route::post('/store')
-
+Route::group(['prefix' => 'test'], function () {
+    Route::get('/orders/index', [PurchasedOrdersController::class, 'apiIndex']);
 });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\Requisition;
+use App\Http\Controllers\InventoriesController;
 use App\Models\InventoryItems;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,8 @@ use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\InventoryItemsController;
 use App\Http\Controllers\PurchasedOrdersController;
 use App\Http\Controllers\RequisitionNotificationController;
+use App\Http\Controllers\SupplierController;
+use App\Models\Suppliers;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,14 +27,10 @@ use App\Http\Controllers\RequisitionNotificationController;
 |
 */
 
-// Route::get('/login', [UserController::class, 'login'])->middleware('guest')->name('login');
-// Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
-// Route::post('/users/authenticate', [UserController::class, 'authenticate']);
-
 Auth::routes();
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
+Route::get('/api/orders/{po_id}', [PurchasedOrdersController::class, 'selectItems']);
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
 Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');
 
@@ -41,18 +40,31 @@ Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
     Route::get('/create_req', [SidebarController::class, 'createReq']);
     Route::get('/requisitions', [SidebarController::class, 'requisitions']);
     Route::get('/purchased_orders', [SidebarController::class, 'purchasedOrders']);
+    Route::get('/suppliers', [SidebarController::class, 'suppliers']);
 });
 
-Route::group(['middleware' => 'auth', 'prefix' => '/requisitions'], function () {
+Route::group(['prefix' => '/requisitions'], function () {
     Route::post('/create', [RequisitionController::class, 'store']);
     Route::post('/{requisition}', [RequisitionController::class, 'select']);
     Route::post('/copy/{requisition}', [RequisitionController::class, 'copy']);
-    Route::post('/update/{requisition}', [RequisitionController::class, 'update']);
+    Route::put('/update', [RequisitionController::class, 'update'])->name('requisition.update');
 });
 
-Route::group(['middleware' => 'auth', 'prefix' => '/orders'], function () {
+Route::group(['prefix' => '/orders'], function () {
     Route::post('/select/{po_id}', [PurchasedOrdersController::class, 'select']);
     Route::post('/update/{po_id}', [PurchasedOrdersController::class, 'update']);
+});
+
+Route::prefix('/suppliers')->group(function () {
+    Route::post('/create', [SupplierController::class, 'create'])->middleware('auth')->name('supplier.create');
+    Route::post('/destroy/{supplier_id}', [SupplierController::class, 'destroy'])->middleware('auth');
+    Route::get('/select/{supplier_id}', [SupplierController::class, 'select'])->middleware('auth');
+    Route::post('/update/{supplier_id}', [SupplierController::class, 'update'])->middleware('auth');
+    Route::get('/api/index', [SupplierController::class, 'apiIndex'])->middleware('auth');
+});
+
+Route::prefix('/inventory')->group(function () {
+    Route::get('/receive', [InventoriesController::class, 'receive']);
 });
 
 Route::get('/supplier', function () {

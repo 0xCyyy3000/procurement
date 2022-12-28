@@ -21,8 +21,16 @@ class RequisitionController extends Controller
 {
     public function apiIndex()
     {
-        if (Auth::user()->department <= 2) {
-            $requisitions = Requisitions::latest()->get();
+        if (Auth::user()->department <= 3) {
+            $requisitions = Requisitions::latest()->get('requisitions.*');
+
+            foreach ($requisitions as $requisition) {
+                if ($requisition->evaluator != null) {
+                    $requisition['evaluator'] = User::join('departments', 'departments.id', '=', 'users.department')
+                        ->where('users.id', $requisition->evaluator)->first(['departments.department', 'users.name']);
+                }
+            }
+
             return response()->json($requisitions);
         } else return response()->json('empty');
     }
@@ -35,22 +43,39 @@ class RequisitionController extends Controller
 
     public function select(Request $request)
     {
-        $requisition = Requisitions::where('req_id', $request->req_id)->get();
-        $response['requisition'] = $requisition;
-        $response['department'] = User::where('id', $requisition[0]->user_id)->get('department');
-
+        $requisition = Requisitions::where('req_id', $request->req_id)->first();
+        // $response['requisition'] = $requisition;
+        // $response['department'] = User::where('id', $requisition[0]->user_id)->get('department');
         if ($requisition) {
+            $response['items'] = RequisitionItems::join('items', 'items.item_id', '=', 'requisition_items.item_id')
+                ->join('units', 'units.unit_id', '=', 'requisition_items.unit_id')
+                ->where('req_id', $request->req_id)
+                ->get([
+                    'items.item',
+                    'units.unit_name',
+                    'requisition_items.qty'
+                ]);
+
+            if ($requisition->supplier) {
+                $response['requisition'] = Requisitions::join('suppliers', 'suppliers.id', '=', 'requisitions.supplier')
+                    ->join('users', 'users.id', '=', 'requisitions.user_id')
+                    ->join('departments', 'departments.id', '=', 'users.department')
+                    ->where('requisitions.req_id', $requisition->req_id)
+                    ->get([
+                        'suppliers.company_name',
+                        'requisitions.*',
+                        'departments.department'
+                    ]);
+            } else {
+                $response['requisition'] = Requisitions::join('users', 'users.id', '=', 'requisitions.user_id')
+                    ->join('departments', 'departments.id', '=', 'users.department')
+                    ->where('requisitions.req_id', $requisition->req_id)
+                    ->get([
+                        'requisitions.*',
+                        'departments.department'
+                    ]);
+            }
             $response['status'] = 200;
-
-            $requisitionItems = RequisitionItems::where('req_id', $request->req_id)->get();
-            $response['requisitionItems'] = $requisitionItems;
-
-            $availableItems = Items::get();
-            $response['items'] = $availableItems;
-
-            $units = Units::get();
-            $response['units'] = $units;
-            $response['supplier'] = Suppliers::where('id', $requisition[0]->supplier)->get('company_name');
         } else $response['status'] = 404;
 
         return response()->json($response);
@@ -64,16 +89,7 @@ class RequisitionController extends Controller
             'user_id' => 'required',
             'maker' => 'required',
             'status' => 'required',
-            'approval_count' => ''
         ]);
-
-        $signatories = array(
-            array('name' => 'School Director', 'approval' => 'Not yet'),
-            array('name' => 'Branch Manager', 'approval' => 'Not yet')
-        );
-
-        $formFields['signatories'] = json_encode($signatories);
-        $formFields['supplier'] = null;
 
         $created = Requisitions::create($formFields);
 
@@ -91,65 +107,60 @@ class RequisitionController extends Controller
 
     public function update(Request $request)
     {
-        $formFields = $request->validate([
-            'req_id' => 'required',
-            'signatories' => 'required'
+        $request->validate([
+            'requisition' => 'required',
+            'address' => 'required',
+            'supplier' => 'required',
+            'decision' => 'required'
         ]);
 
-        $requisition = Requisitions::where('req_id', $request->req_id)->get();
-        $approvalCount = $requisition[0]->approval_count;
-        $signatories = $requisition[0]->signatories;
+        $requisition = Requisitions::where('req_id', $request->requisition)->first();
+        $newStatus = '';
 
-        foreach ($signatories as $signatory) {
-            if (strtoupper($request->signatories) == 'BOTH' || $signatory->name == $request->signatories) {
-                $request->supplier == 'default' ? $supplier = $requisition[0]->supplier : $supplier = $request->supplier;
-
-                if ($approvalCount == 0 and strtoupper($request->approval) == 'APPROVED')
-                    $reqStatus = 'Partially Approved';
-                else if ($approvalCount >= 1 and strtoupper($request->approval) == 'APPROVED') {
-                    $reqStatus = 'Approved';
-
-                    if ($request->supplier || $requisition[0]->supplier) {
-                        $supplierItems = SupplierItems::where('supplier_id', $request->supplier)
-                            ->orWhere('supplier_id', $requisition[0]->supplier)
-                            ->get(['item_id', 'unit_id', 'price']);
-
-
-
-                        $formFields['released'] = true;
-                        PurchasedOrders::create([
-                            'status' => 'Pending',
-                            'supplier' => $supplier, // <- this should be dynamic, depending on the chocie of the admin
-                            'delivery_address' => 'ACLC Tacloban Real Street Tacloban City', // <- Must be dynamic
-                            'req_id' => $request->req_id,
-                            'payment' => 'Due',
-                            'order_total' => 0
-                        ]);
-
-                        $this->createOrderItems($request->req_id, PurchasedOrders::select('id')->latest('id')->first()->id, $supplierItems);
-                    }
-                } else {
-                    $reqStatus = 'Rejected';
-                    $signatory->approval = 'Rejected';
+        if ($requisition) {
+            if (strtoupper($request->decision) == 'REJECTED') {
+                $newStatus = 'Rejected';
+            } else {
+                switch ($requisition->stage + 1) {
+                    case 1:
+                        $newStatus = 'For approval';
+                        $formFields['supplier'] = $request->supplier;
+                        $formFields['delivery_address'] = $request->address;
+                        break;
+                    case 2:
+                        $newStatus = 'Releasing of voucher';
+                        break;
+                    case 3:
+                        $newStatus = 'Approved';
+                        $this->createOrder($requisition, $request->address);
+                        break;
                 }
-
-                $signatory->approval = $request->approval;
-                $approvalCount++;
             }
+
+            $formFields['stage'] = $requisition->stage + 1;
+            $formFields['status'] = $newStatus;
+            $formFields['evaluator'] = Auth::user()->id;
+
+            $update = Requisitions::where('req_id', $request->requisition)
+                ->update($formFields);
+
+            event(new Requisition(
+                Auth::user()->name,
+                'has ' . $request->decision . ' Requisition No.' . $request->requisition
+            ));
+
+            RequisitionNotification::create([
+                'requisition_id' => $request->requisition,
+                'user_id' => auth()->user()->id,
+                'context' => 'has ' . $request->decision . ' Requisition No.' . $request->requisition
+            ]);
         }
 
-        $formFields['evaluator'] = auth()->user()->name;
-        $formFields['approval_count'] = $approvalCount;
-        $formFields['status'] = $reqStatus;
-        $formFields['signatories'] = $signatories;
-        $formFields['supplier'] = $supplier;
-
-        $hasAffectedRows = Requisitions::where('req_id', $request->req_id)->update($formFields);
-
-        if ($hasAffectedRows) $response['status'] = 200;
-        else $response['status'] = 500;
-
-        return response()->json($response);
+        if ($update) {
+            return back()->with('sucess', 'Requisition has been updated!');
+        } else {
+            return back()->with('error', 'Updating failed, please try again later.');
+        }
     }
 
     public function copy(Request $request)
@@ -191,12 +202,12 @@ class RequisitionController extends Controller
         }
 
         $user = User::find(auth()->user()->id);
-        event(new Requisition($user->name, 'Submitted a new requisition'));
+        event(new Requisition($user->name, 'submitted a new requisition'));
 
         RequisitionNotification::create([
             'requisition_id' => $req_id,
             'user_id' => auth()->user()->id,
-            'context' => 'Submitted a new requisition'
+            'context' => 'submitted a new requisition'
         ]);
 
         return $this->disposeSavedItems($user_id);
@@ -210,28 +221,29 @@ class RequisitionController extends Controller
         else return 433;
     }
 
-    public function createOrderItems($requisition_id, $po_id, $supplierItems)
+    public function createOrder($requisition, $address)
     {
-        $items = RequisitionItems::where('req_id', $requisition_id)->get(['item_id', 'unit_id', 'qty']);
-        $orderTotal = 0;
-        $itemTotal = 0;
+        $items = RequisitionItems::join('supplier_items', function ($join) {
+            $join->on('requisition_items.item_id', '=', 'supplier_items.item_id')->on('requisition_items.unit_id', '=', 'supplier_items.unit_id');
+        })->where('req_id', $requisition->req_id)->get(['supplier_items.item_id', 'supplier_items.unit_id', 'supplier_items.price', 'requisition_items.qty']);
+
+        $order = PurchasedOrders::create([
+            'supplier' => $requisition->supplier,
+            'delivery_address' => $address,
+            'req_id' => $requisition->req_id,
+            'payment' => 'Due'
+        ]);
 
         foreach ($items as $item) {
             PurchasedOrderItems::create([
-                'po_id' => $po_id,
+                'po_id' => $order->id,
                 'item_id' => $item->item_id,
                 'unit_id' => $item->unit_id,
-                'qty' => $item->qty
+                'qty' => $item->qty,
+                'amount' => $item->qty * $item->price
             ]);
-
-            foreach ($supplierItems as $supplierItem) {
-                if ($supplierItem->item_id == $item->item_id and $supplierItem->unit_id == $item->unit_id) {
-                    $itemTotal = $item->qty * $supplierItem->price;
-                    $orderTotal += $itemTotal;
-                }
-            }
         }
 
-        PurchasedOrders::where('id', $po_id)->update(['order_total' => $orderTotal]);
+        PurchasedOrders::where('id', $order->id)->update(['order_amount' => PurchasedOrderItems::sum('amount')]);
     }
 }

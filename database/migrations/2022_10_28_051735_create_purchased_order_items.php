@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('item_id')->constrained('items', 'item_id');
             $table->foreignId('unit_id')->constrained('units', 'unit_id');
             $table->double('qty');
+            $table->double('amount');
             $table->timestamps();
         });
     }

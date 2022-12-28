@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('purchased_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('status');
+            $table->integer('status')->default(0);
             $table->longText('notes')->nullable();
             $table->foreignId('supplier')->constrained('suppliers');
-            $table->longText('delivery_address');
+            $table->foreignId('delivery_address')->constrained('delivery_addresses');
             $table->foreignId('req_id')->constrained('requisitions', 'req_id');
             $table->string('payment');
-            $table->double('order_total');
+            $table->double('order_amount')->default(0);
             $table->timestamps();
         });
     }

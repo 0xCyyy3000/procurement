@@ -52,7 +52,7 @@ table tbody td {
     height: 2.8rem !important;
     overflow: hidden !important;
     white-space: nowrap !important;
-    text-overflow: ellipsis !important;
+    text-overflow: ellipsis;
     border-bottom: 1px solid var(--color-light) !important;
     color: var(--color-dark-variant) !important;
 }

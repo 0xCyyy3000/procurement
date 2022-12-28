@@ -1,4 +1,4 @@
-<x-layout :section='$section' :suppliers='$suppliers'>
+<x-layout :section='$section' :suppliers='$suppliers' :requisitions='$requisitions' :delivery_address='$delivery_address'>
     <link rel="stylesheet" href="{{ asset('css/requisitions.css') }}">
 
     <!-- View Modal -->
@@ -36,12 +36,8 @@
                             <p id="supplier" class="" style=""></p>
                         </div>
                         <div class="upper-container">
-                            <h3>School Director's Signatory</h3>
-                            <p id="director-approval"></p>
-                        </div>
-                        <div class="upper-container">
-                            <h3>Branch Manager's Signatory</h3>
-                            <p id="manager-approval"></p>
+                            <h3>Evaluator</h3>
+                            <p id="req_evaluator"></p>
                         </div>
                     </div>
 
@@ -123,15 +119,17 @@
                                 <td>{{ $requisition->description }}</td>
                                 <td>
                                     <span
-                                        @if ($status == 'PENDING') class="warning"
+                                        @if ($status == 'FOR APPROVAL' or $status == 'PENDING') class="warning"
                                         @elseif($status == 'APPROVED') class="success"
-                                        @elseif($status == 'PARTIALLY APPROVED') class="partial"
+                                        @elseif($status == 'RELEASING OF VOUCHER') class="partial"
                                         @else class="danger" @endif>
                                         {{ $requisition->status }}
                                     </span>
                                 </td>
-                                <td> <button class="primary view" type="button" value="{{ $requisition->req_id }}">
-                                        View details</button>
+                                <td>
+                                    <button class="primary view" type="button" value="{{ $requisition->req_id }}">
+                                        View details
+                                    </button>
                                 </td>
                                 <td>
                                     <button class="text-muted copy" value="{{ $requisition->req_id }}">
@@ -194,12 +192,10 @@
                     success: function(response) {
                         if (response.status == 200) {
                             table_body.innerHTML = '';
-
-                            $('.modal').css('display', 'block');
                             $('#req-no').text('Requisition No. ' + response.requisition[0]
                                 .req_id);
                             $('#maker').text(response.requisition[0].maker);
-                            $('#department').text(response.department[0].department +
+                            $('#department').text(response.requisition[0].department +
                                 '  Department');
 
                             $('#date').text(
@@ -213,49 +209,32 @@
                             $('#description').text(response.requisition[0].description);
                             $('#status').text(response.requisition[0].status);
 
-                            $('#director-approval').text(
-                                response.requisition[0].signatories[0]
-                                .approval);
+                            response.requisition[0].stage == 0 ?
+                                $('#supplier').text('Not assigned') :
+                                $('#supplier').text(response.requisition[0].company_name);
 
-                            $('#manager-approval').text(
-                                response.requisition[0].signatories[1]
-                                .approval);
-
-                            response.supplier.length > 0 ? $('#supplier').text(response
-                                .supplier[0].company_name) : $('#supplier').text(
-                                'Not assigned');
+                            response.requisition[0].evaluator == null ?
+                                $('#req_evaluator').text('None yet') :
+                                $('#req_evaluator').text(response.requisition[0].evaluator);
 
                             if (response.requisition[0].message != null) {
                                 $('#message').text(response.requisition[0].message);
                                 $('.message').css('display', 'block');
                             } else $('.message').css('display', 'none');
 
-
-                            if (response.requisition[0].status.toUpperCase() == "REJECTED")
-                                status.style.color = '#ff7782';
-                            else if (response.requisition[0].status.toUpperCase() ==
-                                "APPROVED")
-                                status.style.color = '#41f1b6';
-                            else if (response.requisition[0].status.toUpperCase() ==
-                                "PARTIALLY APPROVED") status.style.color = '#ccd725';
-                            else status.style.color = '#ffbb55';
-
-                            response.requisitionItems.forEach(element => {
-                                let itemName = response.items.find(item => item
-                                    .item_id == element.item_id).item;
-
-                                let unitName = response.units.find(unit => unit
-                                    .unit_id == element.unit_id).unit_name;
-
+                            response.items.forEach(item => {
                                 let template = `
                                         <tr>
-                                            <td>${itemName}</td>
-                                            <td>${unitName}</td>
-                                            <td>${element.qty}x</td>
+                                            <td>${item.item}</td>
+                                            <td>${item.unit_name}</td>
+                                            <td>${item.qty}x</td>
                                         </tr>`;
 
                                 table_body.innerHTML += template;
                             });
+
+                            $('.modal').css('display', 'block');
+
                         }
                     },
                     error: function(response) {

@@ -40,7 +40,7 @@
     display: flex !important;
     align-items: center !important;
     margin: 0 auto !important;
-    color: var(--color-primary) !important;
+    color: var(--color-warning) !important;
     background: none !important;
     gap: 0.8rem !important;
 }
@@ -65,8 +65,8 @@
 
 .item.receipt {
     background-color: transparent !important;
-    border: 2px dashed var(--color-primary) !important;
-    color: var(--color-primary) !important;
+    border: 2px dashed var(--color-warning) !important;
+    color: var(--color-warning) !important;
     box-shadow: none !important;
 }
 
@@ -74,14 +74,14 @@
     display: flex !important;
     align-items: center !important;
     margin: 0 auto !important;
-    color: var(--color-primary) !important;
+    color: var(--color-warning) !important;
     background: none !important;
     gap: 0.8rem !important;
 }
 
 .item.receipt:hover {
     cursor: pointer !important;
-    background-color: var(--color-primary) !important;
+    background-color: var(--color-warning) !important;
     transition: all 300ms ease !important;
     transform: scale(105%) !important;
 }
@@ -112,6 +112,11 @@
     color: var(--color-white) !important;
     transition: all 300ms ease !important;
     cursor: pointer !important;
+}
+
+.item.update button:disabled {
+    background: var(--color-dark-variant) !important;
+
 }
 
 .item.update button span,

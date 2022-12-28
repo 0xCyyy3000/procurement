@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryAddress;
 use App\Models\User;
 use App\Models\Items;
 use App\Models\Units;
@@ -91,14 +92,16 @@ class SidebarController extends Controller
 
     public function requisitions()
     {
-        if (strtoupper(auth()->user()->department) <= 2) {
+        if (strtoupper(auth()->user()->department) <= 3) {
             $requisitions = Requisitions::latest()->get();
             $update_status = 'partials._update-status';
             $suppliers =  Suppliers::get();
+            $delivery_address = DeliveryAddress::all();
         } else {
             $requisitions = request()->user()->requisitions()->latest()->get();
             $update_status = null;
             $suppliers = null;
+            $delivery_address = null;
         }
 
         $user = $this->getDepartment();
@@ -107,6 +110,7 @@ class SidebarController extends Controller
             'procurement.requisitions',
             [
                 'requisitions' => $requisitions,
+                'delivery_address' => $delivery_address,
                 'userId' => auth()->user()->id,
                 'suppliers' => $suppliers,
                 'section' =>
@@ -116,7 +120,7 @@ class SidebarController extends Controller
                     'title' => 'Requisitions',
                     'middle' => $update_status,
                     'bottom' => null,
-                    'userDepartmant' => auth()->user()->department
+                    'requisitions' => $requisitions
                 ]
             ]
         );
@@ -128,14 +132,16 @@ class SidebarController extends Controller
         $bottom = null;
         $purchasedOrders = null;
 
-        if (strtoupper(auth()->user()->department) == 'ADMIN') {
+        if (auth()->user()->department <= 3) {
             $purchasedOrders = PurchasedOrders::latest()->get();
+            foreach ($purchasedOrders as $order) {
+                $order['supplier'] = PurchasedOrders::join('suppliers', 'suppliers.id', '=', 'purchased_orders.supplier')
+                    ->where('purchased_orders.id', $order->id)
+                    ->first(['suppliers.company_name', 'suppliers.id', 'suppliers.contact_person', 'suppliers.address']);
+            }
+
             $middle = 'partials._update-order';
             $bottom = 'partials._update-order-info';
-        }
-
-        foreach ($purchasedOrders as $purchasedOrder) {
-            $purchasedOrder['supplier_name'] = Suppliers::find($purchasedOrder->supplier);
         }
 
         $user = $this->getDepartment();
@@ -149,6 +155,34 @@ class SidebarController extends Controller
                     'user' => $user[0],
                     'page' => 'purchased_orders',
                     'title' => 'Purchased Orders',
+                    'middle' => $middle,
+                    'bottom' => $bottom
+                ]
+            ]
+        );
+    }
+
+    public function suppliers()
+    {
+        $user = $this->getDepartment();
+        $middle = null;
+        $bottom = null;
+        $suppliers = null;
+
+        if (auth()->user()->department <= 3) {
+            $suppliers = Suppliers::latest()->get();
+            $middle = 'partials._create-supplier';
+            // $bottom = 'partials._update-order-info';
+        }
+        return view(
+            'procurement.suppliers',
+            [
+                'suppliers' => $suppliers,
+                'section' =>
+                [
+                    'user' => $user[0],
+                    'page' => 'suppliers',
+                    'title' => 'Suppliers',
                     'middle' => $middle,
                     'bottom' => $bottom
                 ]

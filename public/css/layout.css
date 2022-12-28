@@ -175,7 +175,6 @@ aside button:hover span {
     grid-template-columns: 14rem auto 23rem !important;
 }
 
-
 .text-muted {
     color: var(--color-info-dark) !important;
 }
@@ -196,8 +195,41 @@ aside button:hover span {
     color: var(--color-warning) !important;
 }
 
+.partial {
+    color: var(--color-partial) !important;
+}
+
 .primary-variant {
     color: var(--color-primary-variant) !important;
+}
+
+.text-info-light {
+    color: var(--color-info-light) !important;
+}
+
+.bg-primary-mine {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-info-dark {
+    background-color: var(--color-info-dark) !important;
+}
+
+.bg-warning-mine {
+    background-color: var(--color-warning) !important;
+}
+
+.bg-success-mine {
+    background-color: var(--color-success) !important;
+}
+
+.order-select {
+    background-color: var(--color-info-light) !important;
+}
+
+.order-select:checked {
+    background-color: var(--color-primary-variant) !important;
+    /* background-image: none !important; */
 }
 
 

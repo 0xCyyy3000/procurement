@@ -106,7 +106,6 @@
 
     <script src="{{ asset('js/dateTime.js') }}" defer></script>
     <script>
-        // itemUnits()
         let savedItems = '<?php echo $savedItems; ?>';
         var rowIndex = null;
         var IS_ADDING = false;
