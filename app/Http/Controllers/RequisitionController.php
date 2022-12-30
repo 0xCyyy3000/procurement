@@ -8,6 +8,7 @@ use App\Models\Units;
 use App\Models\Suppliers;
 use App\Models\SavedItems;
 use App\Events\Requisition;
+use App\Models\Inventories;
 use App\Models\Requisitions;
 use Illuminate\Http\Request;
 use App\Models\SupplierItems;
@@ -44,8 +45,6 @@ class RequisitionController extends Controller
     public function select(Request $request)
     {
         $requisition = Requisitions::where('req_id', $request->req_id)->first();
-        // $response['requisition'] = $requisition;
-        // $response['department'] = User::where('id', $requisition[0]->user_id)->get('department');
         if ($requisition) {
             $response['items'] = RequisitionItems::join('items', 'items.item_id', '=', 'requisition_items.item_id')
                 ->join('units', 'units.unit_id', '=', 'requisition_items.unit_id')
@@ -56,6 +55,9 @@ class RequisitionController extends Controller
                     'requisition_items.qty'
                 ]);
 
+            $response['evaluator'] = Requisitions::join('users', 'users.id', '=', 'requisitions.evaluator')
+                ->join('departments', 'departments.id', '=', 'users.department')
+                ->get(['users.name', 'users.email', 'departments.department']);
             if ($requisition->supplier) {
                 $response['requisition'] = Requisitions::join('suppliers', 'suppliers.id', '=', 'requisitions.supplier')
                     ->join('users', 'users.id', '=', 'requisitions.user_id')
@@ -128,11 +130,13 @@ class RequisitionController extends Controller
                         $formFields['delivery_address'] = $request->address;
                         break;
                     case 2:
-                        $newStatus = 'Releasing of voucher';
+                        $newStatus = 'Partially Approved';
                         break;
                     case 3:
                         $newStatus = 'Approved';
-                        $this->createOrder($requisition, $request->address);
+                        $status = $this->createOrder($requisition, $request->address);
+                        if (!$status)
+                            return back()->with('alert', 'Item not found in your inventory! Please add the items in this order, then try again.');
                         break;
                 }
             }
@@ -157,9 +161,12 @@ class RequisitionController extends Controller
         }
 
         if ($update) {
-            return back()->with('sucess', 'Requisition has been updated!');
+            if ($newStatus == 'Approved') {
+                return back()->with('alert', 'Requisition has been approved! Purchased Order has been created.');    # code...
+            }
+            return back()->with('alert', 'Requisition has been updated!');
         } else {
-            return back()->with('error', 'Updating failed, please try again later.');
+            return back()->with('alert', 'Updating failed, please try again later.');
         }
     }
 
@@ -223,10 +230,7 @@ class RequisitionController extends Controller
 
     public function createOrder($requisition, $address)
     {
-        $items = RequisitionItems::join('supplier_items', function ($join) {
-            $join->on('requisition_items.item_id', '=', 'supplier_items.item_id')->on('requisition_items.unit_id', '=', 'supplier_items.unit_id');
-        })->where('req_id', $requisition->req_id)->get(['supplier_items.item_id', 'supplier_items.unit_id', 'supplier_items.price', 'requisition_items.qty']);
-
+        $transferred = null;
         $order = PurchasedOrders::create([
             'supplier' => $requisition->supplier,
             'delivery_address' => $address,
@@ -234,16 +238,30 @@ class RequisitionController extends Controller
             'payment' => 'Due'
         ]);
 
-        foreach ($items as $item) {
-            PurchasedOrderItems::create([
-                'po_id' => $order->id,
-                'item_id' => $item->item_id,
-                'unit_id' => $item->unit_id,
-                'qty' => $item->qty,
-                'amount' => $item->qty * $item->price
-            ]);
+        $reqItems = RequisitionItems::where('req_id', $requisition->req_id)->get();
+        $inventoryItems = Inventories::all();
+
+        foreach ($reqItems as $item) {
+            foreach ($inventoryItems as $inventory) {
+                if ($item->item_id == $inventory->item_id && $item->unit_id == $inventory->unit_id) {
+                    $transferred = PurchasedOrderItems::create([
+                        'po_id' => $order->id,
+                        'item_id' => $item->item_id,
+                        'unit_id' => $item->unit_id,
+                        'qty' => $item->qty,
+                        'amount' => $item->qty * $inventory->price
+                    ]);
+                }
+            }
         }
 
-        PurchasedOrders::where('id', $order->id)->update(['order_amount' => PurchasedOrderItems::sum('amount')]);
+        if ($transferred) {
+            $orderAmount = PurchasedOrderItems::where('po_id', $order->id)->sum('amount');
+            PurchasedOrders::where('id', $order->id)->update(['order_amount' => $orderAmount]);
+            return true;
+        } else {
+            PurchasedOrders::where('id', $order->id)->delete();
+            return false;
+        }
     }
 }

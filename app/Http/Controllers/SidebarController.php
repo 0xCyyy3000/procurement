@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DeliveryAddress;
 use App\Models\User;
 use App\Models\Items;
 use App\Models\Units;
 use App\Models\Suppliers;
 use App\Models\SavedItems;
+use App\Models\Inventories;
+use App\Models\Distribution;
 use App\Models\Requisitions;
+use App\Models\DeliveryAddress;
 use App\Models\PurchasedOrders;
+use App\Models\DistributionItem;
 use Illuminate\Support\Facades\Auth;
 
 class SidebarController extends Controller
@@ -172,7 +175,6 @@ class SidebarController extends Controller
         if (auth()->user()->department <= 3) {
             $suppliers = Suppliers::latest()->get();
             $middle = 'partials._create-supplier';
-            // $bottom = 'partials._update-order-info';
         }
         return view(
             'procurement.suppliers',
@@ -183,6 +185,77 @@ class SidebarController extends Controller
                     'user' => $user[0],
                     'page' => 'suppliers',
                     'title' => 'Suppliers',
+                    'middle' => $middle,
+                    'bottom' => $bottom
+                ]
+            ]
+        );
+    }
+
+    public function inventory()
+    {
+        $user = $this->getDepartment();
+        $middle = null;
+        $bottom = null;
+        $inventoryItems = null;
+
+        if (auth()->user()->department <= 3) {
+            $inventoryItems = Inventories::join('items', 'items.item_id', '=', 'inventories.item_id')
+                ->join('units', 'units.unit_id', '=', 'inventories.unit_id')->orderBy('inventories.created_at', 'desc')->get(['units.*', 'items.*', 'inventories.*']);
+
+            $middle = 'partials._create-inventory';
+        }
+        return view(
+            'procurement.inventory',
+            [
+                'inventoryItems' => $inventoryItems,
+                'units' => Units::all(),
+                'items' => Items::get(['item_id', 'item']),
+                'section' =>
+                [
+                    'user' => $user[0],
+                    'page' => 'inventory',
+                    'title' => 'Inventory',
+                    'middle' => $middle,
+                    'bottom' => $bottom
+                ]
+            ]
+        );
+    }
+
+    public function distributions()
+    {
+        $user = $this->getDepartment();
+        $middle = null;
+        $bottom = null;
+        $distributions = null;
+
+        if (auth()->user()->department <= 3) {
+            $distributions = Distribution::join('users', 'users.id', '=', 'distributions.recipient')
+                ->join('delivery_addresses', 'delivery_addresses.id', '=', 'distributions.address')
+                ->join('departments', 'departments.id', '=', 'users.department')
+                ->get(['distributions.*', 'users.email', 'users.name', 'departments.department', 'delivery_addresses.address']);
+            // dd($distributions);
+
+            $recipients = PurchasedOrders::join('requisitions', 'requisitions.req_id', '=', 'purchased_orders.req_id')
+                ->join('users', 'users.id', '=', 'requisitions.user_id')->join('departments', 'departments.id', '=', 'users.department')
+                ->where('purchased_orders.status', '>', 0)->get(['users.*', 'departments.department']);
+
+            $addresses = DeliveryAddress::all();
+
+            $middle = 'partials._distribution';
+        }
+        return view(
+            'procurement.distributions',
+            [
+                'distributions' => $distributions,
+                'recipients' => $recipients,
+                'addresses' => $addresses,
+                'section' =>
+                [
+                    'user' => $user[0],
+                    'page' => 'distributions',
+                    'title' => 'Distributions',
                     'middle' => $middle,
                     'bottom' => $bottom
                 ]

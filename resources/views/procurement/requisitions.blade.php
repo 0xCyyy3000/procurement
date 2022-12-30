@@ -11,8 +11,8 @@
             </div>
             <div class="body">
                 <div class="top">
-                    <p>Requisitioned by <span id="maker" class="primary"></span>
-                        from <span id="department" class="primary"></span>
+                    <p>Requisitioned by <span id="maker" class="primary fw-bold"></span>
+                        <span id="department" class="text-muted"></span>
                     </p>
                     <p>on <span id="date"></span></p>
                 </div>
@@ -121,7 +121,7 @@
                                     <span
                                         @if ($status == 'FOR APPROVAL' or $status == 'PENDING') class="warning"
                                         @elseif($status == 'APPROVED') class="success"
-                                        @elseif($status == 'RELEASING OF VOUCHER') class="partial"
+                                        @elseif($status == 'PARTIALLY APPROVED') class="partial"
                                         @else class="danger" @endif>
                                         {{ $requisition->status }}
                                     </span>
@@ -146,6 +146,14 @@
 
     <script>
         $(document).ready(function() {
+
+            var msg = "{{ Session::get('alert') }}";
+            var exist = "{{ Session::has('alert') }}";
+            if (exist) {
+                alert(msg);
+                location.reload();
+            }
+
             var view_modal = document.getElementById("view-modal");
             var span = document.getElementById("close");
             var status = document.getElementById('status');
@@ -195,8 +203,8 @@
                             $('#req-no').text('Requisition No. ' + response.requisition[0]
                                 .req_id);
                             $('#maker').text(response.requisition[0].maker);
-                            $('#department').text(response.requisition[0].department +
-                                '  Department');
+                            $('#department').text('(' + response.requisition[0].department +
+                                ')');
 
                             $('#date').text(
                                 // Using RegularExpression to replace ',' (comma) with ' ' (space)
@@ -215,7 +223,8 @@
 
                             response.requisition[0].evaluator == null ?
                                 $('#req_evaluator').text('None yet') :
-                                $('#req_evaluator').text(response.requisition[0].evaluator);
+                                $('#req_evaluator').text(response.evaluator[0].name +
+                                    ' (' + response.evaluator[0].department + ')');
 
                             if (response.requisition[0].message != null) {
                                 $('#message').text(response.requisition[0].message);

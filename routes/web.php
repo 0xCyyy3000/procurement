@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\Requisition;
+use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\InventoriesController;
 use App\Models\InventoryItems;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,9 @@ Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
     Route::get('/create_req', [SidebarController::class, 'createReq']);
     Route::get('/requisitions', [SidebarController::class, 'requisitions']);
     Route::get('/purchased_orders', [SidebarController::class, 'purchasedOrders']);
+    Route::get('/distributions', [SidebarController::class, 'distributions']);
     Route::get('/suppliers', [SidebarController::class, 'suppliers']);
+    Route::get('/inventory', [SidebarController::class, 'inventory']);
 });
 
 Route::group(['prefix' => '/requisitions'], function () {
@@ -55,6 +58,14 @@ Route::group(['prefix' => '/orders'], function () {
     Route::post('/update/{po_id}', [PurchasedOrdersController::class, 'update']);
 });
 
+Route::group(['prefix' => '/distributions'], function () {
+    Route::post('/create', [DistributionController::class, 'create']);
+    Route::post('/update', [DistributionController::class,  'update']);
+    Route::post('/select/{distribution_id}', [DistributionController::class, 'select']);
+    Route::post('/edit/{distribution_id}', [DistributionController::class, 'edit']);
+    Route::put('/address/update', [DistributionController::class, 'updateAddress'])->name('distributions.address.update');
+});
+
 Route::prefix('/suppliers')->group(function () {
     Route::post('/create', [SupplierController::class, 'create'])->middleware('auth')->name('supplier.create');
     Route::post('/destroy/{supplier_id}', [SupplierController::class, 'destroy'])->middleware('auth');
@@ -65,6 +76,10 @@ Route::prefix('/suppliers')->group(function () {
 
 Route::prefix('/inventory')->group(function () {
     Route::get('/receive', [InventoriesController::class, 'receive']);
+    Route::post('/destroy/{inventory_id}', [InventoriesController::class, 'destroy']);
+    Route::get('/index', [InventoriesController::class, 'index']);
+    Route::post('/submit-form', [InventoriesController::class, 'submitForm'])->name('inventory.submit-form');
+    Route::post('/add', [InventoriesController::class, 'add']);
 });
 
 Route::get('/supplier', function () {

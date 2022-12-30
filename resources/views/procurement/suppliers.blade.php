@@ -6,23 +6,23 @@
         <!-- Modal content -->
         <div class="modal-content w-50" style="margin: 15% auto !important;">
             <input id="supplier" class="text-center fs-2 m-auto">
-            <h2 id="supplier-id" class="text-center fs-5 text-muted mb-3"></h2>
+            <h2 id="supplier-id" class="text-center fs-5 text-muted mb-4"></h2>
             <div class="body">
                 <div class="middle">
                     <div class="col-md-fluid">
-                        <div class="d-flex gap-3 mb-3 align-items-center justify-content-center">
+                        <div class="d-flex gap-3 mb-3 align-items-center ">
                             <h2 class="fs-5 text-muted">Company Address: </h2>
-                            <input type="text" class="fs-5 w-50" id="company-address">
+                            <input type="text" class="w-75 fs-5" id="company-address">
                         </div>
-                        <div class="d-flex gap-3 mb-3 align-items-center justify-content-center">
+                        <div class="d-flex gap-3 mb-3 align-items-center ">
                             <label class="fs-5 text-muted">Email: </label>
                             <input type="email" class="fs-5 w-50" id="company-email">
                         </div>
-                        <div class="d-flex gap-3 mb-3 align-items-center justify-content-center">
+                        <div class="d-flex gap-3 mb-3 align-items-center ">
                             <h2 class="fs-5 text-muted">Contact Person: </h2>
                             <input type="text" class="fs-5 w-50" id="contact-person">
                         </div>
-                        <div class="d-flex gap-3 mb-3 align-items-center justify-content-center">
+                        <div class="d-flex gap-3 mb-3 align-items-center ">
                             <h2 class="fs-5 text-muted">Phone Number: </h2>
                             <input type="number" min="0" class="fs-5 w-50" id="phone-number">
                         </div>
@@ -74,8 +74,8 @@
     </div>
 
     <h1>{{ $section['title'] }}</h1>
-    <div class="date">
-        <input type="date" name="" value="">
+    <div class="date bg-transparent mb-3">
+        <input type="hidden" name="" value="">
     </div>
 
     <div class="items-table" id="items-table">
@@ -84,7 +84,7 @@
                 <thead>
                     <th class="p-2">Supplier ID</th>
                     <th class="p-2">Supplier</th>
-                    <th class="p-2">Email</th>
+                    <th class="p-2 w-25">Email</th>
                     <th class="p-2">Address</th>
                 </thead>
                 <tbody>

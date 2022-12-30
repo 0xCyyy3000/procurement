@@ -153,6 +153,9 @@
                                 $('#addxs').prop('disabled', true);
                                 $('#addxs').val(element.delivery_address);
                                 $('#addx').val($('#addxs option:selected').val());
+
+                                $('.reject').prop('disabled', false);
+                                $('.release').prop('disabled', false);
                             } else {
                                 $('#suppliers').prop('disabled', false);
                             }

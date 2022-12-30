@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('distribution_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users', 'id');
-            $table->foreignId('item_id')->nullable()->constrained('items', 'item_id');
-            $table->foreignId('unit_id')->nullable()->constrained('units', 'unit_id');
-            $table->double('stock')->nullable();
-            $table->double('price')->nullable();
+            $table->foreignId('distribution_id')->constrained('distributions');
+            $table->foreignId('inventory_id')->constrained('inventories');
+            $table->foreignId('item_id')->constrained('items', 'item_id');
+            $table->foreignId('unit_id')->constrained('units', 'unit_id');
+            $table->integer('qty');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory');
+        Schema::dropIfExists('distribution_items');
     }
 };

@@ -326,22 +326,22 @@
 
                         $('#payment').text(response.purchaseOrder.payment);
                         if (response.purchaseOrder.payment.toUpperCase() == 'PAID')
-                            $('#payment').toggleClass('success');
+                            $('#payment').addClass('success');
                         else if (response.purchaseOrder.payment.toUpperCase() == 'DUE')
-                            $('#payment').toggleClass('danger');
+                            $('#payment').addClass('danger');
                         else
-                            $('payment').toggleClass('danger');
+                            $('payment').addClass('danger');
 
 
                         if (response.purchaseOrder.status == 0) {
                             $('#status').text("Pending");
-                            $('#status').toggleClass('warning');
+                            $('#status').addClass('warning');
                         } else if (response.purchaseOrder.status == 1) {
                             $('#status').text("Received");
-                            $('status').toggleClass('success');
+                            $('status').addClass('success');
                         } else {
                             $('#status').text("Cancelled");
-                            $('status').toggleClass('danger');
+                            $('status').addClass('danger');
                         }
 
                         $('#delivery-address').text(response.purchaseOrder.delivery_address

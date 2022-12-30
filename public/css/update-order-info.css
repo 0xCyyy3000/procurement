@@ -33,7 +33,7 @@
     color: var(--color-white) !important;
     border-radius: 50% !important;
     display: flex !important;
-    background: var(--color-warning) !important;
+    background: var(--color-warning);
 }
 
 .item.receive button {

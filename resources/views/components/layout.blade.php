@@ -1,4 +1,4 @@
-@props(['section', 'suppliers', 'purchasedOrders', 'requisitions', 'delivery_address'])
+@props(['section', 'suppliers', 'purchasedOrders', 'requisitions', 'delivery_address', 'distributions', 'recipients', 'units', 'items'])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -58,24 +58,24 @@
                                 <span class="material-icons-sharp">receipt_long</span>
                                 <h3>Purchased Orders</h3>
                             </a>
-                        @endif
 
-                        @if (auth()->user()->department <= 3)
-                            <a href="/" @if ($section['page'] == 'distributions') class="active" @endif>
+                            <a href="/distributions" @if ($section['page'] == 'distributions') class="active" @endif>
                                 <span class="material-icons-sharp">view_list</span>
                                 <h3>Distributions</h3>
                             </a>
+
+                            <a href="/suppliers" @if ($section['page'] == 'suppliers') class="active" @endif>
+                                <span class="material-icons-sharp">contact_page</span>
+                                <h3>Suppliers</h3>
+                            </a>
+
+                            <a href="/inventory" @if ($section['page'] == 'inventory') class="active" @endif>
+                                <span class="material-icons-sharp">inventory</span>
+                                <h3>Inventory</h3>
+                            </a>
                         @endif
 
-                        <a href="/suppliers" @if ($section['page'] == 'suppliers') class="active" @endif>
-                            <span class="material-icons-sharp">contact_page</span>
-                            <h3>Suppliers</h3>
-                        </a>
 
-                        <a href="/" @if ($section['page'] == 'inventory') class="active" @endif>
-                            <span class="material-icons-sharp">inventory</span>
-                            <h3>Inventory</h3>
-                        </a>
 
                         <a href="/" @if ($section['page'] == 'settings') class="active" @endif>
                             <span class="material-icons-sharp">settings</span>
@@ -107,6 +107,13 @@
                             'delivery_address' => $delivery_address,
                             'requisitions' => $requisitions,
                             'suppliers' => $suppliers,
+                        ])
+                    @elseif($section['title'] == 'Inventory' and auth()->user()->department <= 3)
+                        @include($section['middle'], ['units' => $units, 'items' => $items])
+                    @elseif($section['title'] == 'Distributions' and auth()->user()->department <= 3)
+                        @include($section['middle'], [
+                            'recipients' => $recipients,
+                            'addresses' => $delivery_address,
                         ])
                     @else
                         @include($section['middle'])
