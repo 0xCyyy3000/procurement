@@ -8,22 +8,24 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="stylesheet" href="{{ asset('css/variables') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout') }}">
+    <link rel="shortcut icon" href="{{ asset('images/aclc tacloban.png') }}" type="image/x-icon">
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <title>Procurement</title>
 
     <!-- Scripts -->
     @vite('resources/js/app.js')
 </head>
 
-<body>
+<body style="background-color: #f6f6f9 !important;">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                <a class="navbar-brand fs-5 fw-bolder" href="{{ url('/') }}">
+                    <img class="me-3" src="{{ asset('images/aclc tacloban.png') }}" alt="" width="54"
+                        height="54">
+                    Procurement System
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -47,9 +49,9 @@
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
+                            @if (Route::has('registering'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link" href="{{ route('registering') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else

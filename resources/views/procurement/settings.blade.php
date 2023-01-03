@@ -49,7 +49,9 @@
                     <select id="department" name="department"
                         class="form-select p-2 w-75 @error('department') is-invalid @enderror" disabled>
                         @foreach ($departments as $department)
-                            @if ($department->id > 3)
+                            @if (Auth::user()->department > 3 && $department->id > 3)
+                                <option value="{{ $department->id }}">{{ $department->department }}</option>
+                            @elseif(Auth::user()->department <= 3)
                                 <option value="{{ $department->id }}">{{ $department->department }}</option>
                             @endif
                         @endforeach

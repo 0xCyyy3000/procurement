@@ -30,7 +30,7 @@ use App\Models\Suppliers;
 
 Auth::routes();
 
-
+Route::get('/registering', [SidebarController::class, 'registering'])->name('registering');
 Route::get('/api/orders/{po_id}', [PurchasedOrdersController::class, 'selectItems']);
 Route::get('/api/get/requisitions', [RequisitionController::class, 'apiIndex'])->middleware('auth');
 Route::get('/requisitions/index', [RequisitionController::class, 'index'])->middleware('auth');

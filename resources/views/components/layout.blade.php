@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf_token" content="{{ csrf_token() }}">
+    <link rel="shortcut icon" href="{{ asset('images/aclc tacloban.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <script src="{{ asset('js/jquery-3.6.1.min.js') }}"></script>
@@ -23,7 +24,7 @@
             <aside id="sidebar">
                 <div class="top">
                     <div class="logo">
-                        <img src="{{ asset('images/logo.svg') }}" alt="">
+                        <img src="{{ asset('images/aclc tacloban.png') }}" alt="" height="44">
                         <span class="">
                             <h2 class="fw-bolder">Procurement</h2>
                             <p>System</p>

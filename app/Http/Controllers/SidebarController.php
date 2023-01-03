@@ -284,4 +284,10 @@ class SidebarController extends Controller
             ]
         );
     }
+
+    public function registering()
+    {
+        $departments = Department::get(['id', 'department']);
+        return view('auth.register')->with('departments', $departments);
+    }
 }

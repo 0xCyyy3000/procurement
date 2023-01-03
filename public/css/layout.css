@@ -87,12 +87,6 @@ aside .logo {
     gap: 1rem !important;
 }
 
-aside img {
-    height: 2rem !important;
-    width: 2rem !important;
-    margin: auto !important;
-}
-
 
 aside .close {
     display: none !important;
