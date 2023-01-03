@@ -101,7 +101,7 @@ class RequisitionController extends Controller
         }
 
         if ($result['status'] != 200) {
-            Requisitions::find($reqId)->delete();
+            Requisitions::where('req_id', $created->id)->delete();
         }
 
         return response()->json($result);
@@ -122,26 +122,32 @@ class RequisitionController extends Controller
         if ($requisition) {
             if (strtoupper($request->decision) == 'REJECTED') {
                 $newStatus = 'Rejected';
+                $formFields['stage'] = -1;
             } else {
+                $formFields['stage'] = $requisition->stage + 1;
                 switch ($requisition->stage + 1) {
                     case 1:
                         $newStatus = 'For approval';
                         $formFields['supplier'] = $request->supplier;
                         $formFields['delivery_address'] = $request->address;
+                        $callback = $this->callback($requisition);
+                        if ($callback == 500) {
+                            return back()->with(
+                                'alert',
+                                "Some items are do not have prices in the Inventory, please add prices to all items and try again."
+                            );
+                        }
                         break;
                     case 2:
                         $newStatus = 'Partially Approved';
                         break;
                     case 3:
                         $newStatus = 'Approved';
-                        $status = $this->createOrder($requisition, $request->address);
-                        if (!$status)
-                            return back()->with('alert', 'Item not found in your inventory! Please add the items in this order, then try again.');
+                        $this->createOrder($requisition, $request->address);
                         break;
                 }
             }
 
-            $formFields['stage'] = $requisition->stage + 1;
             $formFields['status'] = $newStatus;
             $formFields['evaluator'] = Auth::user()->id;
 
@@ -162,7 +168,7 @@ class RequisitionController extends Controller
 
         if ($update) {
             if ($newStatus == 'Approved') {
-                return back()->with('alert', 'Requisition has been approved! Purchased Order has been created.');    # code...
+                return back()->with('alert', 'Requisition has been approved! Purchased Order has been created.');
             }
             return back()->with('alert', 'Requisition has been updated!');
         } else {
@@ -194,7 +200,9 @@ class RequisitionController extends Controller
     public function indexSavedItems($user_id, $req_id)
     {
         $savedItems = request()->user()->savedItems()->get();
-        return $this->submitItems($savedItems, $user_id, $req_id);
+        if ($savedItems->count()) {
+            return $this->submitItems($savedItems, $user_id, $req_id);
+        } else return 500;
     }
 
     public function submitItems($savedItems, $user_id, $req_id)
@@ -230,7 +238,6 @@ class RequisitionController extends Controller
 
     public function createOrder($requisition, $address)
     {
-        $transferred = null;
         $order = PurchasedOrders::create([
             'supplier' => $requisition->supplier,
             'delivery_address' => $address,
@@ -244,24 +251,46 @@ class RequisitionController extends Controller
         foreach ($reqItems as $item) {
             foreach ($inventoryItems as $inventory) {
                 if ($item->item_id == $inventory->item_id && $item->unit_id == $inventory->unit_id) {
-                    $transferred = PurchasedOrderItems::create([
+                    PurchasedOrderItems::create([
                         'po_id' => $order->id,
                         'item_id' => $item->item_id,
                         'unit_id' => $item->unit_id,
                         'qty' => $item->qty,
                         'amount' => $item->qty * $inventory->price
                     ]);
+                    break;
                 }
             }
         }
 
-        if ($transferred) {
-            $orderAmount = PurchasedOrderItems::where('po_id', $order->id)->sum('amount');
-            PurchasedOrders::where('id', $order->id)->update(['order_amount' => $orderAmount]);
-            return true;
-        } else {
-            PurchasedOrders::where('id', $order->id)->delete();
-            return false;
+        $orderAmount = PurchasedOrderItems::where('po_id', $order->id)->sum('amount');
+        PurchasedOrders::where('id', $order->id)->update(['order_amount' => $orderAmount]);
+
+        // if ($transferred != null) {
+        //     return true;
+        // } else {
+        //     PurchasedOrderItems::where('po_id', $order->id)->delete();
+        //     PurchasedOrders::where('id', $order->id)->delete();
+        //     return false;
+        // }
+    }
+
+    public function callback($requisition)
+    {
+        $reqItems = RequisitionItems::where('req_id', $requisition->req_id)->get();
+        $inventoryItems = Inventories::get();
+
+        $response = 200;
+
+        foreach ($reqItems as $item) {
+            foreach ($inventoryItems as $invItem) {
+                if ($item->item_id == $invItem->item_id and $item->unit_id == $invItem->unit_id) {
+                    $invItem->price <= 0 ? $response = 500 : '';
+                    break;
+                }
+            }
         }
+
+        return $response;
     }
 }

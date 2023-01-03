@@ -90,7 +90,7 @@
                 </div>
             </div>
             @if (Auth::user()->department <= 3)
-                <div class="detail mb-3">
+                <div class="detail mb-3" id="req-decision">
                     <div class="d-flex gap-3">
                         <div class="right-side w-100">
                             <h3>
@@ -109,11 +109,21 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="detail d-none" id="callback">
+                    <p class="text-center bg-primary-mine w-100 px-2 py-3 rounded-5 text-white" id="callback_response">
+                    </p>
+                </div>
             @endif
         </form>
     </div>
     <script>
         $(document).ready(function() {
+            const BRANCH_MANAGER = '1';
+            const SCHOOL_DIRECTOR = '2';
+            const PROPERTY_CUSTODIAN = '3';
+
+            const auth = '{{ Auth::user()->department }}';
             let reqs = new Array();
 
             $('#suppliers').prop('disabled', true);
@@ -143,7 +153,7 @@
                                 $('#suppliers').prop('disabled', false);
                                 $('#addxs').prop('disabled', false);
                                 $('#approval').prop('disabled', false);
-                            } else if (element.stage > 0) {
+                            } else if (element.stage > 0 || element.stage == -1) {
                                 $('#evaluator').text(element.evaluator.name + ' (' + element
                                     .evaluator.department + ')');
                                 $('#suppliers').prop('disabled', true);
@@ -154,10 +164,38 @@
                                 $('#addxs').val(element.delivery_address);
                                 $('#addx').val($('#addxs option:selected').val());
 
-                                $('.reject').prop('disabled', false);
-                                $('.release').prop('disabled', false);
+                                if (element.stage == 3 || element.stage == -1) {
+                                    $('.reject').prop('disabled', true);
+                                    $('.release').prop('disabled', true);
+                                } else {
+                                    $('.reject').prop('disabled', false);
+                                    $('.release').prop('disabled', false);
+                                }
+
+
                             } else {
                                 $('#suppliers').prop('disabled', false);
+                            }
+
+                            if (element.stage == 0 && auth != PROPERTY_CUSTODIAN) {
+                                $('#req-decision').addClass('d-none');
+                                $('#callback').removeClass('d-none');
+                                $('#callback_response').text(
+                                    "Waiting for Property Custodian's Approval");
+                            } else if (element.stage == 1 && auth != SCHOOL_DIRECTOR) {
+                                $('#req-decision').addClass('d-none');
+                                $('#callback').removeClass('d-none');
+                                $('#callback_response').text(
+                                    "Waiting for School Director's Approval");
+                            } else if (element.stage == 2 && auth != BRANCH_MANAGER) {
+                                $('#req-decision').addClass('d-none');
+                                $('#callback').removeClass('d-none');
+                                $('#callback_response').text(
+                                    "Waiting for Branch Manager's Approval");
+                            } else {
+                                $('#req-decision').removeClass('d-none');
+                                $('#callback').addClass('d-none');
+                                $('#callback_response').text('');
                             }
                         }
                     });

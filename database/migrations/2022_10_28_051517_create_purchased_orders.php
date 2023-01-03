@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('req_id')->constrained('requisitions', 'req_id');
             $table->string('payment');
             $table->double('order_amount')->default(0);
+            $table->double('collected')->default(0);
             $table->timestamps();
         });
     }

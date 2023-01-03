@@ -11,6 +11,7 @@ use App\Models\Inventories;
 use App\Models\Distribution;
 use App\Models\Requisitions;
 use App\Models\DeliveryAddress;
+use App\Models\Department;
 use App\Models\PurchasedOrders;
 use App\Models\DistributionItem;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class SidebarController extends Controller
     {
         $user = User::join('departments', 'departments.id', '=', 'users.department')
             ->where('users.id', Auth::id())
-            ->get(['departments.department', 'users.name']);
+            ->get(['departments.id', 'departments.department', 'users.name']);
 
         return $user;
     }
@@ -256,6 +257,27 @@ class SidebarController extends Controller
                     'user' => $user[0],
                     'page' => 'distributions',
                     'title' => 'Distributions',
+                    'middle' => $middle,
+                    'bottom' => $bottom
+                ]
+            ]
+        );
+    }
+
+    public function settings()
+    {
+        $user = $this->getDepartment();
+        $middle = null;
+        $bottom = null;
+        return view(
+            'procurement.settings',
+            [
+                'departments' => Department::get(['id', 'department']),
+                'section' =>
+                [
+                    'user' => $user[0],
+                    'page' => 'settings',
+                    'title' => 'Account Settings',
                     'middle' => $middle,
                     'bottom' => $bottom
                 ]

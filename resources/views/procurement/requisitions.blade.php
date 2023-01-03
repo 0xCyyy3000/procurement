@@ -53,9 +53,9 @@
                     </div>
 
                     <div class="container-fluid">
-                        <div class="items-table">
+                        <div class="items-table table-responsive">
                             <table class="">
-                                <thead style="background-color: var(--color-primary);" class="text-white">
+                                <thead style="background-color: var(--color-primary);" class="text-white sticky-top">
                                     <th>Item name</th>
                                     <th>Unit</th>
                                     <th>Qty</th>
@@ -151,7 +151,7 @@
             var exist = "{{ Session::has('alert') }}";
             if (exist) {
                 alert(msg);
-                location.reload();
+                // location.reload();
             }
 
             var view_modal = document.getElementById("view-modal");

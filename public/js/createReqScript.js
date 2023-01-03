@@ -32,7 +32,8 @@ $(document).on('submit', '#req-details-form', function (e) {
             if (result.status == 200) {
                 alert('Requisition was successfully submitted!');
                 location.reload();
-            }
+            } else if (result.status == 500)
+                alert('No added items, please add at least one and try again.');
         },
         error: function (response) {
             alert(response.responseJSON.message);

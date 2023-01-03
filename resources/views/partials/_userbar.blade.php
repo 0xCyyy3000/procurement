@@ -10,10 +10,8 @@
             @endauth
         </div>
         <div class="profile-photo">
-            <img class="primary" src="{{ asset('/images/profile.jpg') }}"alt="logo">
+            <img class="primary"
+                src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('images/aclc tacloban.png') }}"alt="logo">
         </div>
     </div>
-    {{-- <button class="notification">
-        <span class="material-icons-sharp">notifications</span>
-    </button> --}}
 </div>

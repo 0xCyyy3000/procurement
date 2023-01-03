@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CollectedItem;
 use App\Models\Inventories;
 use App\Models\Items;
 use App\Models\PurchasedOrderItems;
@@ -12,20 +13,25 @@ use Illuminate\Support\Facades\Auth;
 
 class InventoriesController extends Controller
 {
+    public const COLLECTED = 1;
+
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
     }
 
     public function receive(Request $request)
     {
-        // dd($request->all());
+
         foreach ($request->items as $item) {
-            $existing = Inventories::where('item_id', $item['item_id'])->where('unit_id', $item['unit_id'])
-                ->where('user_id', '<=', 3)->first();
+            //Storing Collected Items
+            $orderedItem = PurchasedOrderItems::where('po_id', $request->po_id)->where('item_id', $item['item_id'])
+                ->where('unit_id', $item['unit_id'])->first();
+
+            $existing = Inventories::where('item_id', $item['item_id'])->where('unit_id', $item['unit_id'])->first();
 
             if ($existing) {
-                Inventories::where('item_id', $item['item_id'])->update([
+                Inventories::where('item_id', $item['item_id'])->where('unit_id', $item['unit_id'])->update([
                     'stock' => $existing->stock + $item['qty']
                 ]);
             } else {
@@ -37,28 +43,29 @@ class InventoriesController extends Controller
                 ]);
             }
 
-
-            # Removing Item Qtys when it has been collected to the inventory
-
-            // $currentQty = PurchasedOrderItems::where('po_id', $request->po_id)->where('item_id', $item['item_id'])
-            //     ->where('unit_id', $item['unit_id'])->first('qty');
-
-            // PurchasedOrderItems::where('po_id', $request->po_id)->where('item_id', $item['item_id'])
-            //     ->where('unit_id', $item['unit_id'])->update([
-            //         'qty' => doubleVal($currentQty->qty) - doubleval($item['qty'])
-            //     ]);
+            $collected = CollectedItem::where('purchased_order_item_id', $orderedItem->id)->first();
+            if ($collected) {
+                CollectedItem::where('purchased_order_item_id', $orderedItem->id)->update(['collected' => $item['qty']]);
+            } else {
+                CollectedItem::create(['purchased_order_item_id' => $orderedItem->id, 'collected' => $item['qty']]);
+            }
         }
 
+        PurchasedOrders::where('id', $request->po_id)->update(['collected' => $this::COLLECTED]);
         return response()->json(['status' => 200]);
     }
 
     public function destroy(Request $request)
     {
-        $response['status'] = 500;
         if (Auth::user()->department <= 3) {
-            Inventories::where('id', $request->inventory_id)->delete();
-            $response['status'] =  200;
+            try {
+                $destoryed = Inventories::where('id', $request->inventory_id)->delete();
+            } catch (\Throwable $th) {
+                $destoryed = null;
+            }
         }
+
+        $destoryed != null ? $response['status'] = 200 : $response['status'] = 500;
 
         return response()->json($response);
     }
@@ -72,22 +79,24 @@ class InventoriesController extends Controller
 
     public function submitForm(Request $request)
     {
-        // dd($request->all());
-
         $request->validate([
             'qty' => ['required', 'min:0', 'numeric'],
             'price' => ['required', 'numeric']
         ]);
 
         if ($request->decision == null or $request->decision == 'false') {
-            // For Creating New Item
-            Inventories::create([
-                'user_id' => Auth::user()->id,
-                'item_id' => $request->item[0],
-                'unit_id' => $request->unit[0],
-                'stock' => $request->qty,
-                'price' => $request->price
-            ]);
+            // Checking if specific item and unit is not existing
+            $existing = Inventories::where('item_id', $request->item[0])->where('unit_id', $request->unit[0])->first();
+            if (!$existing) {
+                // Creating New Item
+                Inventories::create([
+                    'user_id' => Auth::user()->id,
+                    'item_id' => $request->item[0],
+                    'unit_id' => $request->unit[0],
+                    'stock' => $request->qty,
+                    'price' => $request->price
+                ]);
+            } else return back()->with('alert', 'Item already exist in Inventory!');
         } else {
             // Updating Purchased Order Items prices
             $inventoryItem = Inventories::where('id', $request->inventory_select)->first();
@@ -112,6 +121,7 @@ class InventoriesController extends Controller
                 ]);
             }
         }
+
         return back()->with('alert', 'Successful!');
     }
 

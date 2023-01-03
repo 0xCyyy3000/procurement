@@ -58,9 +58,10 @@
             <span class="close-copy" id="close-copy"></span>
             <h2 class="mt-2 fs-3 text-center">Removing Item</h2>
             <h3 class="reminder text-muted mt-4 fs-5 text-center"><b class="danger">Removing</b> this item cannot be
-                undone.
-                <br>Please press confirm to proceed.
+                undone. <br>Please press confirm to proceed.
             </h3>
+            <p class="text-center text-muted fw-semibold mt-2">(Assigned items cannot be removed)</p>
+
             <br><br>
             <div class="action d-flex gap-2 justify-content-center">
                 <button class="w-25"type="button" id="go-back" style="background-color:var(--color-dark);">
@@ -109,7 +110,6 @@
             <table>
                 <thead>
                     <th class="p-2">Inventory No.</th>
-                    <th class="p-2">Item ID</th>
                     <th class="p-2">Item</th>
                     <th class="p-2">Unit</th>
                     <th class="p-2">Stock</th>
@@ -120,11 +120,18 @@
                         @foreach ($inventoryItems as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->item_id }}</td>
                                 <td>{{ $item->item }}</td>
                                 <td>{{ $item->unit_name }}</td>
-                                <td>{{ $item->stock }}x</td>
-                                <td>₱{{ $item->price }}</td>
+                                @if ($item->stock == 0)
+                                    <td>-</td>
+                                @else
+                                    <td>{{ $item->stock }}x</td>
+                                @endif
+                                @if ($item->price == null)
+                                    <td>-</td>
+                                @else
+                                    <td>₱{{ $item->price }}</td>
+                                @endif
                                 <td>
                                     <button class="danger remove" type="button" value="{{ $item->id }}">
                                         Remove

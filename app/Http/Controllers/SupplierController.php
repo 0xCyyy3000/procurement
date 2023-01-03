@@ -46,11 +46,11 @@ class SupplierController extends Controller
         }
 
         $request->validate([
-            'supplier' => 'required',
-            'email' => ['required', 'email'],
-            'address' => 'required',
-            'contact_person' => 'required',
-            'phone' => ['required', 'digit:11', 'numeric'],
+            'supplier' => ['required', 'max:255'],
+            'email' => ['required', 'email', 'unique:suppliers'],
+            'address' => ['required', 'max:255'],
+            'contact_person' => ['required', 'max:255'],
+            'phone' => ['required', 'digits:11', 'numeric', 'unique:suppliers'],
         ]);
 
         Suppliers::create([

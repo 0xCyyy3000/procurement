@@ -74,12 +74,9 @@
                                 <h3>Inventory</h3>
                             </a>
                         @endif
-
-
-
-                        <a href="/" @if ($section['page'] == 'settings') class="active" @endif>
+                        <a href="/settings" @if ($section['page'] == 'settings') class="active" @endif>
                             <span class="material-icons-sharp">settings</span>
-                            <h3>Settings</h3>
+                            <h3>Account Settings</h3>
                         </a>
 
                         <form action="/logout" method="POST">

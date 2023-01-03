@@ -145,7 +145,7 @@
             class="btn bg-primary-mine rounded-5 p-3 w-50 d-flex align-items-center gap-2 justify-content-center m-auto p-2"
             type="button" id="submit-record">
             <span class="material-icons-sharp text-white">send</span>
-            <h3 class="text-white fs-6">Submit Record</h3>
+            <h3 class="text-white fs-6">Submit and Distribute</h3>
         </button>
     </div>
 </div>

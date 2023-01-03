@@ -18,47 +18,46 @@
                 </div>
 
                 <div class="middle">
-                    <div class="container upper d-flex mb-1">
-                        <div class="upper-container">
+                    <div class="d-flex flex-grow gap-3 mb-3">
+                        <div class="">
                             <h3>Payment</h3>
                             <p id="payment" style="font-weight: bold"></p>
                         </div>
-                        <div class="upper-container">
+                        <div class="">
                             <h3>Status</h3>
                             <p id="status" style="font-weight: bold"></p>
                         </div>
-                        <div class="upper-container">
+                        <div class="">
                             <h3>Delivery Address</h3>
                             <p id="delivery-address"></p>
                         </div>
                     </div>
-                    <div class="container d-flex justify-content-between w-75">
-                        <div class="middle-container">
+                    <div class="d-flex flex-grow-1 gap-3 mb-3">
+                        <div class="w-25 p-0">
                             <h3>Supplier</h3>
                             <p id="supplier"></p>
                         </div>
-                        <div class="middle-container w-25">
+                        <div class="w-25 p-0">
                             <h3>Address</h3>
                             <p id="supplier-address"></p>
                         </div>
-                        <div class="middle-container">
+                        <div class="p-0">
                             <h3>Contact</h3>
                             <p id="contact-name"></p>
                         </div>
-                        <div class="middle-container">
+                        <div class="w-25 p-0">
                             <h3>Email</h3>
                             <p id="contact-email"></p>
                         </div>
-                        <div class="middle-container">
+                        <div class="p-0">
                             <h3>Phone</h3>
                             <p id="contact-phone"></p>
                         </div>
                     </div>
-
                     <div class="container-fluid">
-                        <div class="items-table">
+                        <div class="table-responsive items-table">
                             <table>
-                                <thead style="background-color: var(--color-primary);" class="text-white">
+                                <thead style="background-color: var(--color-primary);" class="text-white sticky-top">
                                     <th>Item name</th>
                                     <th>Unit</th>
                                     <th>Item price</th>
@@ -95,8 +94,11 @@
                 <select class="form-select p-2" id="receiving-order">
                     @unless($purchasedOrders->isEmpty())
                         <option value="">Choose one</option>
+                        @php
+                            $received = 1;
+                        @endphp
                         @foreach ($purchasedOrders as $purchasedOrder)
-                            @if ($purchasedOrder->status > 0)
+                            @if ($purchasedOrder->status == $received)
                                 <option value="{{ $purchasedOrder->id }}">PO
                                     #{{ $purchasedOrder->id }}
                                 </option>
@@ -136,7 +138,7 @@
             </div>
 
             <div class="collections d-none">
-                <h2 class="w-100 text-center text-muted mt-4 mb-3">Collected items</h2>
+                <h2 class="w-100 text-center text-muted mt-4 mb-3">Collectible Items</h2>
                 <div class="table-responsive">
                     <table class="table border-primary w-100 p-5 m-auto text-center">
                         <thead class="sticky-top bg-primary-mine text-white">
@@ -218,7 +220,8 @@
             let orderedItems = [];
             let collectedItems = [];
             class Item {
-                constructor(item_id, item, unit_id, unit, qty) {
+                constructor(id, item_id, item, unit_id, unit, qty) {
+                    this.order_item_id = id;
                     this.item_id = item_id;
                     this.item = item;
                     this.unit_id = unit_id;
@@ -259,24 +262,30 @@
                     },
                     success: function(response) {
                         if (response.status == 200) {
-                            $('#items').append(
-                                '<option value="all">All items</option>'
-                            );
                             response.items.forEach(item => {
-                                orderedItems.push(
-                                    new Item(
-                                        item.item_id,
-                                        item.item,
-                                        item.unit_id,
-                                        item.unit_name,
-                                        item.qty
-                                    )
-                                );
-                                $('#items').append(
-                                    '<option value="' + item.item_id + '">' +
-                                    item.item + ' (' +
-                                    item.unit_name + ')' + '</option>'
-                                );
+                                if (item.qty > 0) {
+                                    $('#items').append(
+                                        '<option value="all">All items</option>'
+                                    );
+
+                                    orderedItems.push(
+                                        new Item(
+                                            item.order_item_id,
+                                            item.item_id,
+                                            item.item,
+                                            item.unit_id,
+                                            item.unit_name,
+                                            item.qty
+                                        )
+                                    );
+
+                                    $('#items').append(
+                                        '<option value="' + item.order_item_id + '">' +
+                                        item.item + ' (' +
+                                        item.unit_name + ')' + '</option>'
+                                    );
+                                }
+
                             });
                         }
                     }
@@ -292,17 +301,28 @@
                             <td> ${element.item} </td>
                             <td> ${element.unit} </td>
                             <td> ${element.qty}x </td>
+                            <td>
+                                <button class = "btn danger remove-collected" value="${element.order_item_id}">
+                                    remove
+                                </button>
+                            </td>
                         </tr>
                     `;
-
                     document.getElementById('collected-items-table').innerHTML += template;
                 });
 
+                $('#items').val('');
+                $('#out-of-x').text('out of x');
+                $('#btn-max').prop('disabled', true);
+                $('#btn-collect').prop('disabled', true);
+                $('#item-qty').val('');
+                $('#item-qty').prop('disabled', true);
                 $('.confirm').prop('disabled', false);
             }
 
-            $(document).on('click', '.order-select', function() {
-                console.log(this.value);
+            $(document).on('click', '.edit-collected', function() {
+                const item = collectedItems.find((item) => item.order_item_id == this.value);
+
             });
 
             $(document).on('click', '.view', function() {
@@ -410,6 +430,11 @@
                 if ($(this).val() != '') {
                     fetchOrderItems();
                     $('#items').prop('disabled', false);
+                    if (orderedItems.length == 0) {
+                        $('#items').empty();
+                        $('#items').append(
+                            '<option value="">Items are already collected for this order</option>');
+                    }
                 } else {
                     $('#items').prop('disabled', true);
                     $('#items').empty().append('<option value="">Choose item</option>');
@@ -423,7 +448,7 @@
             });
 
             $(document).on('input', '#item-qty', function() {
-                if ($(this).val() < 1) {
+                if ($(this).val() < 0) {
                     $(this).val(1);
                 }
             });
@@ -442,17 +467,30 @@
                         $('.collect-modal-content').addClass('h-75');
                         $('.collections').removeClass('d-none');
                     }
-                    const NO_RECORD = -1;
-                    const item = orderedItems.find((item) => item.item_id == $(this).val());
-                    if (collectedItems.indexOf(item) == NO_RECORD && $(this).val() != 'all') {
-                        item.qty = $('#item-qty').val();
-                        collectedItems.push(item);
-                        loadCollectedItems();
-                    } else if ($(this).val() == 'all') {
+
+                    if ($(this).val() == 'all') {
                         collectedItems = [];
                         orderedItems.forEach(orderedItem => {
                             collectedItems.push(orderedItem)
                         });
+                        loadCollectedItems();
+                    } else {
+                        const NO_RECORD = -1;
+                        const orderItem = orderedItems.find((item) => item.order_item_id == $('#items')
+                            .val());
+                        const item = collectedItems.find((item) => item.order_item_id == $('#items').val());
+
+                        if (collectedItems.indexOf(item) == NO_RECORD)
+                            collectedItems.push(new Item(
+                                orderItem.order_item_id,
+                                orderItem.item_id,
+                                orderItem.item,
+                                orderItem.unit_id,
+                                orderItem.unit,
+                                my_qty
+                            ));
+                        else collectedItems[collectedItems.indexOf(item)].qty = my_qty;
+
                         loadCollectedItems();
                     }
                 } else {
@@ -471,9 +509,10 @@
                         $('#item-qty').prop('disabled', true);
                         $('#btn-collect').val('all');
                     } else {
-                        const selectedItem = orderedItems.find((item) => item.item_id == $(this).val());
+                        const selectedItem = orderedItems.find((item) => item.order_item_id == $(this)
+                            .val());
                         $('#btn-max').val(selectedItem.qty);
-                        $('#btn-collect').val(selectedItem.item_id);
+                        $('#btn-collect').val(selectedItem.order_item_id);
                         $('#out-of-x').text('out of ' + selectedItem.qty);
                         $('#item-qty').prop('disabled', false);
                         $('#item-qty').val(1);
@@ -489,6 +528,12 @@
 
             $(document).on('click', '.receive', function() {
                 $('#receive-modal').css('display', 'flex');
+            });
+
+            $(document).on('click', '.remove-collected', function() {
+                const item = collectedItems.find((item) => item.order_item_id == this.value);
+                collectedItems.splice(collectedItems.indexOf(item), 1);
+                loadCollectedItems();
             });
 
         });

@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
     Route::get('/distributions', [SidebarController::class, 'distributions']);
     Route::get('/suppliers', [SidebarController::class, 'suppliers']);
     Route::get('/inventory', [SidebarController::class, 'inventory']);
+    Route::get('/settings', [SidebarController::class, 'settings']);
 });
 
 Route::group(['prefix' => '/requisitions'], function () {
@@ -80,6 +81,12 @@ Route::prefix('/inventory')->group(function () {
     Route::get('/index', [InventoriesController::class, 'index']);
     Route::post('/submit-form', [InventoriesController::class, 'submitForm'])->name('inventory.submit-form');
     Route::post('/add', [InventoriesController::class, 'add']);
+});
+
+Route::group(['prefix' => '/settings'], function () {
+    Route::put('/update-info', [UserController::class, 'update'])->name('user.update');
+    Route::post('/change-password', [UserController::class, 'changePassword'])->name('user.change-password');
+    Route::post('/upload', [UserController::class, 'uploadPhoto'])->name('user.upload-photo');
 });
 
 Route::get('/supplier', function () {

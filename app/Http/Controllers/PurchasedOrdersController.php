@@ -7,6 +7,7 @@ use App\Models\Items;
 use App\Models\Units;
 use App\Models\Suppliers;
 use App\Events\Requisition;
+use App\Models\CollectedItem;
 use App\Models\DeliveryAddress;
 use App\Models\Inventories;
 use App\Models\Requisitions;
@@ -128,10 +129,21 @@ class PurchasedOrdersController extends Controller
     public function selectItems(Request $request)
     {
         $orderedItems = PurchasedOrderItems::join('items', 'items.item_id', '=', 'purchased_order_items.item_id')
-            ->join('units', 'units.unit_id', '=', 'purchased_order_items.unit_id')
-            ->where('po_id', $request->po_id)->get(['items.item', 'items.item_id', 'units.unit_id', 'units.unit_name', 'purchased_order_items.qty']);
+            ->join('units', 'units.unit_id', '=', 'purchased_order_items.unit_id')->where('purchased_order_items.po_id', $request->po_id)
+            ->get(['items.item', 'items.item_id', 'units.unit_id', 'units.unit_name', 'purchased_order_items.qty', 'purchased_order_items.id as order_item_id']);
 
+        $order = PurchasedOrders::where('id', $request->po_id)->first();
         if ($orderedItems->count()) {
+            if ($order->collected == InventoriesController::COLLECTED) {
+                foreach ($orderedItems as $orderedItem) {
+                    $collectedItem = CollectedItem::where('purchased_order_item_id', $orderedItem->order_item_id)->first();
+                    $item = Inventories::where('item_id', $orderedItem->item_id)->where('unit_id', $orderedItem->unit_id)->get();
+                    if ($collectedItem && $item->count()) {
+                        $orderedItem->qty -= $collectedItem->collected;
+                    }
+                }
+            }
+
             return response()->json(
                 [
                     'status' => 200,

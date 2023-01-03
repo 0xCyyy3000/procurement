@@ -58,11 +58,26 @@ class ItemsController extends Controller
             ]);
 
             $formFields['user_id'] = auth()->id();
-            $addedItem = SavedItems::create($formFields);
+
+            $duplicate = SavedItems::where('item_id', $request->item_id)->where('unit_id', $request->unit_id)->first();
+            if (!$duplicate) {
+                $addedItem = SavedItems::create($formFields);
+            } else $addedItem = SavedItems::where('item_id', $request->item_id)->where('unit_id', $request->unit_id)->update(['qty' => $duplicate->qty + $request->qty]);
+
             $result['item'] = SavedItems::select(['item_id', 'item'])->latest('row')->first()[0];
+
+            $existingItem = Inventories::where('item_id', $request->item_id)->where('unit_id', $request->unit_id)->first();
+            if (!$existingItem) {
+                Inventories::create([
+                    'user_id' => auth()->user()->id,
+                    'item_id' => $request->item_id,
+                    'unit_id' => $request->unit_id,
+                    'stock' => 0
+                ]);
+            }
         }
 
-        if ($addedItem->user_id) $result['status'] = 200;
+        if ($addedItem) $result['status'] = 200;
         else $result['status'] = 500;
 
         return response()->json($result);
