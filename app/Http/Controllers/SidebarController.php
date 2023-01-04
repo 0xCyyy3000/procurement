@@ -15,9 +15,17 @@ use App\Models\Department;
 use App\Models\PurchasedOrders;
 use App\Models\DistributionItem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class SidebarController extends Controller
 {
+
+    public function gateCall()
+    {
+        if (!Gate::allows('admin-only', Auth::user())) {
+            abort(403);
+        }
+    }
 
     public function getDepartment()
     {
@@ -48,6 +56,7 @@ class SidebarController extends Controller
 
     public function notifications()
     {
+
         $user = $this->getDepartment();
         return view(
             'procurement.notifications',
@@ -132,6 +141,8 @@ class SidebarController extends Controller
 
     public function purchasedOrders()
     {
+        $this->gateCall();
+
         $middle = null;
         $bottom = null;
         $purchasedOrders = null;
@@ -168,6 +179,8 @@ class SidebarController extends Controller
 
     public function suppliers()
     {
+        $this->gateCall();
+
         $user = $this->getDepartment();
         $middle = null;
         $bottom = null;
@@ -195,6 +208,8 @@ class SidebarController extends Controller
 
     public function inventory()
     {
+        $this->gateCall();
+
         $user = $this->getDepartment();
         $middle = null;
         $bottom = null;
@@ -226,6 +241,8 @@ class SidebarController extends Controller
 
     public function distributions()
     {
+        $this->gateCall();
+
         $user = $this->getDepartment();
         $middle = null;
         $bottom = null;
