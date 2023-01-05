@@ -30,8 +30,7 @@ $(document).on('submit', '#req-details-form', function (e) {
         dataype: 'json',
         success: function (result) {
             if (result.status == 200) {
-                alert('Requisition was successfully submitted!');
-                location.reload();
+                // alert('Requisition was successfully submitted!');
             } else if (result.status == 500)
                 alert('No added items, please add at least one and try again.');
         },

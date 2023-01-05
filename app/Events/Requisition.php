@@ -14,18 +14,20 @@ class Requisition implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $name, $context;
+    public $id, $name, $context, $evaluator = [], $event;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($name, $context)
+    public function __construct($id, $name, $context, $evaluator, $event)
     {
+        $this->id = $id;
         $this->name = $name;
         $this->context = $context;
-
+        $this->evaluator = $evaluator;
+        $this->event = $event;
     }
 
     /**

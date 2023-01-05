@@ -19,6 +19,7 @@
 </head>
 
 <body>
+    {{-- @include('components.flash-message') --}}
     <div class="content">
         <div class="container">
             <aside id="sidebar">

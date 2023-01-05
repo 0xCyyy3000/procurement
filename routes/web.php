@@ -108,15 +108,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/savedItems'], function () {
     Route::post('/clear/{user}', [ItemsController::class, 'clearSavedItem']);
 });
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/test/pusher', function () {
-    // dd(request()->data);
-    $name = request()->name;
-    event(new Requisition($name, 'test'));
-})->name('test.pusher');
-
-
 Route::get('/test/listen', function () {
     return view('partials._pusher');
 });

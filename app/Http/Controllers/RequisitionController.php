@@ -155,14 +155,17 @@ class RequisitionController extends Controller
                 ->update($formFields);
 
             event(new Requisition(
-                Auth::user()->name,
-                'has ' . $request->decision . ' Requisition No.' . $request->requisition
+                $requisition->user_id,
+                $requisition->maker,
+                $request->decision . ' Requisition No.' . $request->requisition,
+                ['name' => Auth::user()->name, 'id' => Auth::user()->id],
+                'UPDATE REQ'
             ));
 
             RequisitionNotification::create([
                 'requisition_id' => $request->requisition,
-                'user_id' => auth()->user()->id,
-                'context' => 'has ' . $request->decision . ' Requisition No.' . $request->requisition
+                'user_id' => Auth::user()->id,
+                'context' => $request->decision . ' Requisition No.' . $request->requisition
             ]);
         }
 
@@ -170,7 +173,7 @@ class RequisitionController extends Controller
             if ($newStatus == 'Approved') {
                 return back()->with('alert', 'Requisition has been approved! Purchased Order has been created.');
             }
-            return back()->with('alert', 'Requisition has been updated!');
+            return back()->with('alert', 'have updated a Requistion successfully!');
         } else {
             return back()->with('alert', 'Updating failed, please try again later.');
         }
@@ -217,11 +220,11 @@ class RequisitionController extends Controller
         }
 
         $user = User::find(auth()->user()->id);
-        event(new Requisition($user->name, 'submitted a new requisition'));
+        event(new Requisition($user->id, $user->name, 'submitted a New Requisition.', null, 'CREATE REQ'));
 
         RequisitionNotification::create([
             'requisition_id' => $req_id,
-            'user_id' => auth()->user()->id,
+            'user_id' => $user->id,
             'context' => 'submitted a new requisition'
         ]);
 

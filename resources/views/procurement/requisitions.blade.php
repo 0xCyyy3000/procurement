@@ -150,8 +150,10 @@
             var msg = "{{ Session::get('alert') }}";
             var exist = "{{ Session::has('alert') }}";
             if (exist) {
-                alert(msg);
-                // location.reload();
+                // alert(msg);
+                $('#flash-toast-maker').text('You ');
+                $('#flash-toast-context').text(msg);
+                $('.flash-toast').toast('show');
             }
 
             var view_modal = document.getElementById("view-modal");
