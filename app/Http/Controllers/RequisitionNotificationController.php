@@ -11,11 +11,10 @@ class RequisitionNotificationController extends Controller
 {
     public function index()
     {
-        $user = User::where('id', Auth::id())->get('department');
-        $notifs = '';
+        $user = User::where('id', Auth::id())->first();
 
-        $notifs = ($user[0]->department <= 3) ?
-            $notifs = RequisitionNotification::join('requisitions', 'requisitions.req_id', '=', 'requisition_notifications.requisition_id')
+        $notifs['contents'] = ($user->department <= 3) ?
+            RequisitionNotification::join('requisitions', 'requisitions.req_id', '=', 'requisition_notifications.reference')
             ->join('departments', 'departments.id', '=', 'requisition_notifications.user_id')
             ->get(
                 [
@@ -23,7 +22,19 @@ class RequisitionNotificationController extends Controller
                     'requisitions.status', 'requisitions.evaluator', 'requisitions.message',
                     'departments.department', 'requisition_notifications.*'
                 ]
-            ) : "You're not an admin";
+            ) : RequisitionNotification::join('requisitions', 'requisitions.req_id', '=', 'requisition_notifications.reference')
+            ->join('departments', 'departments.id', '=', 'requisition_notifications.user_id')
+            ->join('users', 'users.id', '=', 'requisitions.user_id')
+            ->where('users.id', $user->id)
+            ->get(
+                [
+                    'requisitions.maker', 'requisitions.description',
+                    'requisitions.status', 'requisitions.evaluator', 'requisitions.message',
+                    'departments.department', 'requisition_notifications.*'
+                ]
+            );
+
+        $notifs['user'] = $user->id;
 
         return response()->json($notifs);
     }

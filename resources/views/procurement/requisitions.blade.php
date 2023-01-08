@@ -103,8 +103,8 @@
             <table class="">
                 <thead>
                     <th class="p-2">Req No.</th>
-                    <th class="p-2">Priority</th>
-                    <th class="th-description p-2">Description</th>
+                    <th class="p-2 removable">Priority</th>
+                    <th class="th-description p-2 removable">Description</th>
                     <th class="p-2">Status</th>
                 </thead>
                 <tbody>
@@ -115,8 +115,8 @@
                             @endphp
                             <tr>
                                 <td>{{ $requisition->req_id }}</td>
-                                <td style="font-weight: bold">{{ $requisition->priority }}</td>
-                                <td>{{ $requisition->description }}</td>
+                                <td style="font-weight: bold" class="removable">{{ $requisition->priority }}</td>
+                                <td class="removable">{{ $requisition->description }}</td>
                                 <td>
                                     <span
                                         @if ($status == 'FOR APPROVAL' or $status == 'PENDING') class="warning"
@@ -132,8 +132,11 @@
                                     </button>
                                 </td>
                                 <td>
-                                    <button class="text-muted copy" value="{{ $requisition->req_id }}">
+                                    <button class="text-muted copy removable" value="{{ $requisition->req_id }}">
                                         <span>(Copy items)</span>
+                                    </button>
+                                    <button class="text-muted copy alternative" value="{{ $requisition->req_id }}">
+                                        <span>(Copy)</span>
                                     </button>
                                 </td>
                             </tr>
@@ -144,16 +147,36 @@
         </div>
     </div>
 
+    {{ $requisitions->links() }}
+
+
     <script>
         $(document).ready(function() {
+            $.ajax({
+                url: '/api/test/reqs',
+                method: 'GET',
+                dataType: 'JSON',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    console.log(response);
+                }
+            });
+
 
             var msg = "{{ Session::get('alert') }}";
             var exist = "{{ Session::has('alert') }}";
+            var error = "{{ Session::has('error') }}";
+            var error_msg = "{{ Session::get('error') }}";
             if (exist) {
-                // alert(msg);
-                $('#flash-toast-maker').text('You ');
-                $('#flash-toast-context').text(msg);
-                $('.flash-toast').toast('show');
+                $('#pusher-maker').text('You ');
+                $('#pusher-context').text(msg);
+                $('.toast').toast('show');
+            } else if (error) {
+                $('#pusher-maker').text('Oppps! ');
+                $('#pusher-context').text(error_msg);
+                $('.toast').toast('show');
             }
 
             var view_modal = document.getElementById("view-modal");

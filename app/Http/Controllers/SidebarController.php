@@ -106,12 +106,12 @@ class SidebarController extends Controller
     public function requisitions()
     {
         if (strtoupper(auth()->user()->department) <= 3) {
-            $requisitions = Requisitions::latest()->get();
+            $requisitions = Requisitions::latest()->paginate(10);
             $update_status = 'partials._update-status';
             $suppliers =  Suppliers::get();
             $delivery_address = DeliveryAddress::all();
         } else {
-            $requisitions = request()->user()->requisitions()->latest()->get();
+            $requisitions = request()->user()->requisitions()->latest()->paginate(10);
             $update_status = null;
             $suppliers = null;
             $delivery_address = null;
@@ -148,7 +148,7 @@ class SidebarController extends Controller
         $purchasedOrders = null;
 
         if (auth()->user()->department <= 3) {
-            $purchasedOrders = PurchasedOrders::latest()->get();
+            $purchasedOrders = PurchasedOrders::latest()->paginate(10);
             foreach ($purchasedOrders as $order) {
                 $order['supplier'] = PurchasedOrders::join('suppliers', 'suppliers.id', '=', 'purchased_orders.supplier')
                     ->where('purchased_orders.id', $order->id)
@@ -187,7 +187,7 @@ class SidebarController extends Controller
         $suppliers = null;
 
         if (auth()->user()->department <= 3) {
-            $suppliers = Suppliers::latest()->get();
+            $suppliers = Suppliers::latest()->paginate(10);
             $middle = 'partials._create-supplier';
         }
         return view(
@@ -217,7 +217,7 @@ class SidebarController extends Controller
 
         if (auth()->user()->department <= 3) {
             $inventoryItems = Inventories::join('items', 'items.item_id', '=', 'inventories.item_id')
-                ->join('units', 'units.unit_id', '=', 'inventories.unit_id')->orderBy('inventories.created_at', 'desc')->get(['units.*', 'items.*', 'inventories.*']);
+                ->join('units', 'units.unit_id', '=', 'inventories.unit_id')->orderBy('inventories.created_at', 'desc')->paginate(10);
 
             $middle = 'partials._create-inventory';
         }
@@ -252,7 +252,8 @@ class SidebarController extends Controller
             $distributions = Distribution::join('users', 'users.id', '=', 'distributions.recipient')
                 ->join('delivery_addresses', 'delivery_addresses.id', '=', 'distributions.address')
                 ->join('departments', 'departments.id', '=', 'users.department')
-                ->get(['distributions.*', 'users.email', 'users.name', 'departments.department', 'delivery_addresses.address']);
+                // ->get(['distributions.*', 'users.email', 'users.name', 'departments.department', 'delivery_addresses.address']);
+                ->paginate(10);
             // dd($distributions);
 
             $recipients = PurchasedOrders::join('requisitions', 'requisitions.req_id', '=', 'purchased_orders.req_id')

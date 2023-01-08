@@ -145,6 +145,8 @@
         </div>
     </div>
 
+    {{ $inventoryItems->links() }}
+
     <script>
         $(document).ready(function() {
 

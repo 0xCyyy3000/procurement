@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('requisition_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('requisition_id')->constrained('requisitions', 'req_id');
+            $table->integer('reference');
+            $table->integer('type');
             $table->foreignId('user_id')->constrained('users', 'id');
             $table->longText('context');
             $table->timestamps();

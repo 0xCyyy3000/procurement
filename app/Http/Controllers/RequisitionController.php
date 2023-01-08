@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Auth;
 
 class RequisitionController extends Controller
 {
+    public function apiRequistions()
+    {
+        $reqs = Requisitions::latest()->get();
+        return response()->json($reqs);
+    }
+
     public function apiIndex()
     {
         if (Auth::user()->department <= 3) {
@@ -151,9 +157,11 @@ class RequisitionController extends Controller
             $formFields['status'] = $newStatus;
             $formFields['evaluator'] = Auth::user()->id;
 
-            $update = Requisitions::where('req_id', $request->requisition)
+            $updated = Requisitions::where('req_id', $request->requisition)
                 ->update($formFields);
+        }
 
+        if ($updated) {
             event(new Requisition(
                 $requisition->user_id,
                 $requisition->maker,
@@ -163,20 +171,15 @@ class RequisitionController extends Controller
             ));
 
             RequisitionNotification::create([
-                'requisition_id' => $request->requisition,
+                'reference' => $request->requisition,
+                'type' => 1,
                 'user_id' => Auth::user()->id,
                 'context' => $request->decision . ' Requisition No.' . $request->requisition
             ]);
-        }
 
-        if ($update) {
-            if ($newStatus == 'Approved') {
-                return back()->with('alert', 'Requisition has been approved! Purchased Order has been created.');
-            }
-            return back()->with('alert', 'have updated a Requistion successfully!');
-        } else {
-            return back()->with('alert', 'Updating failed, please try again later.');
-        }
+            if ($newStatus == 'For Approval') $newStatus = 'released for approval';
+            return back()->with('alert', 'have ' . $newStatus . ' Req No.' . $request->requisition);
+        } else return back()->with('error', 'There was an error, please try again.');
     }
 
     public function copy(Request $request)
@@ -223,7 +226,8 @@ class RequisitionController extends Controller
         event(new Requisition($user->id, $user->name, 'submitted a New Requisition.', null, 'CREATE REQ'));
 
         RequisitionNotification::create([
-            'requisition_id' => $req_id,
+            'reference' => $req_id,
+            'type' => 1,
             'user_id' => $user->id,
             'context' => 'submitted a new requisition'
         ]);

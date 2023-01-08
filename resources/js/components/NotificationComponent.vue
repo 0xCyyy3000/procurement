@@ -1,17 +1,17 @@
 <template>
-    <div class="w-25">
+    <div class="w-25 mb-3">
         <select class="form-select w-75 mt-2 p-2 text-white" style="background-color: var(--color-primary);"
-            v-model="this.logOptions">
-            <option value="0">All</option>
-            <option value="1">Requisitions</option>
-            <option value="2">Purchased Orders</option>
+            v-model="this.filterValue">
+            <option :value=0>All</option>
+            <option :value=1>Requisitions</option>
+            <option :value=2>Purchased Orders</option>
         </select>
     </div>
 
     <section class="section-50">
         <div class="container">
             <div class="notification-ui_dd-content">
-                <div class="notification-list notification-list--unread" v-for="notification in this.notifications">
+                <div class="notification-list" v-for="notification in filteredArray">
                     <div class="notification-list_content">
                         <div class="notification-list_detail">
                             <p>
@@ -31,17 +31,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- <div class="notification-list">
-                    <div class="notification-list_content">
-                        <div class="notification-list_detail">
-                            <p><b>Brian Cumin</b> reacted to your post</p>
-                            <p class="text-muted">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde,
-                                dolorem.</p>
-                            <p class="text-muted"><small>10 mins ago</small></p>
-                        </div>
-                    </div>
-                </div> -->
             </div>
         </div>
     </section>
@@ -53,7 +42,9 @@ import axios from "axios";
 class Notifications {
     constructor(
         id,
+        type,
         maker,
+        maker_id,
         reference,
         status,
         context,
@@ -63,7 +54,9 @@ class Notifications {
         evaluator
     ) {
         this.id = id;
+        this.type = type;
         this.maker = maker;
+        this.maker_id = maker_id;
         this.reference = reference;
         this.status = status;
         this.context = context;
@@ -77,26 +70,47 @@ class Notifications {
 export default {
     data() {
         return {
-            logOptions: 0,
+            filterValue: 0,
             notifications: [],
         };
     },
     mounted() {
-        console.log("Ohayo!.");
+        // console.log("Ohayo!.");
     },
-    watch: {
-        logOptions(newLogOptions, oldLogOptions) {
-            console.log(newLogOptions);
+    methods: {
+        sortArray: function () {
+            this.notifications = this.notifications.sort((a, b) => b.id - a.id);
+        }
+    },
+    computed: {
+        filteredArray: function () {
+            this.sortArray();
+            if (this.filterValue == 0) {
+                return this.notifications;
+            } else if (this.filterValue == 1) {
+                return this.notifications.filter(function (item) {
+                    return item.type == 1;
+                });
+            } else if (this.filterValue == 2) {
+                return this.notifications.filter(function (item) {
+                    return item.type == 2;
+                });
+            }
         }
     },
     created() {
         axios.get("/api/test/notification/index").then(({ data }) => {
-            data.forEach((element) => {
+            data.contents.forEach((element) => {
+                if (data.user === element.user_id) {
+                    element.maker = 'You';
+                }
                 this.notifications.push(
                     new Notifications(
                         element.id,
+                        element.type,
                         element.maker,
-                        element.requisition_id,
+                        element.user_id,
+                        element.reference,
                         element.status,
                         element.context,
                         element.message,

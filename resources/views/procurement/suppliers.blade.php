@@ -84,8 +84,8 @@
                 <thead>
                     <th class="p-2">Supplier ID</th>
                     <th class="p-2">Supplier</th>
-                    <th class="p-2 w-25">Email</th>
-                    <th class="p-2">Address</th>
+                    <th class="p-2 w-25 removable">Email</th>
+                    <th class="p-2 removable">Address</th>
                 </thead>
                 <tbody>
                     @unless($suppliers->isEmpty())
@@ -97,8 +97,8 @@
                                 <td>
                                     {{ $supplier->company_name }}
                                 </td>
-                                <td>{{ $supplier->email }}</td>
-                                <td>{{ $supplier->address }}</td>
+                                <td class="removable">{{ $supplier->email }}</td>
+                                <td class="removable">{{ $supplier->address }}</td>
                                 <td>
                                     <button class="primary view" type="button" value="{{ $supplier->id }}">
                                         View details

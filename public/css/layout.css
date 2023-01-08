@@ -24,7 +24,6 @@ body {
     font-size: 0.88rem !important;
     background: var(--color-background) !important;
     user-select: none !important;
-    overflow-x: hidden !important;
 }
 
 a {
@@ -87,6 +86,9 @@ aside .logo {
     gap: 1rem !important;
 }
 
+aside .logo img {
+    height: 44px !important;
+}
 
 aside .close {
     display: none !important;

@@ -29,4 +29,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'test'], function () {
     Route::get('/orders/index', [PurchasedOrdersController::class, 'apiIndex']);
+    Route::get('/reqs', [RequisitionController::class, 'apiRequistions']);
 });

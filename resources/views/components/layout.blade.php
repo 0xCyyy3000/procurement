@@ -14,6 +14,7 @@
     <script src="{{ asset('js/jquery-3.6.1.min.js') }}"></script>
     <script src="{{ asset('js/menuBtn.js') }}" defer></script>
     <script src="{{ asset('js/createReqScript.js') }}" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
     <title>{{ $section['title'] }}</title>
 </head>
@@ -25,7 +26,7 @@
             <aside id="sidebar">
                 <div class="top">
                     <div class="logo">
-                        <img src="{{ asset('images/aclc tacloban.png') }}" alt="" height="44">
+                        <img src="{{ asset('images/aclc tacloban.png') }}" alt="">
                         <span class="">
                             <h2 class="fw-bolder">Procurement</h2>
                             <p>System</p>
@@ -125,7 +126,6 @@
                 @endif
             </div>
             @include('partials._pusher')
-            @include('components.flash-message')
         </div>
     </div>
     @vite('resources/js/app.js')

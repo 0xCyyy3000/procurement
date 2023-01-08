@@ -168,7 +168,7 @@
             <table>
                 <thead>
                     <th class="p-2">PO No.</th>
-                    <th class="p-2">Supplier</th>
+                    <th class="p-2 removable">Supplier</th>
                     <th class="p-2">Payment</th>
                     <th class="p-2">Status</th>
                 </thead>
@@ -187,7 +187,7 @@
                                 <td>
                                     {{ $purchasedOrder->id }}
                                 </td>
-                                <td>
+                                <td class="removable">
                                     {{ $purchasedOrder->supplier->company_name }}
                                 </td>
                                 <td style="font-weight: bold">{{ $purchasedOrder->payment }}</td>

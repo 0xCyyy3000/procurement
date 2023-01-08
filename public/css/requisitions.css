@@ -18,6 +18,7 @@ main {
     max-height: 77% !important;
     overflow-y: auto !important;
     margin-top: 0 !important;
+    padding: var(--card-padding) !important;
     border-radius: var(--card-border-radius) !important;
     box-shadow: var(--box-shadow) !important;
     background: var(--color-white) !important;
@@ -26,7 +27,6 @@ main {
 .items-table table {
     margin-top: 0 !important;
     width: 100% !important;
-    padding: var(--card-padding) !important;
     text-align: center !important;
     transition: all 300ms ease !important;
 }
@@ -81,7 +81,11 @@ table thead th.th-description {
     width: 35% !important;
 }
 
-.copy {
+table .alternative {
+    display: none !important;
+}
+
+div .copy {
     font-size: 10px !important;
     margin-left: 1rem !important;
     font-weight: 600 !important;
@@ -98,5 +102,13 @@ table thead th.th-description {
     main {
         margin-top: 4rem !important;
         padding: 0 1rem !important;
+    }
+
+    .items-table .table table .removable {
+        display: none !important;
+    }
+
+    table .alternative {
+        display: block !important;
     }
 }

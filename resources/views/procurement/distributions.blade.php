@@ -81,7 +81,7 @@
                 <thead>
                     <th class="p-2">Distribution No.</th>
                     <th class="p-2">Recipient</th>
-                    <th class="p-2">Address</th>
+                    <th class="p-2 removable">Address</th>
                 </thead>
                 <tbody>
                     @unless($distributions->isEmpty())
@@ -89,7 +89,7 @@
                             <tr>
                                 <td>{{ $distribution->id }}</td>
                                 <td>{{ $distribution->email }}</td>
-                                <td>{{ $distribution->address }}</td>
+                                <td class="removable">{{ $distribution->address }}</td>
                                 <td>
                                     <button class="primary view" type="button" value="{{ $distribution->id }}">
                                         View details

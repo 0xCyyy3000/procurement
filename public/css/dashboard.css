@@ -56,7 +56,6 @@ main .recent-orders h2 {
 }
 
 main .recent-orders .table {
-    height: 400px !important;
     overflow-y: auto !important;
     border-radius: var(--card-border-radius) !important;
     box-shadow: var(--box-shadow) !important;

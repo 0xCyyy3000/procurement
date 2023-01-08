@@ -29,10 +29,12 @@ $(document).on('submit', '#req-details-form', function (e) {
         },
         dataype: 'json',
         success: function (result) {
-            if (result.status == 200) {
-                // alert('Requisition was successfully submitted!');
-            } else if (result.status == 500)
+            if (result.status == 500)
                 alert('No added items, please add at least one and try again.');
+
+            setTimeout(function () {
+                location.reload();
+            }, 2000);
         },
         error: function (response) {
             alert(response.responseJSON.message);

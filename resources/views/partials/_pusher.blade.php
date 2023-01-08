@@ -20,7 +20,8 @@
                         $('#pusher-maker').text('You');
                     } else if (data.event == 'CREATE REQ' && department <= 3)
                         $('#pusher-maker').text(data.name);
-                    else if (data.event == 'UPDATE REQ' && user == data.evaluator['id'] && department <= 3)
+                    else if (data.event == 'UPDATE REQ' && user == data.evaluator['id'] &&
+                        user != data.id)
                         $('#pusher-maker').text('You');
                     else if (data.event == 'UPDATE REQ' && user != data.evaluator['id'] &&
                         user == data.id) {
